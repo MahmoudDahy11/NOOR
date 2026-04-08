@@ -19,7 +19,10 @@ class ResetPasswordPage extends StatefulWidget {
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
   late TextEditingController _emailController;
   final OtpService _otpService = OtpService();
-  bool _isSending = false;
+  final ValueNotifier<bool> _isSending = ValueNotifier<bool>(false);
+  
+  final _formKey = GlobalKey<FormState>();
+  final _autovalidateMode = ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
 
   @override
   void initState() {
@@ -30,22 +33,30 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   void dispose() {
     _emailController.dispose();
+    _isSending.dispose();
+    _autovalidateMode.dispose();
     super.dispose();
   }
 
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your email';
+    }
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
   Future<void> _handleSendLink() async {
+    if (!_formKey.currentState!.validate()) {
+      _autovalidateMode.value = AutovalidateMode.always;
+      return;
+    }
+
     final email = _emailController.text.trim();
-    if (email.isEmpty) {
-      showSnakBar(context, "Please enter your email", isError: true);
-      return;
-    }
 
-    if (!email.contains('@')) {
-      showSnakBar(context, "Please enter a valid email", isError: true);
-      return;
-    }
-
-    setState(() => _isSending = true);
+    _isSending.value = true;
 
     try {
       final otp = _otpService.generateOtp();
@@ -66,7 +77,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       showSnakBar(context, "Failed to send OTP: $e", isError: true);
     } finally {
       if (mounted) {
-        setState(() => _isSending = false);
+        _isSending.value = false;
       }
     }
   }
@@ -89,16 +100,31 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 style: AppTextStyles.bodyLarge,
               ),
               const SizedBox(height: 40),
-              CustomTextField(
-                hintText: "Email",
-                prefixIcon: Icons.email_outlined,
-                controller: _emailController,
+              ValueListenableBuilder<AutovalidateMode>(
+                valueListenable: _autovalidateMode,
+                builder: (context, autovalidateMode, child) {
+                  return Form(
+                    key: _formKey,
+                    autovalidateMode: autovalidateMode,
+                    child: CustomTextField(
+                      hintText: "Email",
+                      prefixIcon: Icons.email_outlined,
+                      controller: _emailController,
+                      validator: _validateEmail,
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 32),
-              CustomGradientButton(
-                text: "Send Code",
-                isLoading: _isSending,
-                onPressed: _isSending ? () {} : _handleSendLink,
+              ValueListenableBuilder<bool>(
+                valueListenable: _isSending,
+                builder: (context, isSending, child) {
+                  return CustomGradientButton(
+                    text: "Send Code",
+                    isLoading: isSending,
+                    onPressed: isSending ? () {} : _handleSendLink,
+                  );
+                },
               ),
             ],
           ),

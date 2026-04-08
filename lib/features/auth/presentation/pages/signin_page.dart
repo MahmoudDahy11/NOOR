@@ -21,6 +21,8 @@ class SigninPage extends StatefulWidget {
 class _SigninPageState extends State<SigninPage> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  final _formKey = GlobalKey<FormState>();
+  final _autovalidateMode = ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
 
   @override
   void initState() {
@@ -33,14 +35,39 @@ class _SigninPageState extends State<SigninPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _autovalidateMode.dispose();
     super.dispose();
   }
 
   void _handleSignIn() {
-    context.read<LoginCubit>().signInWithEmailAndPassword(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-    );
+    if (_formKey.currentState!.validate()) {
+      context.read<LoginCubit>().signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+    } else {
+      _autovalidateMode.value = AutovalidateMode.always;
+    }
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your email';
+    }
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your password';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
   }
 
   @override
@@ -72,17 +99,32 @@ class _SigninPageState extends State<SigninPage> {
                     style: AppTextStyles.bodyLarge,
                   ),
                   const SizedBox(height: 40),
-                  CustomTextField(
-                    hintText: "Email",
-                    prefixIcon: Icons.email_outlined,
-                    controller: _emailController,
-                  ),
-                  const SizedBox(height: 20),
-                  CustomTextField(
-                    hintText: "Password",
-                    prefixIcon: Icons.lock_outline,
-                    isPassword: true,
-                    controller: _passwordController,
+                  ValueListenableBuilder<AutovalidateMode>(
+                    valueListenable: _autovalidateMode,
+                    builder: (context, autovalidateMode, child) {
+                      return Form(
+                        key: _formKey,
+                        autovalidateMode: autovalidateMode,
+                        child: Column(
+                          children: [
+                            CustomTextField(
+                              hintText: "Email",
+                              prefixIcon: Icons.email_outlined,
+                              controller: _emailController,
+                              validator: _validateEmail,
+                            ),
+                            const SizedBox(height: 20),
+                            CustomTextField(
+                              hintText: "Password",
+                              prefixIcon: Icons.lock_outline,
+                              isPassword: true,
+                              controller: _passwordController,
+                              validator: _validatePassword,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                   _buildForgotPassword(context),
                   const SizedBox(height: 32),

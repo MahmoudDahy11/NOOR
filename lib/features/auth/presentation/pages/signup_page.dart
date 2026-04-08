@@ -22,6 +22,8 @@ class _SignupPageState extends State<SignupPage> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+  final _formKey = GlobalKey<FormState>();
+  final _autovalidateMode = ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
 
   @override
   void initState() {
@@ -36,15 +38,47 @@ class _SignupPageState extends State<SignupPage> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _autovalidateMode.dispose();
     super.dispose();
   }
 
   void _handleSignUp() {
-    context.read<SignupCubit>().createUserWithEmailAndPassword(
-      name: _nameController.text.trim(),
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-    );
+    if (_formKey.currentState!.validate()) {
+      context.read<SignupCubit>().createUserWithEmailAndPassword(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+    } else {
+      _autovalidateMode.value = AutovalidateMode.always;
+    }
+  }
+
+  String? _validateName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your full name';
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your email';
+    }
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your password';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
   }
 
   @override
@@ -77,23 +111,39 @@ class _SignupPageState extends State<SignupPage> {
                     style: AppTextStyles.bodyLarge,
                   ),
                   const SizedBox(height: 40),
-                  CustomTextField(
-                    hintText: "Full Name",
-                    prefixIcon: Icons.person_outline,
-                    controller: _nameController,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    hintText: "Email",
-                    prefixIcon: Icons.email_outlined,
-                    controller: _emailController,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    hintText: "Password",
-                    prefixIcon: Icons.lock_outline,
-                    isPassword: true,
-                    controller: _passwordController,
+                  ValueListenableBuilder<AutovalidateMode>(
+                    valueListenable: _autovalidateMode,
+                    builder: (context, autovalidateMode, child) {
+                      return Form(
+                        key: _formKey,
+                        autovalidateMode: autovalidateMode,
+                        child: Column(
+                          children: [
+                            CustomTextField(
+                              hintText: "Full Name",
+                              prefixIcon: Icons.person_outline,
+                              controller: _nameController,
+                              validator: _validateName,
+                            ),
+                            const SizedBox(height: 16),
+                            CustomTextField(
+                              hintText: "Email",
+                              prefixIcon: Icons.email_outlined,
+                              controller: _emailController,
+                              validator: _validateEmail,
+                            ),
+                            const SizedBox(height: 16),
+                            CustomTextField(
+                              hintText: "Password",
+                              prefixIcon: Icons.lock_outline,
+                              isPassword: true,
+                              controller: _passwordController,
+                              validator: _validatePassword,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 32),
                   BlocBuilder<SignupCubit, SignupState>(
