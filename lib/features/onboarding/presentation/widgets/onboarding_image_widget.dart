@@ -11,7 +11,7 @@ class OnboardingImageWidget extends StatelessWidget {
       imagePath,
       fit: BoxFit.contain,
       width: double.infinity,
-      height: double.infinity,
+      // height: double.infinity,
       errorBuilder: (context, error, stackTrace) =>
           const Center(child: Text('Image not found')),
     );

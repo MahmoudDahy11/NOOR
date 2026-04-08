@@ -59,39 +59,35 @@ class _OnboardingViewState extends State<_OnboardingView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: _pages.length,
-              onPageChanged: (i) => setState(() => _currentIndex = i),
-              itemBuilder: (_, i) =>
-                  OnboardingImageWidget(imagePath: _pages[i].imagePath),
+      body: PageView.builder(
+        controller: _pageController,
+        itemCount: _pages.length,
+        onPageChanged: (i) => setState(() => _currentIndex = i),
+        itemBuilder: (_, i) => Stack(
+          children: [
+            OnboardingImageWidget(imagePath: _pages[i].imagePath),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: OnboardingContentCard(
+                page: _pages[i],
+                currentIndex: _currentIndex,
+                totalPages: _pages.length,
+                onNext: () {
+                  if (_currentIndex < _pages.length - 1) {
+                    _pageController.nextPage(
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.ease,
+                    );
+                  } else {
+                    context.read<OnboardingCubit>().finish();
+                    context.go(AppRouter.signin);
+                  }
+                },
+                onSkip: () => context.go(AppRouter.signin),
+              ),
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: OnboardingContentCard(
-              page: _pages[_currentIndex],
-              currentIndex: _currentIndex,
-              totalPages: _pages.length,
-              onNext: () {
-                if (_currentIndex < _pages.length - 1) {
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.ease,
-                  );
-                } else {
-                  context.read<OnboardingCubit>().finish();
-                  context.go(AppRouter.auth);
-                }
-              },
-              onSkip: () => context.go(AppRouter.auth),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
