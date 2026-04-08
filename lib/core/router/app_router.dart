@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tally_islamic/features/auth/presentation/pages/signin_page.dart';
+import 'package:tally_islamic/features/auth/presentation/pages/signup_page.dart';
 
+import '../../features/auth/presentation/pages/otp_page.dart';
+import '../../features/auth/presentation/pages/reset_password_page.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 
@@ -9,7 +13,10 @@ class AppRouter {
 
   static const splash = '/';
   static const onboarding = '/onboarding';
-  static const auth = '/auth';
+  static const resetPassword = '/reset-password';
+  static const otp = '/otp';
+  static const signin = '/signin';
+  static const signup = '/signup';
 
   static final router = GoRouter(
     initialLocation: splash,
@@ -26,14 +33,15 @@ class AppRouter {
       ),
       // Auth route — will be added in next feature
       GoRoute(
-        path: auth,
+        path: signin,
         pageBuilder: (context, state) => _slidePage(
           state: state,
-          child: const Scaffold(
-            body: Center(child: Text('Auth — Coming Soon')),
-          ),
+          child:const SigninPage()
         ),
       ),
+      GoRoute(path: resetPassword, builder: (context, state) => const ResetPasswordPage()),
+      GoRoute(path: otp, builder: (context, state) => const OtpPage()),
+      GoRoute(path: signup, builder: (context, state) => const SignupPage()),
     ],
   );
 

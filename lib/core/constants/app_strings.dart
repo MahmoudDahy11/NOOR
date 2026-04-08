@@ -19,4 +19,6 @@ class AppStrings {
       'Acquire premium tickets to host your own Zikir rooms and invite others to join your journey in collective remembrance.';
   static const onboarding3Body =
       'Interact with the app seamlessly using haptic feedback, volume buttons, or simple touch. Designed for mindfulness.';
+
+  static const String boxName = 'userBox';
 }
