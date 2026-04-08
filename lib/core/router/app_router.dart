@@ -1,47 +1,97 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tally_islamic/features/auth/presentation/pages/signin_page.dart';
-import 'package:tally_islamic/features/auth/presentation/pages/signup_page.dart';
 
+import '../../core/di/service_locator.dart';
+import '../../features/auth/presentation/cubits/facebook_cubit/facebook_cubit.dart';
+import '../../features/auth/presentation/cubits/forget_password_cubit/forget_password_cubit.dart';
+import '../../features/auth/presentation/cubits/google_cubit/google_cubit.dart';
+import '../../features/auth/presentation/cubits/login_cubit/login_cubit.dart';
+import '../../features/auth/presentation/cubits/otp_cubit/otp_cubit.dart';
+import '../../features/auth/presentation/cubits/signup_cubit/signup_cubit.dart';
 import '../../features/auth/presentation/pages/otp_page.dart';
 import '../../features/auth/presentation/pages/reset_password_page.dart';
+import '../../features/auth/presentation/pages/signin_page.dart';
+import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 
 class AppRouter {
   AppRouter._();
 
-  static const splash = '/';
-  static const onboarding = '/onboarding';
-  static const resetPassword = '/reset-password';
-  static const otp = '/otp';
-  static const signin = '/signin';
-  static const signup = '/signup';
+  // Route paths
+  static const String splashRoute = '/';
+  static const String onboardingRoute = '/onboarding';
+  static const String signinRoute = 'signin';
+  static const String signupRoute = 'signup';
+  static const String otpRoute = 'otp';
+  static const String resetPasswordRoute = 'reset-password';
 
   static final router = GoRouter(
-    initialLocation: splash,
+    initialLocation: splashRoute,
     routes: [
       GoRoute(
-        path: splash,
+        path: splashRoute,
         pageBuilder: (context, state) =>
             _fadePage(state: state, child: const SplashScreen()),
       ),
       GoRoute(
-        path: onboarding,
+        path: onboardingRoute,
         pageBuilder: (context, state) =>
             _slidePage(state: state, child: const OnboardingScreen()),
       ),
-      // Auth route — will be added in next feature
       GoRoute(
-        path: signin,
+        name: signinRoute,
+        path: '/$signinRoute',
         pageBuilder: (context, state) => _slidePage(
           state: state,
-          child:const SigninPage()
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => getIt<LoginCubit>()),
+              BlocProvider(create: (_) => getIt<GoogleCubit>()),
+              BlocProvider(create: (_) => getIt<FacebookCubit>()),
+            ],
+            child: const SigninPage(),
+          ),
         ),
       ),
-      GoRoute(path: resetPassword, builder: (context, state) => const ResetPasswordPage()),
-      GoRoute(path: otp, builder: (context, state) => const OtpPage()),
-      GoRoute(path: signup, builder: (context, state) => const SignupPage()),
+      GoRoute(
+        name: signupRoute,
+        path: '/$signupRoute',
+        pageBuilder: (context, state) => _slidePage(
+          state: state,
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => getIt<SignupCubit>()),
+              BlocProvider(create: (_) => getIt<GoogleCubit>()),
+              BlocProvider(create: (_) => getIt<FacebookCubit>()),
+            ],
+            child: const SignupPage(),
+          ),
+        ),
+      ),
+      GoRoute(
+        name: otpRoute,
+        path: '/$otpRoute',
+        pageBuilder: (context, state) => _slidePage(
+          state: state,
+          child: BlocProvider(
+            create: (_) => getIt<OtpCubit>(),
+            child: const OtpPage(),
+          ),
+        ),
+      ),
+      GoRoute(
+        name: resetPasswordRoute,
+        path: '/$resetPasswordRoute',
+        pageBuilder: (context, state) => _slidePage(
+          state: state,
+          child: BlocProvider(
+            create: (_) => getIt<ForgetPasswordCubit>(),
+            child: const ResetPasswordPage(),
+          ),
+        ),
+      ),
     ],
   );
 

@@ -62,7 +62,7 @@ class _SplashViewState extends State<_SplashView>
 
   void _handleState(BuildContext context, SplashState state) {
     if (state is SplashNavigateToOnboarding) {
-      context.go(AppRouter.onboarding);
+      context.go(AppRouter.onboardingRoute);
     } else if (state is SplashNavigateToHome) {
       // context.go(AppRouter.home); — will be added
     }

@@ -1,51 +1,105 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/helper/show_snak_bar.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/custom_gradient_button.dart';
 import '../../../../core/widgets/custom_textfield.dart';
+import '../cubits/login_cubit/login_cubit.dart';
 import '../widgets/social_auth_section.dart';
 
-class SigninPage extends StatelessWidget {
+class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
 
   @override
+  State<SigninPage> createState() => _SigninPageState();
+}
+
+class _SigninPageState extends State<SigninPage> {
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _handleSignIn() {
+    context.read<LoginCubit>().signInWithEmailAndPassword(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 60),
-              _buildLogo(),
-              const SizedBox(height: 40),
-              const Text("Sign In", style: AppTextStyles.displayLarge),
-              const SizedBox(height: 8),
-              const Text(
-                "Welcome back to Tally",
-                style: AppTextStyles.bodyLarge,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: BlocListener<LoginCubit, LoginState>(
+          listener: (context, state) {
+            if (state is LoginSuccess) {
+              context.go('/');
+            } else if (state is LoginFailure) {
+              showSnakBar(context, state.errMessage, isError: true);
+            }
+          },
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 60),
+                  _buildLogo(),
+                  const SizedBox(height: 40),
+                  const Text("Sign In", style: AppTextStyles.displayLarge),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Welcome back to Tally",
+                    style: AppTextStyles.bodyLarge,
+                  ),
+                  const SizedBox(height: 40),
+                  CustomTextField(
+                    hintText: "Email",
+                    prefixIcon: Icons.email_outlined,
+                    controller: _emailController,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: "Password",
+                    prefixIcon: Icons.lock_outline,
+                    isPassword: true,
+                    controller: _passwordController,
+                  ),
+                  _buildForgotPassword(context),
+                  const SizedBox(height: 32),
+                  BlocBuilder<LoginCubit, LoginState>(
+                    builder: (context, state) => CustomGradientButton(
+                      text: "Sign In",
+                      isLoading: state is LoginLoading,
+                      onPressed: _handleSignIn,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  const SocialAuthSection(),
+                  const SizedBox(height: 24),
+                  _buildSignupPrompt(context),
+                ],
               ),
-              const SizedBox(height: 40),
-              const CustomTextField(
-                hintText: "Email",
-                prefixIcon: Icons.email_outlined,
-              ),
-              const SizedBox(height: 20),
-              const CustomTextField(
-                hintText: "Password",
-                prefixIcon: Icons.lock_outline,
-                isPassword: true,
-              ),
-              _buildForgotPassword(),
-              const SizedBox(height: 32),
-              CustomGradientButton(text: "Sign In", onPressed: () {}),
-              const SizedBox(height: 40),
-              const SocialAuthSection(),
-              const SizedBox(height: 24),
-              _buildSignupPrompt(),
-            ],
+            ),
           ),
         ),
       ),
@@ -58,11 +112,11 @@ class SigninPage extends StatelessWidget {
     );
   }
 
-  Widget _buildForgotPassword() {
+  Widget _buildForgotPassword(BuildContext context) {
     return Align(
       alignment: Alignment.centerLeft,
       child: TextButton(
-        onPressed: () {},
+        onPressed: () => context.pushNamed(AppRouter.resetPasswordRoute),
         child: const Text(
           "Forgot Password?",
           style: TextStyle(color: AppColors.primary),
@@ -71,16 +125,13 @@ class SigninPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSignupPrompt() {
-    
+  Widget _buildSignupPrompt(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text("Don't have an account? "),
         TextButton(
-          onPressed: () {
-            
-          },
+          onPressed: () => context.pushNamed(AppRouter.signupRoute),
           child: const Text(
             "Sign Up",
             style: TextStyle(

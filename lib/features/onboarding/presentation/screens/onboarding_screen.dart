@@ -80,10 +80,11 @@ class _OnboardingViewState extends State<_OnboardingView> {
                     );
                   } else {
                     context.read<OnboardingCubit>().finish();
-                    context.go(AppRouter.signin);
+                    context.goNamed(AppRouter.signinRoute);
+                    
                   }
                 },
-                onSkip: () => context.go(AppRouter.signin),
+                onSkip: () => context.go(AppRouter.signinRoute),
               ),
             ),
           ],
