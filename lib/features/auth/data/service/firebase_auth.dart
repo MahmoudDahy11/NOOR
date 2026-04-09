@@ -40,12 +40,19 @@ class FirebaseService {
         throw CustomException(errMessage: 'User creation failed.');
       }
 
-      await user.updateDisplayName(name);
-      await user.reload();
+      try {
+        await user.updateDisplayName(name);
+      } catch (e) {
+        log("⚠️ Warning: Could not update display name: $e");
+        // Continue anyway - display name update is not critical
+      }
+
       log("✅ User created: ${user.email}");
       return user;
     } on FirebaseAuthException catch (e) {
       throw CustomException(errMessage: e.message ?? 'Firebase Auth error');
+    } catch (e) {
+      throw CustomException(errMessage: 'Error creating user: $e');
     }
   }
 

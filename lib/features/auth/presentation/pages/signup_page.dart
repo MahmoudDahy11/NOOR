@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -23,7 +25,9 @@ class _SignupPageState extends State<SignupPage> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   final _formKey = GlobalKey<FormState>();
-  final _autovalidateMode = ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
+  final _autovalidateMode = ValueNotifier<AutovalidateMode>(
+    AutovalidateMode.disabled,
+  );
 
   @override
   void initState() {
@@ -89,9 +93,10 @@ class _SignupPageState extends State<SignupPage> {
         body: BlocListener<SignupCubit, SignupState>(
           listener: (context, state) {
             if (state is SignupSuccess) {
-              context.goNamed(AppRouter.otpRoute);
+              context.go('/');
             } else if (state is SignupFailure) {
               showSnakBar(context, state.errMessage, isError: true);
+              log("Signup failed: ${state.errMessage}");
             }
           },
           child: SafeArea(

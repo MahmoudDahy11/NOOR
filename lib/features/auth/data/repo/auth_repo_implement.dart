@@ -32,10 +32,6 @@ class FirebaseAuthRepoImplement extends FirebaseAuthRepo {
         name: name,
       );
 
-      final otp = _otpService.generateOtp();
-      await _otpService.saveOtp(user.uid, otp);
-      await _otpService.sendOtpToEmail(user.email!, otp);
-
       UserModel userModel = UserModel.fromFirebase(user);
       userModel = UserModel(
         uId: userModel.uId,
@@ -68,13 +64,6 @@ class FirebaseAuthRepoImplement extends FirebaseAuthRepo {
         email: email,
         password: password,
       );
-      final isVerified = await _otpService.isOtpVerified(user.uid);
-      if (!isVerified) {
-        await _firebaseService.signOut();
-        throw CustomException(
-          errMessage: 'Account not activated. Please verify your OTP first.',
-        );
-      }
 
       await LocalStorageService.saveUserData(
         uid: user.uid,

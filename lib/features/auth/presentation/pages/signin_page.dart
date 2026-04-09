@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -79,8 +81,10 @@ class _SigninPageState extends State<SigninPage> {
           listener: (context, state) {
             if (state is LoginSuccess) {
               context.go('/');
+              log("Login successful");
             } else if (state is LoginFailure) {
               showSnakBar(context, state.errMessage, isError: true);
+              log("Login failed: ${state.errMessage}");
             }
           },
           child: SafeArea(

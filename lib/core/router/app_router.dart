@@ -14,14 +14,14 @@ import '../../features/auth/presentation/pages/reset_password_page.dart';
 import '../../features/auth/presentation/pages/signin_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
-import '../../features/splash/presentation/screens/splash_screen.dart';
+import '../../features/splash/splash_screen.dart';
 
 class AppRouter {
   AppRouter._();
 
   // Route paths
   static const String splashRoute = '/';
-  static const String onboardingRoute = '/onboarding';
+  static const String onboardingRoute = 'onboarding';
   static const String signinRoute = 'signin';
   static const String signupRoute = 'signup';
   static const String otpRoute = 'otp';
@@ -36,7 +36,8 @@ class AppRouter {
             _fadePage(state: state, child: const SplashScreen()),
       ),
       GoRoute(
-        path: onboardingRoute,
+        name: onboardingRoute,
+        path: '/$onboardingRoute',
         pageBuilder: (context, state) =>
             _slidePage(state: state, child: const OnboardingScreen()),
       ),

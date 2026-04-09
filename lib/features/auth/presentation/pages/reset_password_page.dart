@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tally_islamic/core/router/app_router.dart';
 
-import '../../../../core/helper/show_snak_bar.dart';
-import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/custom_gradient_button.dart';
 import '../../../../core/widgets/custom_textfield.dart';
-import '../../data/service/otp_service.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -18,11 +15,12 @@ class ResetPasswordPage extends StatefulWidget {
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
   late TextEditingController _emailController;
-  final OtpService _otpService = OtpService();
   final ValueNotifier<bool> _isSending = ValueNotifier<bool>(false);
-  
+
   final _formKey = GlobalKey<FormState>();
-  final _autovalidateMode = ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
+  final _autovalidateMode = ValueNotifier<AutovalidateMode>(
+    AutovalidateMode.disabled,
+  );
 
   @override
   void initState() {
@@ -48,39 +46,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     return null;
   }
 
-  Future<void> _handleSendLink() async {
-    if (!_formKey.currentState!.validate()) {
-      _autovalidateMode.value = AutovalidateMode.always;
-      return;
-    }
-
-    final email = _emailController.text.trim();
-
-    _isSending.value = true;
-
-    try {
-      final otp = _otpService.generateOtp();
-      // Use email as temporary id for password reset OTP verification
-      await _otpService.saveOtp(email, otp);
-      await _otpService.sendOtpToEmail(email, otp);
-
-      // Store email temporarily for OTP verification
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('reset_email', email);
-
-      if (!mounted) return;
-
-      showSnakBar(context, "OTP sent to your email");
-      context.pushNamed(AppRouter.otpRoute);
-    } catch (e) {
-      if (!mounted) return;
-      showSnakBar(context, "Failed to send OTP: $e", isError: true);
-    } finally {
-      if (mounted) {
-        _isSending.value = false;
-      }
-    }
-  }
+  // void _handleSendLink() {
+  //   if (!_formKey.currentState!.validate()) {
+  //     _autovalidateMode.value = AutovalidateMode.always;
+  //     return;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +93,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   return CustomGradientButton(
                     text: "Send Code",
                     isLoading: isSending,
-                    onPressed: isSending ? () {} : _handleSendLink,
+                    onPressed: () {
+                      context.goNamed(AppRouter.otpRoute);
+                    },
                   );
                 },
               ),

@@ -10,12 +10,15 @@ import 'package:tally_islamic/firebase_options.dart';
 import 'core/di/service_locator.dart';
 import 'core/env/app_env.dart';
 import 'core/router/app_router.dart';
+import 'features/auth/data/service/local_storage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // 1. Load Environment Variables
   await dotenv.load(fileName: '.env');
 
+  // 2. Initialize Firebase
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -24,6 +27,9 @@ Future<void> main() async {
     log('Firebase initialization failed: $e');
   }
 
+  // 3. Initialize Local Storage & Stripe
+  await LocalStorageService.init();
+
   try {
     Stripe.publishableKey = AppEnv.stripePublishableKey;
     await Stripe.instance.applySettings();
@@ -31,10 +37,14 @@ Future<void> main() async {
     log('Stripe initialization failed: $e');
   }
 
+  // 4. Setup Dependency Injection
   setupServiceLocator();
 
   runApp(
-    const TallyApp(),
+    DevicePreview(
+      enabled: false, // Set to true if you want to use it
+      builder: (context) => const TallyApp(),
+    ),
   );
 }
 
@@ -44,11 +54,18 @@ class TallyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Tally',
+      title: 'Tally Islamic',
       debugShowCheckedModeBanner: false,
       routerConfig: AppRouter.router,
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
+      theme: ThemeData(fontFamily: 'Cairo'), // Global Font
     );
   }
 }
+
+//dahym2028@gmail.com
+// Asd00968
+
+
+// test123@gmail.com 
