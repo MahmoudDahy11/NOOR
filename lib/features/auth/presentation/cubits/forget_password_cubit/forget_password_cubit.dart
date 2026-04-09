@@ -9,14 +9,17 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
   ForgetPasswordCubit(this._firebaseAuthrepo) : super(ForgetPasswordInitial());
   final FirebaseAuthRepo _firebaseAuthrepo;
 
-  Future<void> resetPassword(String newPassword) async {
+  Future<void> sendResetLink(String email) async {
     emit(ForgetPasswordLoading());
-    final result = await _firebaseAuthrepo.forgetPassword(
-      newPassword: newPassword,
-    );
+    if(isClosed) return;
+    final result = await _firebaseAuthrepo.sendPasswordResetEmail(email);
     result.fold(
       (failure) => emit(ForgetPasswordFailure(errMessage: failure.errMessage)),
-      (_) => emit(const ForgetPasswordSuccess(message: 'تم تغيير كلمة المرور بنجاح')),
+      (_) => emit(
+        const ForgetPasswordSuccess(
+          message: 'Check your inbox for the reset link',
+        ),
+      ),
     );
   }
 }
