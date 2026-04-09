@@ -22,6 +22,11 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
+    packagingOptions {
+        exclude("META-INF/proguard/androidx-*.pro")
+        exclude("META-INF/gradle/incremental.annotation.processors")
+    }
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.tally_islamic"
