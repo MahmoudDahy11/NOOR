@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tally_islamic/core/error/failure.dart';
 
 import '../../../../core/error/custom_excption.dart';
@@ -9,15 +8,12 @@ import '../../domain/repo/auth_repo.dart';
 import '../model/user_model.dart';
 import '../service/firebase_auth.dart';
 import '../service/local_storage.dart';
-import '../service/otp_service.dart';
 
 class FirebaseAuthRepoImplement extends FirebaseAuthRepo {
   final FirebaseService _firebaseService;
   FirebaseAuthRepoImplement(this._firebaseService);
 
   FirebaseFirestore get _firestore => _firebaseService.firestore;
-  User? get _currentUser => FirebaseAuth.instance.currentUser;
-  final _otpService = OtpService();
 
   @override
   Future<Either<CustomFailure, UserEntity>> createUserWithEmailAndPassword({
@@ -97,22 +93,12 @@ class FirebaseAuthRepoImplement extends FirebaseAuthRepo {
   }
 
   @override
-  Future<Either<CustomFailure, Unit>> forgetPassword({
-    required String newPassword,
-  }) async {
+  Future<Either<CustomFailure, void>> sendPasswordResetEmail(
+    String email,
+  ) async {
     try {
-      final user = _currentUser;
-      if (user == null) {
-        return left(CustomFailure(errMessage: 'User is not authenticated.'));
-      }
-
-      final otp = _otpService.generateOtp();
-      await _otpService.saveOtp(user.uid, otp);
-      await _otpService.sendOtpToEmail(user.email!, otp);
-
-      await _firebaseService.forgetPassword(newPassword: newPassword);
-
-      return right(unit);
+      await _firebaseService.sendPasswordResetEmail(email: email);
+      return right(null);
     } on CustomException catch (ex) {
       return left(CustomFailure(errMessage: ex.errMessage));
     } catch (e) {

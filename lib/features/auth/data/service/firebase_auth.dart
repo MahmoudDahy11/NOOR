@@ -108,13 +108,25 @@ class FirebaseService {
     }
   }
 
-  Future<void> forgetPassword({required String newPassword}) async {
+  Future<void> sendPasswordResetEmail({required String email}) async {
     try {
-      final user = _auth.currentUser;
-      if (user == null) {
-        throw CustomException(errMessage: 'User not authenticated');
+      final userDoc = await firestore
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (userDoc.docs.isEmpty) {
+        throw CustomException(
+          errMessage: 'This email is not registered in our database.',
+        );
       }
-      await user.updatePassword(newPassword);
+      await _auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw CustomException(
+        errMessage: e.message ?? 'An error occurred during password reset.',
+      );
+    } on CustomException {
+      rethrow;
     } catch (e) {
       throw CustomException(errMessage: e.toString());
     }

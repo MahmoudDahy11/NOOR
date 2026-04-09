@@ -32,9 +32,7 @@ abstract class FirebaseAuthRepo {
    */
   Future<Either<CustomFailure, Unit>> signOut();
 
-  Future<Either<CustomFailure, Unit>> forgetPassword({
-    required String newPassword,
-  });
+  Future<Either<CustomFailure, void>> sendPasswordResetEmail(String email);
 
   Future<Either<CustomFailure, Unit>> signInWithGoogle();
   Future<Either<CustomFailure, UserEntity>> signinWithFacebook();

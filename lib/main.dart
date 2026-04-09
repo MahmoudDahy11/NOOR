@@ -42,7 +42,7 @@ Future<void> main() async {
 
   runApp(
     DevicePreview(
-      enabled: false, // Set to true if you want to use it
+      enabled: false, 
       builder: (context) => const TallyApp(),
     ),
   );
@@ -59,13 +59,11 @@ class TallyApp extends StatelessWidget {
       routerConfig: AppRouter.router,
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
-      theme: ThemeData(fontFamily: 'Cairo'), // Global Font
     );
   }
 }
 
 //dahym2028@gmail.com
-// Asd00968
 
 
 // test123@gmail.com 
