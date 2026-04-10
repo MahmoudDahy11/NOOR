@@ -37,8 +37,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
       if (!mounted) return;
       if (loggedIn && user != null) {
-        log("Splash: Navigating to Signin");
-        context.goNamed(AppRouter.signinRoute);
+        log("Splash: Navigating to Account Setup");
+        context.goNamed(AppRouter.accountSetupRoute);
       } else {
         log("Splash: Navigating to Onboarding");
         context.goNamed(AppRouter.onboardingRoute);

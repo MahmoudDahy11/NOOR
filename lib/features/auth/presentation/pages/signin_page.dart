@@ -24,7 +24,9 @@ class _SigninPageState extends State<SigninPage> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   final _formKey = GlobalKey<FormState>();
-  final _autovalidateMode = ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
+  final _autovalidateMode = ValueNotifier<AutovalidateMode>(
+    AutovalidateMode.disabled,
+  );
 
   @override
   void initState() {
@@ -80,7 +82,8 @@ class _SigninPageState extends State<SigninPage> {
         body: BlocListener<LoginCubit, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              context.go('/');
+              context.go(AppRouter.accountSetupRoute);
+              showSnakBar(context, 'Login successful');
               log("Login successful");
             } else if (state is LoginFailure) {
               showSnakBar(context, state.errMessage, isError: true);
