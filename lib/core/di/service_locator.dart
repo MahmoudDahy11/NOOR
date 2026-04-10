@@ -8,6 +8,9 @@
 
 import 'package:get_it/get_it.dart';
 
+import '../../features/account_setup/data/repositories/account_setup_repo_impl.dart';
+import '../../features/account_setup/domain/repositories/account_setup_repo.dart';
+import '../../features/account_setup/presentation/cubit/account_setup_cubit.dart';
 import '../../features/auth/data/repo/auth_repo_implement.dart';
 import '../../features/auth/data/repo/otp_repo_implement.dart';
 import '../../features/auth/data/service/firebase_auth.dart';
@@ -36,7 +39,7 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<OtpRepository>(
     () => OtpRepositoryImpl(otpService: getIt<OtpService>()),
   );
-
+  getIt.registerLazySingleton<AccountSetupRepo>(() => AccountSetupRepoImpl());
   // Cubits (Factories)
   getIt.registerFactory(() => SignupCubit(getIt<FirebaseAuthRepo>()));
   getIt.registerFactory(() => LoginCubit(getIt<FirebaseAuthRepo>()));
@@ -45,4 +48,5 @@ void setupServiceLocator() {
   getIt.registerFactory(() => ForgetPasswordCubit(getIt<FirebaseAuthRepo>()));
   getIt.registerFactory(() => GoogleCubit(getIt<FirebaseAuthRepo>()));
   getIt.registerFactory(() => FacebookCubit(getIt<FirebaseAuthRepo>()));
+  getIt.registerFactory(() => AccountSetupCubit(repo: getIt<AccountSetupRepo>()));
 }

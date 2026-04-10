@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tally_islamic/features/home/home.dart';
 
 import '../../core/di/service_locator.dart';
+import '../../features/account_setup/presentation/cubit/account_setup_cubit.dart';
+import '../../features/account_setup/presentation/screens/account_setup_screen.dart';
 import '../../features/auth/presentation/cubits/facebook_cubit/facebook_cubit.dart';
 import '../../features/auth/presentation/cubits/forget_password_cubit/forget_password_cubit.dart';
 import '../../features/auth/presentation/cubits/google_cubit/google_cubit.dart';
@@ -26,6 +29,8 @@ class AppRouter {
   static const String signupRoute = 'signup';
   static const String otpRoute = 'otp';
   static const String resetPasswordRoute = 'reset-password';
+  static const String accountSetupRoute = '/account-setup';
+  static const String homeRoute = '/home';
 
   static final router = GoRouter(
     initialLocation: splashRoute,
@@ -93,6 +98,26 @@ class AppRouter {
           ),
         ),
       ),
+      GoRoute(
+        name: accountSetupRoute,
+        path: '/$accountSetupRoute',
+        pageBuilder: (context, state) => _slidePage(
+          state: state,
+          child: BlocProvider(
+            create: (_) => getIt<AccountSetupCubit>(),
+            child: const AccountSetupScreen(),
+          ),
+        ),
+      ),
+      GoRoute(
+        name: homeRoute,
+        path: '/$homeRoute',
+        pageBuilder: (context, state) => _slidePage(
+          state: state,
+          child: const Home(),
+        ),
+      ),
+
     ],
   );
 
