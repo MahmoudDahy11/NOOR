@@ -31,10 +31,10 @@ class AccountSetupRepoImpl implements AccountSetupRepo {
   @override
   Future<Either<CustomFailure, bool>> hasUserProfile(String uid) async {
     try {
-      final docSnapshot = await _firestore.collection('users').doc(uid).get();
-      return right(docSnapshot.exists);
+      final doc = await _firestore.collection('users').doc(uid).get();
+      return Right(doc.exists);
     } catch (e) {
-      return left(CustomFailure(errMessage: e.toString()));
+      return Left(CustomFailure(errMessage: e.toString()));
     }
   }
 }

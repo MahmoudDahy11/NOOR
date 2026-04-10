@@ -24,6 +24,8 @@ import '../../features/auth/presentation/cubits/login_cubit/login_cubit.dart';
 import '../../features/auth/presentation/cubits/otp_cubit/otp_cubit.dart';
 import '../../features/auth/presentation/cubits/signout_cubit/signout_cubit.dart';
 import '../../features/auth/presentation/cubits/signup_cubit/signup_cubit.dart';
+import '../../features/splash/data/repos/splash_repo_impl.dart';
+import '../../features/splash/domain/repos/splash_repo.dart';
 import '../../features/splash/presentation/cubits/splash_cubit/splash_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -41,9 +43,13 @@ void setupServiceLocator() {
     () => OtpRepositoryImpl(otpService: getIt<OtpService>()),
   );
   getIt.registerLazySingleton<AccountSetupRepo>(() => AccountSetupRepoImpl());
+  getIt.registerLazySingleton<SplashRepo>(
+    () => SplashRepoImpl(accountSetupRepo: getIt<AccountSetupRepo>()),
+  );
+
   // Cubits (Factories)
   getIt.registerFactory(
-    () => SplashCubit(accountSetupRepo: getIt<AccountSetupRepo>()),
+    () => SplashCubit(splashRepo: getIt<SplashRepo>()),
   );
   getIt.registerFactory(() => SignupCubit(getIt<FirebaseAuthRepo>()));
   getIt.registerFactory(() => LoginCubit(getIt<FirebaseAuthRepo>()));

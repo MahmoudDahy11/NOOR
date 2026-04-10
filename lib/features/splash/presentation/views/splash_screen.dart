@@ -5,11 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/app_assets.dart';
-import '../../core/di/service_locator.dart';
-import '../../core/router/app_router.dart';
-import '../../core/theme/app_colors.dart';
-import 'presentation/cubits/splash_cubit/splash_cubit.dart';
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../cubits/splash_cubit/splash_cubit.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});

@@ -1,26 +1,24 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
-import '../../../../account_setup/domain/repositories/account_setup_repo.dart';
-import '../../../../auth/data/service/local_storage.dart';
+import '../../../domain/repos/splash_repo.dart';
 
-part './splash_state.dart';
+part 'splash_state.dart';
 
 /*
  * SplashCubit class
  * extends Cubit with SplashState
  * manages the initialization and navigation logic for the splash screen
- * checks authentication status and profile completion
- * emits appropriate navigation states based on user status
+ * uses SplashRepo to determine the initial navigation path
+ * emits appropriate navigation states based on the repository's decision
  */
 class SplashCubit extends Cubit<SplashState> {
-  final AccountSetupRepo _accountSetupRepo;
+  final SplashRepo _splashRepo;
 
-  SplashCubit({required AccountSetupRepo accountSetupRepo})
-      : _accountSetupRepo = accountSetupRepo,
+  SplashCubit({required SplashRepo splashRepo})
+      : _splashRepo = splashRepo,
         super(SplashInitial());
 
   Future<void> initializeApp() async {
@@ -32,42 +30,33 @@ class SplashCubit extends Cubit<SplashState> {
       // Wait for a minimum time for the logo to appear
       await Future.delayed(const Duration(seconds: 2));
 
-      log("SplashCubit: Checking auth status...");
-      final user = FirebaseAuth.instance.currentUser;
-      final bool loggedIn = LocalStorageService.isLoggedIn();
+      log("SplashCubit: Checking initial navigation...");
+      final result = await _splashRepo.checkInitialNavigation();
 
-      // Navigation logkwic:
-      // - If user is authenticated -> check if profile exists in Firestore
-      // - If profile exists -> emit NavigateToHome
-      // - If profile doesn't exist -> emit NavigateToAccountSetup
-      // - If not authenticated -> emit NavigateToOnboarding
-      if (loggedIn && user != null) {
-        final result = await _accountSetupRepo.hasUserProfile(user.uid);
-
-        result.fold(
-          (failure) {
-            log("SplashCubit: Error checking profile: ${failure.errMessage}");
-            // If there's an error, navigate to account setup as fallback
-            emit(NavigateToAccountSetup());
-          },
-          (profileExists) {
-            if (profileExists) {
-              log("SplashCubit: User authenticated with complete profile. Emitting NavigateToHome");
+      result.fold(
+        (failure) {
+          log("SplashCubit: Error determining navigation: ${failure.errMessage}");
+          emit(SplashError(message: failure.errMessage));
+        },
+        (navTarget) {
+          log("SplashCubit: Navigation target determined: $navTarget");
+          switch (navTarget) {
+            case 'home':
               emit(NavigateToHome());
-            } else {
-              log("SplashCubit: User authenticated but profile incomplete. Emitting NavigateToAccountSetup");
+              break;
+            case 'account_setup':
               emit(NavigateToAccountSetup());
-            }
-          },
-        );
-      } else {
-        log("SplashCubit: User not authenticated. Emitting NavigateToOnboarding");
-        emit(NavigateToOnboarding());
-      }
+              break;
+            case 'onboarding':
+            default:
+              emit(NavigateToOnboarding());
+              break;
+          }
+        },
+      );
     } catch (e, stack) {
       log("SplashCubit Error: $e");
       log("Stack Trace: $stack");
-      // Fallback in case of error
       emit(SplashError(message: e.toString()));
     }
   }

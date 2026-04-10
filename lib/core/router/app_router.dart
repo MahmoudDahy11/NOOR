@@ -17,7 +17,7 @@ import '../../features/auth/presentation/pages/reset_password_page.dart';
 import '../../features/auth/presentation/pages/signin_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
-import '../../features/splash/splash_screen.dart';
+import '../../features/splash/presentation/views/splash_screen.dart';
 
 class AppRouter {
   AppRouter._();
