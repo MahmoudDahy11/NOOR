@@ -40,12 +40,7 @@ Future<void> main() async {
   // 4. Setup Dependency Injection
   setupServiceLocator();
 
-  runApp(
-    DevicePreview(
-      enabled: false, 
-      builder: (context) => const TallyApp(),
-    ),
-  );
+  runApp(DevicePreview(enabled: false, builder: (context) => const TallyApp()));
 }
 
 class TallyApp extends StatelessWidget {
@@ -67,3 +62,5 @@ class TallyApp extends StatelessWidget {
 
 
 // test123@gmail.com 
+
+// test123456@gmail.com
