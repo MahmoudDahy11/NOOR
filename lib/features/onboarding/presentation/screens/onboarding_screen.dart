@@ -30,7 +30,7 @@ class _OnboardingView extends StatefulWidget {
 
 class _OnboardingViewState extends State<_OnboardingView> {
   final PageController _pageController = PageController();
-  int _currentIndex = 0;
+  final ValueNotifier<int> _currentIndexNotifier = ValueNotifier<int>(0);
 
   final List<OnboardingPageModel> _pages = [
     const OnboardingPageModel(
@@ -57,33 +57,47 @@ class _OnboardingViewState extends State<_OnboardingView> {
   ];
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    _currentIndexNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView.builder(
         controller: _pageController,
         itemCount: _pages.length,
-        onPageChanged: (i) => setState(() => _currentIndex = i),
+        onPageChanged: (i) => _currentIndexNotifier.value = i,
         itemBuilder: (_, i) => Stack(
           children: [
             OnboardingImageWidget(imagePath: _pages[i].imagePath),
             Align(
               alignment: Alignment.bottomCenter,
-              child: OnboardingContentCard(
-                page: _pages[i],
-                currentIndex: _currentIndex,
-                totalPages: _pages.length,
-                onNext: () {
-                  if (_currentIndex < _pages.length - 1) {
-                    _pageController.nextPage(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.ease,
-                    );
-                  } else {
-                    context.read<OnboardingCubit>().finish();
-                    context.goNamed(AppRouter.signinRoute);
-                  }
+              child: ValueListenableBuilder<int>(
+                valueListenable: _currentIndexNotifier,
+                builder: (context, currentIndex, _) {
+                  return OnboardingContentCard(
+                    page: _pages[currentIndex == i ? i : i], // We need to pass the page corresponding to i
+                    // However, we want the card to stay linked to the page i
+                    // But use the currentIndex for button text and dots
+                    currentIndex: currentIndex,
+                    totalPages: _pages.length,
+                    onNext: () {
+                      if (currentIndex < _pages.length - 1) {
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.ease,
+                        );
+                      } else {
+                        context.read<OnboardingCubit>().finish();
+                        context.goNamed(AppRouter.signinRoute);
+                      }
+                    },
+                    onSkip: () => context.goNamed(AppRouter.signinRoute),
+                  );
                 },
-                onSkip: () => context.goNamed(AppRouter.signinRoute),
               ),
             ),
           ],

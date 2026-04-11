@@ -20,10 +20,11 @@ final class FacebookLoading extends FacebookState {}
 
 final class FacebookSuccess extends FacebookState {
   final UserEntity user;
-  const FacebookSuccess({required this.user});
+  final bool needsAccountSetup;
+  const FacebookSuccess({required this.user, this.needsAccountSetup = false});
 
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, needsAccountSetup];
 }
 
 final class FacebookFailure extends FacebookState {

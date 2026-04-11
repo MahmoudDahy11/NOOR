@@ -64,7 +64,7 @@ class _AccountSetupViewState extends State<_AccountSetupView> {
 
   void _handleState(BuildContext context, AccountSetupState state) {
     if (state is AccountSetupSuccess) {
-      context.go(AppRouter.homeRoute);
+      context.go(AppRouter.addCardRoute);
     } else if (state is AccountSetupFailure) {
       showSnakBar(context, state.message);
       log('Account setup failed: ${state.message}');
@@ -308,11 +308,15 @@ class _AppTextField extends StatelessWidget {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.15)),
+          borderSide: BorderSide(
+            color: AppColors.primary.withValues(alpha: 0.15),
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.15)),
+          borderSide: BorderSide(
+            color: AppColors.primary.withValues(alpha: 0.15),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),

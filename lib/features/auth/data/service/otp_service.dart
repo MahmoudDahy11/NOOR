@@ -7,6 +7,15 @@ import 'package:mailer/smtp_server/gmail.dart';
 
 import '../../../../core/env/app_env.dart';
 
+/*
+ * OtpService class
+ * manages OTP generation, storage, verification, and email sending
+ * generates a random 4-digit OTP
+ * saves OTP with expiration and resend cooldown in Firestore
+ * verifies entered OTP against stored value and checks expiration
+ * checks if user can resend OTP based on cooldown
+ * sends OTP to user's email using Gmail SMTP server
+ */
 class OtpService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 

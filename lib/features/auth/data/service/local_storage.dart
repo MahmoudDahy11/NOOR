@@ -14,11 +14,6 @@ class LocalStorageService {
   static const String _nameKey = 'name';
   static const String _photoUrlKey = 'photoUrl';
   static const String _isLoggedInKey = 'isLoggedIn';
-
-  // Keys for temporary data
-  // static const String _seenOnboardingKey = 'seen_onboarding';
-  // static const String _resetEmailKey = 'reset_email';
-  // Box name for Hive storage
   static const String boxName = 'userBox';
 
   static Future<void> init() async {
@@ -71,38 +66,4 @@ class LocalStorageService {
     final box = Hive.box(boxName);
     await box.clear();
   }
-
-  // // ==================== Temporary Data Methods ====================
-
-  // /// Sets the onboarding seen status
-  // static Future<void> setSeenOnboarding(bool seen) async {
-  //   final box = Hive.box(boxName);
-  //   await box.put(_seenOnboardingKey, seen);
-  // }
-
-  // /// Gets whether the user has seen the onboarding screens
-  // static bool hasSeenOnboarding() {
-  //   final box = Hive.box(boxName);
-  //   return box.get(_seenOnboardingKey, defaultValue: false) as bool;
-  // }
-
-  // /// Stores the email temporarily for password reset flow
-  // static Future<void> setResetEmail(String email) async {
-  //   final box = Hive.box(boxName);
-  //   await box.put(_resetEmailKey, email);
-  // }
-
-  // /// Retrieves the temporarily stored reset email
-  // static String? getResetEmail() {
-  //   final box = Hive.box(boxName);
-  //   final email = box.get(_resetEmailKey, defaultValue: '');
-  //   return email.isEmpty ? null : email as String;
-  // }
-
-  // /// Clears the temporary reset email after verification
-  // static Future<void> clearResetEmail() async {
-  //   final box = Hive.box(boxName);
-  //   await box.delete(_resetEmailKey);
-  // }
-
 }

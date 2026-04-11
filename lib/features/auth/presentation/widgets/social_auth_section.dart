@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/helper/show_snak_bar.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../cubits/facebook_cubit/facebook_cubit.dart';
 import '../cubits/google_cubit/google_cubit.dart';
@@ -31,7 +34,11 @@ class SocialAuthSection extends StatelessWidget {
             BlocListener<GoogleCubit, GoogleState>(
               listener: (context, state) {
                 if (state is GoogleSuccess) {
-                  context.go('/');
+                  if (state.needsAccountSetup) {
+                    context.goNamed(AppRouter.accountSetupRoute);
+                  } else {
+                    context.goNamed(AppRouter.homeRoute);
+                  }
                 } else if (state is GoogleFailure) {
                   showSnakBar(context, state.errMessage, isError: true);
                 }
@@ -40,9 +47,17 @@ class SocialAuthSection extends StatelessWidget {
             BlocListener<FacebookCubit, FacebookState>(
               listener: (context, state) {
                 if (state is FacebookSuccess) {
-                  context.go('/');
+                  log("Facebook login successful");
+                  showSnakBar(context, "Facebook login successful");
+                  if (state.needsAccountSetup) {
+                    log("needsAccountSetup");
+                    context.goNamed(AppRouter.accountSetupRoute);
+                  } else {
+                    context.goNamed(AppRouter.homeRoute);
+                  }
                 } else if (state is FacebookFailure) {
                   showSnakBar(context, state.errMessage, isError: true);
+                  log("Facebook login failed: ${state.errMessage}");
                 }
               },
             ),

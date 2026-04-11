@@ -31,9 +31,19 @@ abstract class FirebaseAuthRepo {
    * returns Either a CustomFailure or Unit
    */
   Future<Either<CustomFailure, Unit>> signOut();
-
+  /* 
+   * Method to send a password reset email
+   * returns Either a CustomFailure or void
+   */
   Future<Either<CustomFailure, void>> sendPasswordResetEmail(String email);
-
+  /* 
+   * Method to sign in with Google
+   * returns Either a CustomFailure or Unit
+   */
   Future<Either<CustomFailure, Unit>> signInWithGoogle();
+  /* 
+   * Method to sign in with Facebook
+   * returns Either a CustomFailure or Unit
+   */
   Future<Either<CustomFailure, UserEntity>> signinWithFacebook();
 }

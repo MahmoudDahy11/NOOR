@@ -13,7 +13,10 @@ final class GoogleInitial extends GoogleState {}
 
 final class GoogleLoading extends GoogleState {}
 
-final class GoogleSuccess extends GoogleState {}
+final class GoogleSuccess extends GoogleState {
+  final bool needsAccountSetup;
+  GoogleSuccess({this.needsAccountSetup = false});
+}
 
 final class GoogleFailure extends GoogleState {
   final String errMessage;

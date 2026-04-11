@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../account_setup/domain/repositories/account_setup_repo.dart';
 import '../../../domain/repo/auth_repo.dart';
 part 'google_state.dart';
 
@@ -13,20 +15,38 @@ part 'google_state.dart';
  * emits loading, success, and failure states based on the sign-in process
  */
 class GoogleCubit extends Cubit<GoogleState> {
-  GoogleCubit(this.firebaseAuthrepo) : super(GoogleInitial());
+  GoogleCubit(this.firebaseAuthrepo, this._accountSetupRepo) : super(GoogleInitial());
   final FirebaseAuthRepo firebaseAuthrepo;
+  final AccountSetupRepo _accountSetupRepo;
+
   Future<void> signInWithGoogle() async {
     try {
       if (isClosed) return;
       emit(GoogleLoading());
-      if (isClosed) return;
+      
       final result = await firebaseAuthrepo.signInWithGoogle();
-      result.fold(
-        (failure) => emit(GoogleFailure(errMessage: failure.errMessage)),
-        (user) => emit(GoogleSuccess()),
+      
+      if (isClosed) return;
+
+      await result.fold(
+        (failure) async => emit(GoogleFailure(errMessage: failure.errMessage)),
+        (unit) async {
+          final user = FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            final profileResult = await _accountSetupRepo.hasUserProfile(user.uid);
+            profileResult.fold(
+              (failure) => emit(GoogleSuccess(needsAccountSetup: true)),
+              (exists) => emit(GoogleSuccess(needsAccountSetup: !exists)),
+            );
+          } else {
+            emit(GoogleSuccess());
+          }
+        },
       );
     } catch (e) {
-      emit(GoogleFailure(errMessage: e.toString()));
+      if (!isClosed) {
+        emit(GoogleFailure(errMessage: e.toString()));
+      }
     }
   }
 }

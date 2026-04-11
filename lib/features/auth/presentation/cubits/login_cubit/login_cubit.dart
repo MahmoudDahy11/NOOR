@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
-
 import 'package:meta/meta.dart';
 
+import '../../../../account_setup/domain/repositories/account_setup_repo.dart';
 import '../../../domain/entity/user_entity.dart';
 import '../../../domain/repo/auth_repo.dart';
 
-part '../login_cubit/login_state.dart';
+part 'login_state.dart';
 
 /*
  * LoginCubit class
@@ -15,9 +15,11 @@ part '../login_cubit/login_state.dart';
  * emits loading, success, and failure states based on the login process
  */
 class LoginCubit extends Cubit<LoginState> {
-  LoginCubit(this._firebaseAuthrepo) : super(LoginInitial());
+  LoginCubit(this._firebaseAuthrepo, this._accountSetupRepo)
+    : super(LoginInitial());
 
   final FirebaseAuthRepo _firebaseAuthrepo;
+  final AccountSetupRepo _accountSetupRepo;
 
   Future<void> signInWithEmailAndPassword({
     required String email,
@@ -26,17 +28,30 @@ class LoginCubit extends Cubit<LoginState> {
     try {
       if (isClosed) return;
       emit(LoginLoading());
-      if (isClosed) return;
+
       final result = await _firebaseAuthrepo.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      result.fold(
-        (failure) => emit(LoginFailure(errMessage: failure.errMessage)),
-        (user) => emit(LoginSuccess(user)),
+
+      if (isClosed) return;
+
+      await result.fold(
+        (failure) async => emit(LoginFailure(errMessage: failure.errMessage)),
+        (user) async {
+          final profileResult = await _accountSetupRepo.hasUserProfile(
+            user.uId,
+          );
+          profileResult.fold(
+            (failure) => emit(LoginSuccess(user, needsAccountSetup: true)),
+            (exists) => emit(LoginSuccess(user, needsAccountSetup: !exists)),
+          );
+        },
       );
     } catch (e) {
-      emit(LoginFailure(errMessage: e.toString()));
+      if (!isClosed) {
+        emit(LoginFailure(errMessage: e.toString()));
+      }
     }
   }
 }

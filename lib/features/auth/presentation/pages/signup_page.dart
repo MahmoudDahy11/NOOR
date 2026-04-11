@@ -93,7 +93,7 @@ class _SignupPageState extends State<SignupPage> {
         body: BlocListener<SignupCubit, SignupState>(
           listener: (context, state) {
             if (state is SignupSuccess) {
-              context.go('/');
+              context.goNamed(AppRouter.signinRoute);
             } else if (state is SignupFailure) {
               showSnakBar(context, state.errMessage, isError: true);
               log("Signup failed: ${state.errMessage}");
