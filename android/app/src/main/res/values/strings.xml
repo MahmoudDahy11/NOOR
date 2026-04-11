@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  Facebook Configuration  -->
+    <string name="facebook_app_id">1813555566265710</string>
+    <string name="fb_login_protocol_scheme">fb1813555566265710</string>
+    <string name="facebook_client_token">6ceb57b3317cf819e8eb2035c6309df5</string>
+    <!--  App Name  -->
+    <string name="app_name">Tally Islamic</string>
+</resources>

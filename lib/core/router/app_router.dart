@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tally_islamic/features/home/home.dart';
 
-import '../../core/di/service_locator.dart';
-import '../../features/account_setup/presentation/cubit/account_setup_cubit.dart';
+import '../../features/account_setup/domain/entities/user_profile_entity.dart';
 import '../../features/account_setup/presentation/screens/account_setup_screen.dart';
+import '../../features/add_card/presentation/screen/add_card_screen.dart';
 import '../../features/auth/presentation/cubits/facebook_cubit/facebook_cubit.dart';
 import '../../features/auth/presentation/cubits/forget_password_cubit/forget_password_cubit.dart';
 import '../../features/auth/presentation/cubits/google_cubit/google_cubit.dart';
@@ -16,8 +15,13 @@ import '../../features/auth/presentation/pages/otp_page.dart';
 import '../../features/auth/presentation/pages/reset_password_page.dart';
 import '../../features/auth/presentation/pages/signin_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
+import '../../features/home/home.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../../features/profile/presentation/cubit/profile_cubit.dart';
+import '../../features/profile/presentation/views/edit_profile_screen.dart';
+import '../../features/profile/presentation/views/profile_screen.dart';
 import '../../features/splash/presentation/views/splash_screen.dart';
+import '../di/service_locator.dart';
 
 class AppRouter {
   AppRouter._();
@@ -31,120 +35,124 @@ class AppRouter {
   static const String resetPasswordRoute = 'reset-password';
   static const String accountSetupRoute = '/account-setup';
   static const String homeRoute = '/home';
+  static const String profileRoute = '/profile';
+  static const String editProfileRoute = 'edit-profile';
+  static const String addCardRoute = '/add-card';
 
   static final router = GoRouter(
     initialLocation: splashRoute,
     routes: [
       GoRoute(
+        name: splashRoute,
         path: splashRoute,
-        pageBuilder: (context, state) =>
-            _fadePage(state: state, child: const SplashScreen()),
+        builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
         name: onboardingRoute,
         path: '/$onboardingRoute',
-        pageBuilder: (context, state) =>
-            _slidePage(state: state, child: const OnboardingScreen()),
+        builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
         name: signinRoute,
         path: '/$signinRoute',
-        pageBuilder: (context, state) => _slidePage(
-          state: state,
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider(create: (_) => getIt<LoginCubit>()),
-              BlocProvider(create: (_) => getIt<GoogleCubit>()),
-              BlocProvider(create: (_) => getIt<FacebookCubit>()),
-            ],
-            child: const SigninPage(),
-          ),
+        builder: (context, state) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => getIt<LoginCubit>()),
+            BlocProvider(create: (context) => getIt<GoogleCubit>()),
+            BlocProvider(create: (context) => getIt<FacebookCubit>()),
+          ],
+          child: const SigninPage(),
         ),
       ),
       GoRoute(
         name: signupRoute,
         path: '/$signupRoute',
-        pageBuilder: (context, state) => _slidePage(
-          state: state,
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider(create: (_) => getIt<SignupCubit>()),
-              BlocProvider(create: (_) => getIt<GoogleCubit>()),
-              BlocProvider(create: (_) => getIt<FacebookCubit>()),
-            ],
-            child: const SignupPage(),
-          ),
+        builder: (context, state) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => getIt<SignupCubit>()),
+            BlocProvider(create: (context) => getIt<GoogleCubit>()),
+            BlocProvider(create: (context) => getIt<FacebookCubit>()),
+          ],
+          child: const SignupPage(),
         ),
       ),
       GoRoute(
         name: otpRoute,
         path: '/$otpRoute',
-        pageBuilder: (context, state) => _slidePage(
-          state: state,
-          child: BlocProvider(
-            create: (_) => getIt<OtpCubit>(),
-            child: const OtpPage(),
-          ),
+        builder: (context, state) => BlocProvider(
+          create: (context) => getIt<OtpCubit>(),
+          child: const OtpPage(),
         ),
       ),
       GoRoute(
         name: resetPasswordRoute,
         path: '/$resetPasswordRoute',
-        pageBuilder: (context, state) => _slidePage(
-          state: state,
-          child: BlocProvider(
-            create: (_) => getIt<ForgetPasswordCubit>(),
-            child: const ResetPasswordPage(),
-          ),
+        builder: (context, state) => BlocProvider(
+          create: (context) => getIt<ForgetPasswordCubit>(),
+          child: const ResetPasswordPage(),
         ),
       ),
       GoRoute(
         name: accountSetupRoute,
-        path: '/$accountSetupRoute',
-        pageBuilder: (context, state) => _slidePage(
-          state: state,
-          child: BlocProvider(
-            create: (_) => getIt<AccountSetupCubit>(),
-            child: const AccountSetupScreen(),
-          ),
-        ),
+        path: accountSetupRoute,
+        pageBuilder: (context, state) =>
+            _slidePage(state: state, child: const AccountSetupScreen()),
       ),
       GoRoute(
         name: homeRoute,
-        path: '/$homeRoute',
-        pageBuilder: (context, state) => _slidePage(
-          state: state,
-          child: const Home(),
-        ),
+        path: homeRoute,
+        pageBuilder: (context, state) =>
+            _slidePage(state: state, child: const Home()),
       ),
-
+      GoRoute(
+        name: profileRoute,
+        path: profileRoute,
+        pageBuilder: (context, state) =>
+            _slidePage(state: state, child: const ProfileScreen()),
+        routes: [
+          GoRoute(
+            name: editProfileRoute,
+            path: editProfileRoute,
+            pageBuilder: (context, state) {
+              final profile = state.extra as UserProfileEntity;
+              return _slidePage(
+                state: state,
+                child: BlocProvider.value(
+                  value: getIt<ProfileCubit>(),
+                  child: EditProfileScreen(profile: profile),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      GoRoute(
+        name: addCardRoute,
+        path: addCardRoute,
+        pageBuilder: (context, state) =>
+            _slidePage(state: state, child: const AddCardScreen()),
+      ),
     ],
   );
 
-  static CustomTransitionPage _fadePage({
+  static Page _slidePage({
     required GoRouterState state,
     required Widget child,
-  }) => CustomTransitionPage(
-    key: state.pageKey,
-    child: child,
-    transitionDuration: const Duration(milliseconds: 600),
-    transitionsBuilder: (_, animation, _, child) =>
-        FadeTransition(opacity: animation, child: child),
-  );
-
-  static CustomTransitionPage _slidePage({
-    required GoRouterState state,
-    required Widget child,
-  }) => CustomTransitionPage(
-    key: state.pageKey,
-    child: child,
-    transitionDuration: const Duration(milliseconds: 400),
-    transitionsBuilder: (_, animation, _, child) => SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(1, 0),
-        end: Offset.zero,
-      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+  }) {
+    return CustomTransitionPage(
+      key: state.pageKey,
       child: child,
-    ),
-  );
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: animation.drive(
+            Tween(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).chain(CurveTween(curve: Curves.easeIn)),
+          ),
+          child: child,
+        );
+      },
+    );
+  }
 }

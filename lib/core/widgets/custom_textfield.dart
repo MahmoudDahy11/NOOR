@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final String hintText;
   final IconData? prefixIcon;
   final bool isPassword;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final int maxLines;
 
   const CustomTextField({
     super.key,
@@ -17,30 +18,49 @@ class CustomTextField extends StatelessWidget {
     this.isPassword = false,
     this.controller,
     this.validator,
+    this.maxLines = 1,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final obscureTextNotifier = ValueNotifier<bool>(true);
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
 
-    return ValueListenableBuilder(
-      valueListenable: obscureTextNotifier,
+class _CustomTextFieldState extends State<CustomTextField> {
+  late final ValueNotifier<bool> _obscureTextNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureTextNotifier = ValueNotifier<bool>(true);
+  }
+
+  @override
+  void dispose() {
+    _obscureTextNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _obscureTextNotifier,
       builder: (context, isObscured, _) {
         return TextFormField(
-          controller: controller,
-          obscureText: isPassword ? isObscured : false,
-          validator: validator,
+          controller: widget.controller,
+          obscureText: widget.isPassword ? isObscured : false,
+          validator: widget.validator,
+          maxLines: widget.maxLines,
           style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textPrimary),
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: widget.hintText,
             hintStyle: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textHint,
             ),
-            prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: AppColors.primary)
+            prefixIcon: widget.prefixIcon != null
+                ? Icon(widget.prefixIcon, color: AppColors.primary)
                 : null,
-            suffixIcon: isPassword
-                ? _buildPasswordIcon(obscureTextNotifier, isObscured)
+            suffixIcon: widget.isPassword
+                ? _buildPasswordIcon(isObscured)
                 : null,
             filled: true,
             fillColor: AppColors.surface,
@@ -54,13 +74,13 @@ class CustomTextField extends StatelessWidget {
     );
   }
 
-  Widget _buildPasswordIcon(ValueNotifier<bool> notifier, bool isObscured) {
+  Widget _buildPasswordIcon(bool isObscured) {
     return IconButton(
       icon: Icon(
         isObscured ? Icons.visibility_off : Icons.visibility,
         color: AppColors.textSecondary,
       ),
-      onPressed: () => notifier.value = !notifier.value,
+      onPressed: () => _obscureTextNotifier.value = !_obscureTextNotifier.value,
     );
   }
 
