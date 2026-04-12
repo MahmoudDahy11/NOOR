@@ -64,6 +64,7 @@ class _AccountSetupViewState extends State<_AccountSetupView> {
 
   void _handleState(BuildContext context, AccountSetupState state) {
     if (state is AccountSetupSuccess) {
+      log('Account setup success');
       context.go(AppRouter.addCardRoute);
     } else if (state is AccountSetupFailure) {
       showSnakBar(context, state.message);

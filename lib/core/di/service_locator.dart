@@ -1,6 +1,6 @@
 /*
  * this fior setting up the GetIt service locator
- * it registers services, repole is responsible fsitories, and cubits for dependency injection
+ * it registers services, repositories, and cubits for dependency injection
  * to use, call getIt<T>() to retrieve an instance of type T
  * for example, getIt<ApiService>() returns the registered ApiService instance
  * make sure to call getItSetup() during app initialization
@@ -51,7 +51,10 @@ void setupServiceLocator() {
   );
   getIt.registerLazySingleton<AccountSetupRepo>(() => AccountSetupRepoImpl());
   getIt.registerLazySingleton<SplashRepo>(
-    () => SplashRepoImpl(accountSetupRepo: getIt<AccountSetupRepo>()),
+    () => SplashRepoImpl(
+      accountSetupRepo: getIt<AccountSetupRepo>(),
+      addCardRepo: getIt<AddCardRepo>(),
+    ),
   );
   getIt.registerLazySingleton<ProfileRepo>(
     () => ProfileRepoImpl(firebaseService: getIt<FirebaseService>()),
@@ -63,16 +66,28 @@ void setupServiceLocator() {
   getIt.registerFactory(() => SplashCubit(splashRepo: getIt<SplashRepo>()));
   getIt.registerFactory(() => SignupCubit(getIt<FirebaseAuthRepo>()));
   getIt.registerFactory(
-    () => LoginCubit(getIt<FirebaseAuthRepo>(), getIt<AccountSetupRepo>()),
+    () => LoginCubit(
+      getIt<FirebaseAuthRepo>(),
+      getIt<AccountSetupRepo>(),
+      getIt<AddCardRepo>(),
+    ),
   );
   getIt.registerFactory(() => SignoutCubit(getIt<FirebaseAuthRepo>()));
   getIt.registerFactory(() => OtpCubit(getIt<OtpRepository>()));
   getIt.registerFactory(() => ForgetPasswordCubit(getIt<FirebaseAuthRepo>()));
   getIt.registerFactory(
-    () => GoogleCubit(getIt<FirebaseAuthRepo>(), getIt<AccountSetupRepo>()),
+    () => GoogleCubit(
+      getIt<FirebaseAuthRepo>(),
+      getIt<AccountSetupRepo>(),
+      getIt<AddCardRepo>(),
+    ),
   );
   getIt.registerFactory(
-    () => FacebookCubit(getIt<FirebaseAuthRepo>(), getIt<AccountSetupRepo>()),
+    () => FacebookCubit(
+      getIt<FirebaseAuthRepo>(),
+      getIt<AccountSetupRepo>(),
+      getIt<AddCardRepo>(),
+    ),
   );
   getIt.registerFactory(
     () => AccountSetupCubit(repo: getIt<AccountSetupRepo>()),

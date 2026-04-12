@@ -25,6 +25,11 @@ class AddCardRepoImpl implements AddCardRepo {
        _firestore = firestore ?? FirebaseFirestore.instance,
        _auth = auth ?? FirebaseAuth.instance;
 
+  /*
+   * createCustomerAndSave method
+   * Creates a Stripe customer and saves the customer ID to Firestore
+   * Returns either a CustomFailure or a StripeCustomerEntity
+   */
   @override
   Future<Either<CustomFailure, StripeCustomerEntity>>
   createCustomerAndSave() async {
@@ -72,6 +77,11 @@ class AddCardRepoImpl implements AddCardRepo {
     }
   }
 
+  /*
+   * attachCard method
+   * Attaches a payment method to a Stripe customer and updates Firestore
+   * Returns either a CustomFailure or void on success
+   */
   @override
   Future<Either<CustomFailure, void>> attachCard({
     required String customerId,
@@ -108,6 +118,21 @@ class AddCardRepoImpl implements AddCardRepo {
       return right(null);
     } on DioException catch (e) {
       return left(ServerFailure.fromDioException(e));
+    } catch (e) {
+      return left(CustomFailure(errMessage: e.toString()));
+    }
+  }
+
+  /*
+   * hasCard method
+   * Checks if the user has a card on file by looking at Firestore
+   * Returns either a CustomFailure or a boolean indicating card presence
+   */
+  @override
+  Future<Either<CustomFailure, bool>> hasCard(String uid) async {
+    try {
+      final doc = await _firestore.collection('users').doc(uid).get();
+      return right(doc.data()?['hasCard'] == true);
     } catch (e) {
       return left(CustomFailure(errMessage: e.toString()));
     }

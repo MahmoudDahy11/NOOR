@@ -36,10 +36,13 @@ class SocialAuthSection extends StatelessWidget {
                 if (state is GoogleSuccess) {
                   if (state.needsAccountSetup) {
                     context.goNamed(AppRouter.accountSetupRoute);
+                  } else if (state.needsAddCard) {
+                    context.goNamed(AppRouter.addCardRoute);
                   } else {
                     context.goNamed(AppRouter.homeRoute);
                   }
                 } else if (state is GoogleFailure) {
+                  log(state.errMessage);
                   showSnakBar(context, state.errMessage, isError: true);
                 }
               },
@@ -52,6 +55,9 @@ class SocialAuthSection extends StatelessWidget {
                   if (state.needsAccountSetup) {
                     log("needsAccountSetup");
                     context.goNamed(AppRouter.accountSetupRoute);
+                  } else if (state.needsAddCard) {
+                    log("needsAddCard");
+                    context.goNamed(AppRouter.addCardRoute);
                   } else {
                     context.goNamed(AppRouter.homeRoute);
                   }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -75,6 +77,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               context.pop();
             } else if (state is ProfileError) {
               showSnakBar(context, state.message);
+              log('Profile Error: ${state.message}');
             }
           },
           child: SingleChildScrollView(

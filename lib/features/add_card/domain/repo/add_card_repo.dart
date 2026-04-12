@@ -13,4 +13,7 @@ abstract class AddCardRepo {
     required String customerId,
     required String paymentMethodId,
   });
+
+  /// Checks if the user already has a card attached.
+  Future<Either<CustomFailure, bool>> hasCard(String uid);
 }

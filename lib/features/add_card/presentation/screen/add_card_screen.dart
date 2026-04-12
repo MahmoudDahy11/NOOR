@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -32,6 +34,7 @@ class _AddCardView extends StatelessWidget {
 
   void _handleState(BuildContext context, AddCardState state) {
     if (state is AddCardSuccess) {
+      log('AddCardSuccess');
       showModalBottomSheet(
         context: context,
         isDismissible: false,
@@ -44,7 +47,8 @@ class _AddCardView extends StatelessWidget {
         ),
       );
     } else if (state is AddCardFailure) {
-      showSnakBar(context, state.message , isError: true);
+      log('AddCardFailure');
+      showSnakBar(context, state.message, isError: true);
     }
   }
 
