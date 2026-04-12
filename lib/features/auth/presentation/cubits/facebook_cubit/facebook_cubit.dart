@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../account_setup/domain/repositories/account_setup_repo.dart';
+import '../../../../add_card/domain/repo/add_card_repo.dart';
 import '../../../domain/entity/user_entity.dart';
 import '../../../domain/repo/auth_repo.dart';
 
@@ -15,9 +16,14 @@ part 'facebook_state.dart';
  * emits loading, success, and failure states based on the sign-in process
  */
 class FacebookCubit extends Cubit<FacebookState> {
-  FacebookCubit(this.firebaseAuthrepo, this._accountSetupRepo) : super(FacebookInitial());
+  FacebookCubit(
+    this.firebaseAuthrepo,
+    this._accountSetupRepo,
+    this._addCardRepo,
+  ) : super(FacebookInitial());
   final FirebaseAuthRepo firebaseAuthrepo;
   final AccountSetupRepo _accountSetupRepo;
+  final AddCardRepo _addCardRepo;
 
   Future<void> signInWithFacebook() async {
     try {
@@ -32,9 +38,31 @@ class FacebookCubit extends Cubit<FacebookState> {
         (failure) async => emit(FacebookFailure(errMessage: failure.errMessage)),
         (user) async {
           final profileResult = await _accountSetupRepo.hasUserProfile(user.uId);
-          profileResult.fold(
-            (failure) => emit(FacebookSuccess(user: user, needsAccountSetup: true)),
-            (exists) => emit(FacebookSuccess(user: user, needsAccountSetup: !exists)),
+          await profileResult.fold(
+            (failure) async => emit(FacebookSuccess(user: user, needsAccountSetup: true)),
+            (exists) async {
+              if (exists) {
+                final cardResult = await _addCardRepo.hasCard(user.uId);
+                cardResult.fold(
+                  (failure) => emit(
+                    FacebookSuccess(
+                      user: user,
+                      needsAccountSetup: false,
+                      needsAddCard: true,
+                    ),
+                  ),
+                  (hasCard) => emit(
+                    FacebookSuccess(
+                      user: user,
+                      needsAccountSetup: false,
+                      needsAddCard: !hasCard,
+                    ),
+                  ),
+                );
+              } else {
+                emit(FacebookSuccess(user: user, needsAccountSetup: true));
+              }
+            },
           );
         },
       );

@@ -15,7 +15,8 @@ final class GoogleLoading extends GoogleState {}
 
 final class GoogleSuccess extends GoogleState {
   final bool needsAccountSetup;
-  GoogleSuccess({this.needsAccountSetup = false});
+  final bool needsAddCard;
+  GoogleSuccess({this.needsAccountSetup = false, this.needsAddCard = false});
 }
 
 final class GoogleFailure extends GoogleState {
