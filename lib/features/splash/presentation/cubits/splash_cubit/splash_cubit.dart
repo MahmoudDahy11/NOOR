@@ -47,6 +47,9 @@ class SplashCubit extends Cubit<SplashState> {
             case 'account_setup':
               emit(NavigateToAccountSetup());
               break;
+            case 'add_card':
+              emit(NavigateToAddCard());
+              break;
             case 'onboarding':
             default:
               emit(NavigateToOnboarding());

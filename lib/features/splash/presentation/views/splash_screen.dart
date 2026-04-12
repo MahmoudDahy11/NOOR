@@ -33,6 +33,9 @@ class _SplashView extends StatelessWidget {
     } else if (state is NavigateToAccountSetup) {
       log("Splash: Navigating to Account Setup");
       context.goNamed(AppRouter.accountSetupRoute);
+    } else if (state is NavigateToAddCard) {
+      log("Splash: Navigating to Add Card");
+      context.goNamed(AppRouter.addCardRoute);
     } else if (state is NavigateToOnboarding) {
       log("Splash: Navigating to Onboarding");
       context.goNamed(AppRouter.onboardingRoute);

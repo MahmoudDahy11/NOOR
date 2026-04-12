@@ -17,6 +17,8 @@ final class NavigateToHome extends SplashState {}
 
 final class NavigateToAccountSetup extends SplashState {}
 
+final class NavigateToAddCard extends SplashState {}
+
 final class NavigateToOnboarding extends SplashState {}
 
 final class SplashError extends SplashState {
