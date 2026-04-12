@@ -10,6 +10,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/custom_gradient_button.dart';
 import '../../../../core/widgets/custom_textfield.dart';
+import '../cubits/facebook_cubit/facebook_cubit.dart';
+import '../cubits/google_cubit/google_cubit.dart';
 import '../cubits/login_cubit/login_cubit.dart';
 import '../widgets/social_auth_section.dart';
 
@@ -79,21 +81,69 @@ class _SigninPageState extends State<SigninPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        body: BlocListener<LoginCubit, LoginState>(
-          listener: (context, state) {
-            if (state is LoginSuccess) {
-              if (state.needsAccountSetup) {
-                context.pushNamed(AppRouter.accountSetupRoute);
-              } else {
-                context.pushNamed(AppRouter.homeRoute);
-              }
-              showSnakBar(context, 'Login successful');
-              log("Login successful");
-            } else if (state is LoginFailure) {
-              showSnakBar(context, state.errMessage, isError: true);
-              log("Login failed: ${state.errMessage}");
-            }
-          },
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<LoginCubit, LoginState>(
+              listener: (context, state) {
+                if (state is LoginSuccess) {
+                  if (state.needsAccountSetup) {
+                    log("needsAccountSetup");
+                    context.pushNamed(AppRouter.accountSetupRoute);
+                  } else if (state.needsAddCard) {
+                    context.pushNamed(AppRouter.addCardRoute);
+                  } else {
+                    context.pushNamed(AppRouter.homeRoute);
+                  }
+                  showSnakBar(context, 'Login successful');
+                  log("Login successful");
+                } else if (state is LoginFailure) {
+                  showSnakBar(context, state.errMessage, isError: true);
+                  log("Login failed: ${state.errMessage}");
+                }
+              },
+            ),
+            BlocListener<GoogleCubit, GoogleState>(
+              listener: (context, state) {
+                if (state is GoogleSuccess) {
+                  if (state.needsAccountSetup) {
+                    log("needsAccountSetup");
+                    context.pushNamed(AppRouter.accountSetupRoute);
+                  } else if (state.needsAddCard) {
+                    log("needsAddCard");
+                    context.pushNamed(AppRouter.addCardRoute);
+                  } else {
+                    log("homeRoute");
+                    context.pushNamed(AppRouter.homeRoute);
+                  }
+                  showSnakBar(context, 'Google Sign-In successful');
+                } else if (state is GoogleFailure) {
+                  log('Google Failure: ${state.errMessage}');
+                  showSnakBar(context, state.errMessage, isError: true);
+                }
+              },
+            ),
+            BlocListener<FacebookCubit, FacebookState>(
+              listener: (context, state) {
+                if (state is FacebookSuccess) {
+                  log("Facebook Success");
+                  if (state.needsAccountSetup) {
+                    log("needsAccountSetup");
+                    context.pushNamed(AppRouter.accountSetupRoute);
+                  } else if (state.needsAddCard) {
+                    log("needsAddCard");
+                    context.pushNamed(AppRouter.addCardRoute);
+                  } else {
+                    log("homeRoute");
+                    context.pushNamed(AppRouter.homeRoute);
+                  }
+                  showSnakBar(context, 'Facebook Sign-In successful');
+                } else if (state is FacebookFailure) {
+                  log('Facebook Failure: ${state.errMessage}');
+                  showSnakBar(context, state.errMessage, isError: true);
+                }
+              },
+            ),
+          ],
           child: SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),

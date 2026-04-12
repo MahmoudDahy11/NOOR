@@ -22,5 +22,10 @@ final class LoginFailure extends LoginState {
 final class LoginSuccess extends LoginState {
   final UserEntity userEntity;
   final bool needsAccountSetup;
-  LoginSuccess(this.userEntity, {this.needsAccountSetup = false});
+  final bool needsAddCard;
+  LoginSuccess(
+    this.userEntity, {
+    this.needsAccountSetup = false,
+    this.needsAddCard = false,
+  });
 }

@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../account_setup/domain/repositories/account_setup_repo.dart';
+import '../../../../add_card/domain/repo/add_card_repo.dart';
 import '../../../domain/entity/user_entity.dart';
 import '../../../domain/repo/auth_repo.dart';
 
@@ -15,11 +16,15 @@ part 'login_state.dart';
  * emits loading, success, and failure states based on the login process
  */
 class LoginCubit extends Cubit<LoginState> {
-  LoginCubit(this._firebaseAuthrepo, this._accountSetupRepo)
-    : super(LoginInitial());
+  LoginCubit(
+    this._firebaseAuthrepo,
+    this._accountSetupRepo,
+    this._addCardRepo,
+  ) : super(LoginInitial());
 
   final FirebaseAuthRepo _firebaseAuthrepo;
   final AccountSetupRepo _accountSetupRepo;
+  final AddCardRepo _addCardRepo;
 
   Future<void> signInWithEmailAndPassword({
     required String email,
@@ -42,9 +47,27 @@ class LoginCubit extends Cubit<LoginState> {
           final profileResult = await _accountSetupRepo.hasUserProfile(
             user.uId,
           );
-          profileResult.fold(
-            (failure) => emit(LoginSuccess(user, needsAccountSetup: true)),
-            (exists) => emit(LoginSuccess(user, needsAccountSetup: !exists)),
+          await profileResult.fold(
+            (failure) async => emit(LoginSuccess(user, needsAccountSetup: true)),
+            (exists) async {
+              if (exists) {
+                final cardResult = await _addCardRepo.hasCard(user.uId);
+                cardResult.fold(
+                  (failure) => emit(
+                    LoginSuccess(user, needsAccountSetup: false, needsAddCard: true),
+                  ),
+                  (hasCard) => emit(
+                    LoginSuccess(
+                      user,
+                      needsAccountSetup: false,
+                      needsAddCard: !hasCard,
+                    ),
+                  ),
+                );
+              } else {
+                emit(LoginSuccess(user, needsAccountSetup: true));
+              }
+            },
           );
         },
       );
