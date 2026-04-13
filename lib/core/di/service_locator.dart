@@ -34,6 +34,9 @@ import '../../features/settings/presentation/cubit/settings_cubit.dart';
 import '../../features/splash/data/repos/splash_repo_impl.dart';
 import '../../features/splash/domain/repos/splash_repo.dart';
 import '../../features/splash/presentation/cubits/splash_cubit/splash_cubit.dart';
+import '../../features/store/data/repo/store_repo_impl.dart';
+import '../../features/store/data/service/store_stripe_service.dart';
+import '../../features/store/domain/repo/store_repo.dart';
 import '../api/api_service.dart';
 
 final getIt = GetIt.instance;
@@ -43,6 +46,9 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<FirebaseService>(() => FirebaseService());
   getIt.registerLazySingleton<OtpService>(() => OtpService());
   getIt.registerLazySingleton<ApiService>(() => ApiService());
+  getIt.registerLazySingleton<StoreStripeService>(
+    () => StoreStripeService(apiService: getIt<ApiService>()),
+  );
   // Repositories
   getIt.registerLazySingleton<FirebaseAuthRepo>(
     () => FirebaseAuthRepoImplement(getIt<FirebaseService>()),
@@ -62,6 +68,9 @@ void setupServiceLocator() {
   );
   getIt.registerLazySingleton<AddCardRepo>(
     () => AddCardRepoImpl(apiService: getIt<ApiService>()),
+  );
+  getIt.registerLazySingleton<StoreRepo>(
+    () => StoreRepoImpl(stripeService: getIt<StoreStripeService>()),
   );
   // Cubits (Factories)
   getIt.registerFactory(() => SplashCubit(splashRepo: getIt<SplashRepo>()));
