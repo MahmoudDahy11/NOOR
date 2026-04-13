@@ -20,12 +20,14 @@ class TicketCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: isPurchasing ? null : onTap,
-      child: Stack(
-        children: [
-          _GoldenCard(package: package),
-          if (package.isPopular) const PopularBadge(),
-          if (isPurchasing) const PurchasingOverlay(),
-        ],
+      child: RepaintBoundary(
+        child: Stack(
+          children: [
+            _GoldenCard(package: package),
+            if (package.isPopular) const PopularBadge(),
+            if (isPurchasing) const PurchasingOverlay(),
+          ],
+        ),
       ),
     );
   }

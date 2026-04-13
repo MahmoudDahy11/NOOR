@@ -14,7 +14,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       : _profileRepo = profileRepo,
         super(ProfileInitial());
 
-  Future<void> loadProfile() async {
+  Future<void> getProfile() async {
     emit(ProfileLoading());
     final uid = LocalStorageService.getUserId();
     
@@ -37,7 +37,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       (failure) => emit(ProfileError(message: failure.errMessage)),
       (_) {
         emit(ProfileUpdateSuccess());
-        loadProfile(); // Refresh profile after update
+        getProfile(); // Refresh profile after update
       },
     );
   }

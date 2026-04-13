@@ -6,13 +6,15 @@ class TicketCardShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: const Color(0xFFE0C84A),
-      highlightColor: const Color(0xFFFFD700),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFFDAA520),
-          borderRadius: BorderRadius.circular(20),
+    return RepaintBoundary(
+      child: Shimmer.fromColors(
+        baseColor: const Color(0xFFE0C84A),
+        highlightColor: const Color(0xFFFFD700),
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFDAA520),
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
       ),
     );

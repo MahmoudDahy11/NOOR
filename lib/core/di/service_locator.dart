@@ -7,6 +7,7 @@
  */
 
 import 'package:get_it/get_it.dart';
+
 import '../../features/account_setup/data/repositories/account_setup_repo_impl.dart';
 import '../../features/account_setup/domain/repositories/account_setup_repo.dart';
 import '../../features/add_card/data/repo/add_card_repo_impl.dart';
@@ -19,6 +20,7 @@ import '../../features/auth/domain/repo/auth_repo.dart';
 import '../../features/auth/domain/repo/otp_repo.dart';
 import '../../features/profile/data/repos/profile_repo_impl.dart';
 import '../../features/profile/domain/repos/profile_repo.dart';
+import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/splash/data/repos/splash_repo_impl.dart';
 import '../../features/splash/domain/repos/splash_repo.dart';
 import '../../features/store/data/repo/store_repo_impl.dart';
@@ -58,5 +60,10 @@ void setupServiceLocator() {
   );
   getIt.registerLazySingleton<StoreRepo>(
     () => StoreRepoImpl(stripeService: getIt<StoreStripeService>()),
+  );
+
+  // Cubits
+  getIt.registerFactory<ProfileCubit>(
+    () => ProfileCubit(profileRepo: getIt<ProfileRepo>()),
   );
 }

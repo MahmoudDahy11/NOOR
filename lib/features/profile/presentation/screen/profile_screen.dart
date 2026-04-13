@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../domain/repos/profile_repo.dart';
 import '../cubit/profile_cubit.dart';
 import '../widgets/interests_section.dart';
 import '../widgets/profile_header.dart';
@@ -21,7 +20,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProfileCubit(profileRepo: getIt<ProfileRepo>())..loadProfile(),
+      create: (context) => getIt<ProfileCubit>()..getProfile(),
       child: const _ProfileView(),
     );
   }
@@ -77,11 +76,13 @@ class _ProfileView extends StatelessWidget {
                     InterestsSection(interests: profile.user.interests),
                     const SizedBox(height: 30),
                     ProfileMenu(
-                      onEditProfile: () {
-                        context.pushNamed(
+                      onEditProfile: () async {
+                        final result = await context.pushNamed<dynamic>(
                           AppRouter.editProfileRoute,
-                          extra: profile.user,
                         );
+                        if (result == true && context.mounted) {
+                          context.read<ProfileCubit>().getProfile();
+                        }
                       },
                       onSettings: () {
                         context.pushNamed(AppRouter.settingsRoute);

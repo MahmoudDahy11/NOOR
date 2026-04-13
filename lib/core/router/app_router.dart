@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../features/account_setup/domain/entities/user_profile_entity.dart';
 import '../../features/account_setup/presentation/screens/account_setup_screen.dart';
 import '../../features/add_card/presentation/screen/add_card_screen.dart';
 import '../../features/auth/presentation/pages/otp_page.dart';
@@ -87,10 +85,9 @@ class AppRouter {
             name: editProfileRoute,
             path: editProfileRoute,
             pageBuilder: (context, state) {
-              final profile = state.extra as UserProfileEntity;
               return _slidePage(
                 state: state,
-                child: EditProfileScreen(profile: profile),
+                child: const EditProfileScreen(),
               );
             },
           ),

@@ -74,7 +74,7 @@ class _StoreShimmerBody extends StatelessWidget {
           sliver: SliverGrid(
             delegate: SliverChildBuilderDelegate(
               (_, _) => const TicketCardShimmer(),
-              childCount: 6,
+              childCount: 4,
             ),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
