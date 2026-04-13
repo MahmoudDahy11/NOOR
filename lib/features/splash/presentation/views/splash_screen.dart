@@ -9,6 +9,7 @@ import '../../../../core/constants/app_assets.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../domain/repos/splash_repo.dart';
 import '../cubits/splash_cubit/splash_cubit.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -17,7 +18,8 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<SplashCubit>()..initializeApp(),
+      create: (context) =>
+          SplashCubit(splashRepo: getIt<SplashRepo>())..initializeApp(),
       child: const _SplashView(),
     );
   }

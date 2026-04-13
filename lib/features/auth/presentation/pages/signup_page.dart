@@ -4,23 +4,59 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/helper/show_snak_bar.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/custom_gradient_button.dart';
 import '../../../../core/widgets/custom_textfield.dart';
+import '../../../account_setup/domain/repositories/account_setup_repo.dart';
+import '../../../add_card/domain/repo/add_card_repo.dart';
+import '../../domain/repo/auth_repo.dart';
+import '../cubits/facebook_cubit/facebook_cubit.dart';
+import '../cubits/google_cubit/google_cubit.dart';
 import '../cubits/signup_cubit/signup_cubit.dart';
 import '../widgets/social_auth_section.dart';
 
-class SignupPage extends StatefulWidget {
+class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
 
   @override
-  State<SignupPage> createState() => _SignupPageState();
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => SignupCubit(getIt<FirebaseAuthRepo>()),
+        ),
+        BlocProvider(
+          create: (context) => GoogleCubit(
+            getIt<FirebaseAuthRepo>(),
+            getIt<AccountSetupRepo>(),
+            getIt<AddCardRepo>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => FacebookCubit(
+            getIt<FirebaseAuthRepo>(),
+            getIt<AccountSetupRepo>(),
+            getIt<AddCardRepo>(),
+          ),
+        ),
+      ],
+      child: const _SignupView(),
+    );
+  }
 }
 
-class _SignupPageState extends State<SignupPage> {
+class _SignupView extends StatefulWidget {
+  const _SignupView();
+
+  @override
+  State<_SignupView> createState() => _SignupViewState();
+}
+
+class _SignupViewState extends State<_SignupView> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;

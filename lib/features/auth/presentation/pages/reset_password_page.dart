@@ -4,19 +4,33 @@ import 'package:go_router/go_router.dart';
 import 'package:tally_islamic/core/helper/show_snak_bar.dart';
 import 'package:tally_islamic/core/router/app_router.dart';
 
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/custom_gradient_button.dart';
 import '../../../../core/widgets/custom_textfield.dart';
+import '../../domain/repo/auth_repo.dart';
 import '../cubits/forget_password_cubit/forget_password_cubit.dart';
 
-class ResetPasswordPage extends StatefulWidget {
+class ResetPasswordPage extends StatelessWidget {
   const ResetPasswordPage({super.key});
 
   @override
-  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => ForgetPasswordCubit(getIt<FirebaseAuthRepo>()),
+      child: const _ResetPasswordView(),
+    );
+  }
 }
 
-class _ResetPasswordPageState extends State<ResetPasswordPage> {
+class _ResetPasswordView extends StatefulWidget {
+  const _ResetPasswordView();
+
+  @override
+  State<_ResetPasswordView> createState() => _ResetPasswordViewState();
+}
+
+class _ResetPasswordViewState extends State<_ResetPasswordView> {
   late TextEditingController _emailController;
   final _formKey = GlobalKey<FormState>();
   final _autovalidateMode = ValueNotifier<AutovalidateMode>(
@@ -50,8 +64,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
       context.read<ForgetPasswordCubit>().sendResetLink(
-        _emailController.text.trim(),
-      );
+            _emailController.text.trim(),
+          );
     } else {
       _autovalidateMode.value = AutovalidateMode.always;
     }

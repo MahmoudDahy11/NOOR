@@ -40,16 +40,16 @@ Future<void> main() async {
   // 4. Setup Dependency Injection
   setupServiceLocator();
 
-  runApp(DevicePreview(enabled: false, builder: (context) => const TallyApp()));
+  runApp(DevicePreview(enabled: false, builder: (context) => const NoorApp()));
 }
 
-class TallyApp extends StatelessWidget {
-  const TallyApp({super.key});
+class NoorApp extends StatelessWidget {
+  const NoorApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Tally Islamic',
+      title: 'Noor Islamic',
       debugShowCheckedModeBanner: false,
       routerConfig: AppRouter.router,
       locale: DevicePreview.locale(context),

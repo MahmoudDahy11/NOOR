@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,8 +29,10 @@ class _StoreView extends StatelessWidget {
 
   void _handleState(BuildContext context, StoreState state) {
     if (state is StorePurchaseSuccess) {
+      log('Purchase successful: ${state.ticketBalance} tickets added');
       showSnakBar(context, 'Tickets added to your balance! 🎉');
     } else if (state is StoreFailure) {
+      log('Purchase failed: ${state.message}');
       showSnakBar(context, state.message, isError: true);
       context.read<StoreCubit>().loadStore();
     }

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../domain/repos/profile_repo.dart';
 import '../cubit/profile_cubit.dart';
 import '../widgets/interests_section.dart';
 import '../widgets/profile_header.dart';
@@ -19,8 +20,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: getIt<ProfileCubit>()..loadProfile(),
+    return BlocProvider(
+      create: (context) => ProfileCubit(profileRepo: getIt<ProfileRepo>())..loadProfile(),
       child: const _ProfileView(),
     );
   }

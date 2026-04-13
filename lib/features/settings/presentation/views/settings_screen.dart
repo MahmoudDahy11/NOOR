@@ -2,15 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tally_islamic/core/theme/app_theme.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/helper/show_snak_bar.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../auth/domain/repo/auth_repo.dart';
 import '../cubit/settings_cubit.dart';
 import '../widgets/confirm_password_dialog.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => SettingsCubit(getIt<FirebaseAuthRepo>()),
+      child: const _SettingsView(),
+    );
+  }
+}
+
+class _SettingsView extends StatelessWidget {
+  const _SettingsView();
 
   @override
   Widget build(BuildContext context) {

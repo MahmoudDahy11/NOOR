@@ -1,19 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tally_islamic/core/router/app_router.dart';
 
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/custom_gradient_button.dart';
+import '../../domain/repo/otp_repo.dart';
+import '../cubits/otp_cubit/otp_cubit.dart';
 
-class OtpPage extends StatefulWidget {
+class OtpPage extends StatelessWidget {
   const OtpPage({super.key});
 
   @override
-  State<OtpPage> createState() => _OtpPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => OtpCubit(getIt<OtpRepository>()),
+      child: const _OtpView(),
+    );
+  }
 }
 
-class _OtpPageState extends State<OtpPage> {
+class _OtpView extends StatefulWidget {
+  const _OtpView();
+
+  @override
+  State<_OtpView> createState() => _OtpViewState();
+}
+
+class _OtpViewState extends State<_OtpView> {
   late List<TextEditingController> _controllers;
 
   @override
@@ -29,15 +45,6 @@ class _OtpPageState extends State<OtpPage> {
     }
     super.dispose();
   }
-
-  // String _getOtpCode() => _controllers.map((c) => c.text).join();
-
-  // void _handleVerifyOtp() {
-  //   final otp = _getOtpCode();
-  //   if (otp.length != 4) {
-  //     return;
-  //   }
-  // }
 
   void _handleResendOtp() {}
 
