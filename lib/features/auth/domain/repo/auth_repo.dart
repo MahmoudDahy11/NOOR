@@ -46,4 +46,10 @@ abstract class FirebaseAuthRepo {
    * returns Either a CustomFailure or Unit
    */
   Future<Either<CustomFailure, UserEntity>> signinWithFacebook();
+  /* 
+   * Method to delete the user's account
+   * requires re-authentication with password
+   * returns Either a CustomFailure or void
+   */
+  Future<Either<CustomFailure, void>> deleteUserAccount(String password);
 }

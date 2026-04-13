@@ -20,6 +20,8 @@ import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/views/edit_profile_screen.dart';
 import '../../features/profile/presentation/views/profile_screen.dart';
+import '../../features/settings/presentation/cubit/settings_cubit.dart';
+import '../../features/settings/presentation/views/settings_screen.dart';
 import '../../features/splash/presentation/views/splash_screen.dart';
 import '../di/service_locator.dart';
 
@@ -37,6 +39,7 @@ class AppRouter {
   static const String homeRoute = '/home';
   static const String profileRoute = '/profile';
   static const String editProfileRoute = 'edit-profile';
+  static const String settingsRoute = '/settings';
   static const String addCardRoute = '/add-card';
 
   static final router = GoRouter(
@@ -125,6 +128,17 @@ class AppRouter {
             },
           ),
         ],
+      ),
+      GoRoute(
+        name: settingsRoute,
+        path: settingsRoute,
+        pageBuilder: (context, state) => _slidePage(
+          state: state,
+          child: BlocProvider(
+            create: (context) => getIt<SettingsCubit>(),
+            child: const SettingsScreen(),
+          ),
+        ),
       ),
       GoRoute(
         name: addCardRoute,

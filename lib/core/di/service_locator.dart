@@ -30,6 +30,7 @@ import '../../features/auth/presentation/cubits/signup_cubit/signup_cubit.dart';
 import '../../features/profile/data/repos/profile_repo_impl.dart';
 import '../../features/profile/domain/repos/profile_repo.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
+import '../../features/settings/presentation/cubit/settings_cubit.dart';
 import '../../features/splash/data/repos/splash_repo_impl.dart';
 import '../../features/splash/domain/repos/splash_repo.dart';
 import '../../features/splash/presentation/cubits/splash_cubit/splash_cubit.dart';
@@ -96,4 +97,5 @@ void setupServiceLocator() {
     () => ProfileCubit(profileRepo: getIt<ProfileRepo>()),
   );
   getIt.registerFactory(() => AddCardCubit(repo: getIt<AddCardRepo>()));
+  getIt.registerFactory(() => SettingsCubit(getIt<FirebaseAuthRepo>()));
 }

@@ -154,4 +154,16 @@ class FirebaseAuthRepoImplement extends FirebaseAuthRepo {
       return left(CustomFailure(errMessage: e.toString()));
     }
   }
+
+  @override
+  Future<Either<CustomFailure, void>> deleteUserAccount(String password) async {
+    try {
+      await _firebaseService.deleteUserAccount(password: password);
+      return right(null);
+    } on CustomException catch (ex) {
+      return left(CustomFailure(errMessage: ex.errMessage));
+    } catch (e) {
+      return left(CustomFailure(errMessage: e.toString()));
+    }
+  }
 }

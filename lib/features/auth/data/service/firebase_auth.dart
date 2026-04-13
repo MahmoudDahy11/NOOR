@@ -167,4 +167,49 @@ class FirebaseService {
       throw CustomException(errMessage: e.toString());
     }
   }
+
+  Future<void> deleteUserAccount({required String password}) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw CustomException(errMessage: 'No authenticated user found.');
+      }
+
+      // 1. Re-authenticate the user
+      final AuthCredential credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: password,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+
+      // 2. Delete user's document from Firestore
+      final uid = user.uid;
+      await firestore.collection('users').doc(uid).delete();
+
+      // 3. Delete the user from FirebaseAuth
+      await user.delete();
+
+      // 4. Clear local session/cache
+      await LocalStorageService.clearUserData();
+
+      log("✅ User account deleted and session cleared: $uid");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password') {
+        throw CustomException(
+          errMessage: 'The password you entered is incorrect.',
+        );
+      } else if (e.code == 'requires-recent-login') {
+        throw CustomException(
+          errMessage:
+              'This operation is sensitive and requires recent authentication. Please log in again.',
+        );
+      }
+      throw CustomException(errMessage: e.message ?? 'Authentication error');
+    } catch (e) {
+      throw CustomException(
+        errMessage: 'Error deleting account: ${e.toString()}',
+      );
+    }
+  }
 }

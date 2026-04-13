@@ -81,7 +81,7 @@ class _ProfileView extends StatelessWidget {
                         );
                       },
                       onSettings: () {
-                        // Navigate to Settings
+                        context.pushNamed(AppRouter.settingsRoute);
                       },
                       onSignOut: () {
                         _showSignOutDialog(context);
