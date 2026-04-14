@@ -30,6 +30,24 @@ class StoreLoadedBody extends StatelessWidget {
       _ => null,
     };
 
+    final width = MediaQuery.sizeOf(context).width;
+    int crossAxisCount;
+    double childAspectRatio;
+
+    if (width > 1200) {
+      crossAxisCount = 5;
+      childAspectRatio = 1.2;
+    } else if (width > 900) {
+      crossAxisCount = 4;
+      childAspectRatio = 1.15;
+    } else if (width > 600) {
+      crossAxisCount = 3;
+      childAspectRatio = 1.1;
+    } else {
+      crossAxisCount = 2;
+      childAspectRatio = 0.75;
+    }
+
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(child: TicketBalanceHeader(balance: balance)),
@@ -45,11 +63,11 @@ class StoreLoadedBody extends StatelessWidget {
               ),
               childCount: packages.length,
             ),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
-              childAspectRatio: 0.75,
+              childAspectRatio: childAspectRatio,
             ),
           ),
         ),
