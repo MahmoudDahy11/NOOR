@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:tally_islamic/core/api/api_service.dart';
+import 'package:tally_islamic/core/constants/app_strings.dart';
 import 'package:tally_islamic/core/error/failure.dart';
 
 import '../../../../core/env/app_env.dart';
@@ -51,7 +52,7 @@ class StoreStripeService {
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: clientSecret,
           customerEphemeralKeySecret: ephemeralKey,
-          merchantDisplayName: 'Tally Islamic',
+          merchantDisplayName: AppStrings.appName,
           customerId: customerId,
           allowsDelayedPaymentMethods: true,
         ),

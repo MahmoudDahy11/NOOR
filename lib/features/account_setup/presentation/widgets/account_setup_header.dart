@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class AccountSetupHeader extends StatelessWidget {
@@ -30,7 +31,7 @@ class AccountSetupHeader extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 const Text(
-                  'Tally Islamic',
+                  AppStrings.appName,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,

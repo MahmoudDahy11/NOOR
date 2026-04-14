@@ -1,6 +1,9 @@
 class AppStrings {
   AppStrings._();
 
+  // General
+  static const appName = 'Noor';
+
   // Onboarding
   static const onboarding1Title = 'Count Together';
 
