@@ -42,7 +42,9 @@ class _SplashView extends StatelessWidget {
       log("Splash: Navigating to Onboarding");
       context.goNamed(AppRouter.onboardingRoute);
     } else if (state is SplashError) {
-      log("Splash: Error occurred - ${state.message}. Navigating to Onboarding");
+      log(
+        "Splash: Error occurred - ${state.message}. Navigating to Onboarding",
+      );
       context.goNamed(AppRouter.onboardingRoute);
     }
   }
@@ -56,7 +58,7 @@ class _SplashView extends StatelessWidget {
         body: Center(
           child: SvgPicture.asset(
             AppAssets.splashLogo,
-            width: 150,
+            // width: 150,
           ),
         ),
       ),

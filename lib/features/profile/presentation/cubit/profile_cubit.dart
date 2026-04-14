@@ -19,11 +19,14 @@ class ProfileCubit extends Cubit<ProfileState> {
     final uid = LocalStorageService.getUserId();
     
     if (uid == null) {
-      emit(ProfileError(message: 'User session not found'));
+      if (!isClosed) {
+        emit(ProfileError(message: 'User session not found'));
+      }
       return;
     }
 
     final result = await _profileRepo.getProfile(uid);
+    if (isClosed) return;
     result.fold(
       (failure) => emit(ProfileError(message: failure.errMessage)),
       (profile) => emit(ProfileSuccess(profile: profile)),
@@ -33,6 +36,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> updateProfile(UserProfileEntity profile) async {
     emit(ProfileLoading());
     final result = await _profileRepo.updateProfile(profile);
+    if (isClosed) return;
     result.fold(
       (failure) => emit(ProfileError(message: failure.errMessage)),
       (_) {
@@ -44,6 +48,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> signOut() async {
     final result = await _profileRepo.signOut();
+    if (isClosed) return;
     result.fold(
       (failure) => emit(ProfileError(message: failure.errMessage)),
       (_) => emit(ProfileSignOutSuccess()),

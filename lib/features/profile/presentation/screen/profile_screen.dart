@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tally_islamic/core/helper/show_snak_bar.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/router/app_router.dart';
@@ -38,9 +39,7 @@ class _ProfileView extends StatelessWidget {
           if (state is ProfileSignOutSuccess) {
             context.goNamed(AppRouter.signinRoute);
           } else if (state is ProfileError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            showSnakBar(context, state.message , isError: true);
           }
         },
         builder: (context, state) {
@@ -51,18 +50,21 @@ class _ProfileView extends StatelessWidget {
             final currentUser = FirebaseAuth.instance.currentUser;
             // Use email if available, otherwise fallback or empty
             final userName = currentUser?.email ?? '';
-            
+
             return SafeArea(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 30),
-                    ProfileHeader(
-                      avatar: profile.user.avatarAsset,
-                      name: profile.user.displayName,
-                      userName: userName,
-                      bio: profile.user.bio,
+                    Center(
+                      child: ProfileHeader(
+                        avatar: profile.user.avatarAsset,
+                        name: profile.user.displayName,
+                        userName: userName,
+                        bio: profile.user.bio,
+                      ),
                     ),
                     const SizedBox(height: 30),
                     ProfileStats(
@@ -120,8 +122,10 @@ class _ProfileView extends StatelessWidget {
                 Navigator.pop(dialogContext);
                 context.read<ProfileCubit>().signOut();
               },
-              child: const Text('Sign Out',
-                  style: TextStyle(color: AppColors.error)),
+              child: const Text(
+                'Sign Out',
+                style: TextStyle(color: AppColors.error),
+              ),
             ),
           ],
         );
