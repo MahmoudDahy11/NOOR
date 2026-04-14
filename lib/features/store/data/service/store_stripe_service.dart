@@ -29,18 +29,31 @@ class StoreStripeService {
           'currency': currency,
           'customer': customerId,
           'payment_method_types[]': 'card',
+          'setup_future_usage': 'off_session',
         },
       );
 
       final clientSecret = response.data['client_secret'] as String;
       final paymentIntentId = response.data['id'] as String;
 
-      // 2. Init payment sheet
+      // 2. Create ephemeral key
+      final ephemeralKeyResponse = await _apiService.post(
+        url: '$_base/ephemeral_keys',
+        contentType: Headers.formUrlEncodedContentType,
+        token: AppEnv.stripeSecretKey,
+        headers: {'Stripe-Version': '2024-12-18.acacia'},
+        body: {'customer': customerId},
+      );
+      final ephemeralKey = ephemeralKeyResponse.data['secret'] as String;
+
+      // 3. Init payment sheet
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: clientSecret,
+          customerEphemeralKeySecret: ephemeralKey,
           merchantDisplayName: 'Tally Islamic',
           customerId: customerId,
+          allowsDelayedPaymentMethods: true,
         ),
       );
 
