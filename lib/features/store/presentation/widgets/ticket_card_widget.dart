@@ -24,11 +24,7 @@ class TicketCardWidget extends StatelessWidget {
         child: Stack(
           children: [
             _GoldenCard(package: package),
-            if (package.isPopular)
-              const Align(
-                alignment: Alignment.topCenter,
-                child: PopularBadge(),
-              ),
+            if (package.isPopular) const PopularBadge(),
             if (isPurchasing) const PurchasingOverlay(),
           ],
         ),

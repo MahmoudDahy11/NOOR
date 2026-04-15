@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tally_islamic/core/router/app_router.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/helper/show_snak_bar.dart';
@@ -31,26 +33,41 @@ class _CreateRoomSheetView extends StatelessWidget {
 
   void _handleState(BuildContext context, CreateRoomState state) {
     if (state is CreateRoomSuccess) {
-      Navigator.pop(context);
+      final room = state.room;
+      final repo = getIt<CreateRoomRepo>();
+
+      // Capture navigator BEFORE popping — context is unmounted after pop.
+      final navigator = Navigator.of(context);
+
+      // Close the creation sheet
+      navigator.pop();
+
+      // Show success sheet using navigator.context (still valid).
       showModalBottomSheet(
-        context: context,
+        context: navigator.context,
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
         isDismissible: false,
-        builder: (_) => RoomCreatedSheet(
-          room: state.room,
-          onStartNow: () {
-            Navigator.pop(context);
-            context.read<CreateRoomCubit>().startRoom(state.room.id);
+        builder: (sheetContext) => RoomCreatedSheet(
+          room: room,
+          onStartNow: () async {
+            final result = await repo.startRoom(room.id);
+            result.fold(
+              (failure) {
+                log('[Activation] Failed: ${failure.errMessage}');
+                if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+              },
+              (_) {
+                log('[Activation] Room started: ${room.id}');
+                if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+                // Navigate to the live room screen
+                GoRouter.of(navigator.context).go(AppRouter.liveRoomRoute);
+              },
+            );
           },
-          onLater: () => Navigator.pop(context),
+          onLater: () => Navigator.of(sheetContext).pop(),
         ),
       );
-    } else if (state is RoomStarted) {
-      // TODO: navigate to live room
-
-      showSnakBar(context, 'Room started! 🕌');
-      log('Room started! ${state.roomId}');
     } else if (state is CreateRoomFailure) {
       showSnakBar(context, state.message, isError: true);
     }

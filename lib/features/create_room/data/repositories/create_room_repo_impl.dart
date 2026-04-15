@@ -1,4 +1,5 @@
-import 'dart:math';
+import 'dart:developer';
+import 'dart:math' hide log;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
@@ -38,7 +39,11 @@ class CreateRoomRepoImpl implements CreateRoomRepo {
     CreateRoomParams params,
   ) async {
     try {
+      log('[Repo] Fetching user data for UID: $_uid');
       final userDoc = await _firestore.collection('users').doc(_uid).get();
+      if (!userDoc.exists) {
+        return left(CustomFailure(errMessage: 'User profile not found.'));
+      }
       final userData = userDoc.data()!;
 
       if (params.isPaid) {
@@ -72,13 +77,30 @@ class CreateRoomRepoImpl implements CreateRoomRepo {
         durationHours: params.durationHours,
       );
 
+      log('[Repo] Starting transaction...');
       final helper = RoomTransactionHelper(firestore: _firestore, uid: _uid);
       final txResult = await helper.saveRoomTransaction(room, params);
 
-      return txResult.fold((f) => left(f), (_) async {
-        await _rtdb.ref('rooms/$roomId').set({'currentCount': 0});
-        return right(room);
-      });
+      if (txResult.isLeft()) {
+        return left(
+          txResult.fold((f) => f, (r) => throw Exception('unreachable')),
+        );
+      }
+
+      log('[Repo] Transaction success. Setting RTDB counter...');
+      try {
+        await _rtdb
+            .ref('live_counters/$roomId')
+            .set({'c': 0})
+            .timeout(const Duration(seconds: 5));
+      } catch (e) {
+        log('[Repo] RTDB set failed or timed out: $e');
+        // We still return success because Firestore transaction is done.
+        // The room exists on Firestore now.
+      }
+
+      log('[Repo] createRoom complete: $roomId');
+      return right(room);
     } catch (e) {
       return left(CustomFailure(errMessage: e.toString()));
     }

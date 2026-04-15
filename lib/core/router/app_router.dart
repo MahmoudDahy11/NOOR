@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tally_islamic/features/live_room/live.dart';
 import '../../features/account_setup/presentation/screens/account_setup_screen.dart';
 import '../../features/add_card/presentation/screen/add_card_screen.dart';
 import '../../features/auth/presentation/pages/otp_page.dart';
@@ -29,6 +30,7 @@ class AppRouter {
   static const String editProfileRoute = 'edit-profile';
   static const String settingsRoute = '/settings';
   static const String addCardRoute = '/add-card';
+  static const String liveRoomRoute = '/live-room';
 
   static final router = GoRouter(
     initialLocation: splashRoute,
@@ -85,10 +87,7 @@ class AppRouter {
             name: editProfileRoute,
             path: editProfileRoute,
             pageBuilder: (context, state) {
-              return _slidePage(
-                state: state,
-                child: const EditProfileScreen(),
-              );
+              return _slidePage(state: state, child: const EditProfileScreen());
             },
           ),
         ],
@@ -96,16 +95,20 @@ class AppRouter {
       GoRoute(
         name: settingsRoute,
         path: settingsRoute,
-        pageBuilder: (context, state) => _slidePage(
-          state: state,
-          child: const SettingsScreen(),
-        ),
+        pageBuilder: (context, state) =>
+            _slidePage(state: state, child: const SettingsScreen()),
       ),
       GoRoute(
         name: addCardRoute,
         path: addCardRoute,
         pageBuilder: (context, state) =>
             _slidePage(state: state, child: const AddCardScreen()),
+      ),
+      GoRoute(
+        name: liveRoomRoute,
+        path: liveRoomRoute,
+        pageBuilder: (context, state) =>
+            _slidePage(state: state, child: const LiveRoomScreen()),
       ),
     ],
   );

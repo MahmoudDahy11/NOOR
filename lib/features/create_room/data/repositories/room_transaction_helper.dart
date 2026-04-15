@@ -10,7 +10,6 @@ class RoomTransactionHelper {
   final String uid;
 
   const RoomTransactionHelper({required this.firestore, required this.uid});
-
   Future<Either<CustomFailure, void>> saveRoomTransaction(
     RoomModel room,
     CreateRoomParams params,
@@ -19,14 +18,22 @@ class RoomTransactionHelper {
       await firestore.runTransaction((tx) async {
         final roomRef = firestore.collection('rooms').doc(room.id);
         final userRef = firestore.collection('users').doc(uid);
-        tx.set(roomRef, room.toFirestore());
+
+        // 1. ALL READS FIRST
+        final userSnap = await tx.get(userRef);
+
         if (params.isPaid) {
-          final snap = await tx.get(userRef);
-          final balance = (snap.data()?['ticket_balance'] ?? 0) as int;
+          final balance = (userSnap.data()?['ticket_balance'] ?? 0) as int;
+          if (balance < params.ticketsRequired) {
+            throw Exception('Not enough tickets.');
+          }
+          // 2. ALL WRITES LAST
           tx.update(userRef, {
             'ticket_balance': balance - params.ticketsRequired,
           });
         }
+
+        tx.set(roomRef, room.toFirestore());
       });
       return right(null);
     } catch (e) {
@@ -41,7 +48,8 @@ class RoomTransactionHelper {
     try {
       final now = DateTime.now();
       final expiresAt = now.add(
-          Duration(minutes: (durationHours * 60).round()));
+        Duration(minutes: (durationHours * 60).round()),
+      );
       await firestore.collection('rooms').doc(roomId).update({
         'status': 'active',
         'startedAt': Timestamp.fromDate(now),

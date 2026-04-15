@@ -23,18 +23,22 @@ class CreateRoomCubit extends Cubit<CreateRoomState> {
         'goal=${params.goal} duration=${params.durationHours}h '
         'tickets=${params.ticketsRequired} public=${params.isPublic}');
 
-    final result = await _repo.createRoom(params);
-
-    result.fold(
-      (failure) {
-        log('[CreateRoom] Failed: ${failure.errMessage}');
-        emit(CreateRoomFailure(failure.errMessage));
-      },
-      (room) {
-        log('[CreateRoom] Success: ${room.id}');
-        emit(CreateRoomSuccess(room));
-      },
-    );
+    try {
+      final result = await _repo.createRoom(params);
+      result.fold(
+        (failure) {
+          log('[CreateRoom] Failed: ${failure.errMessage}');
+          emit(CreateRoomFailure(failure.errMessage));
+        },
+        (room) {
+          log('[CreateRoom] Success: ${room.id}');
+          emit(CreateRoomSuccess(room));
+        },
+      );
+    } catch (e) {
+      log('[CreateRoom] Unexpected error: $e');
+      emit(const CreateRoomFailure('Something went wrong. Please try again.'));
+    }
   }
 
   Future<void> startRoom(String roomId) async {
@@ -42,17 +46,22 @@ class CreateRoomCubit extends Cubit<CreateRoomState> {
 
     log('[CreateRoom] Starting room: $roomId');
 
-    final result = await _repo.startRoom(roomId);
+    try {
+      final result = await _repo.startRoom(roomId);
 
-    result.fold(
-      (failure) {
-        log('[CreateRoom] Start failed: ${failure.errMessage}');
-        emit(CreateRoomFailure(failure.errMessage));
-      },
-      (_) {
-        log('[CreateRoom] Room started: $roomId');
-        emit(RoomStarted(roomId));
-      },
-    );
+      result.fold(
+        (failure) {
+          log('[CreateRoom] Start failed: ${failure.errMessage}');
+          emit(CreateRoomFailure(failure.errMessage));
+        },
+        (_) {
+          log('[CreateRoom] Room started: $roomId');
+          emit(RoomStarted(roomId));
+        },
+      );
+    } catch (e) {
+      log('[CreateRoom] Unexpected start error: $e');
+      emit(const CreateRoomFailure('Failed to start room.'));
+    }
   }
 }

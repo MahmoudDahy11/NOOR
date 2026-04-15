@@ -76,11 +76,11 @@ class _StoreShimmerBody extends StatelessWidget {
               (_, _) => const TicketCardShimmer(),
               childCount: 4,
             ),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: MediaQuery.sizeOf(context).width > 600 ? 3 : 2,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
-              childAspectRatio: 0.75,
+              childAspectRatio: MediaQuery.sizeOf(context).width > 600 ? 1.5 : 0.75,
             ),
           ),
         ),

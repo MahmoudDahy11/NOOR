@@ -34,18 +34,12 @@ class StoreLoadedBody extends StatelessWidget {
     int crossAxisCount;
     double childAspectRatio;
 
-    if (width > 1200) {
-      crossAxisCount = 5;
-      childAspectRatio = 1.2;
-    } else if (width > 900) {
-      crossAxisCount = 4;
-      childAspectRatio = 1.15;
-    } else if (width > 600) {
+    if (width > 600) {
       crossAxisCount = 3;
-      childAspectRatio = 1.1;
+      childAspectRatio = 1.5; // Tablet optimization
     } else {
       crossAxisCount = 2;
-      childAspectRatio = 0.75;
+      childAspectRatio = 0.75; // Mobile standard
     }
 
     return CustomScrollView(
