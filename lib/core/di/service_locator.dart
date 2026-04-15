@@ -18,6 +18,8 @@ import '../../features/auth/data/service/firebase_auth.dart';
 import '../../features/auth/data/service/otp_service.dart';
 import '../../features/auth/domain/repo/auth_repo.dart';
 import '../../features/auth/domain/repo/otp_repo.dart';
+import '../../features/create_room/data/repositories/create_room_repo_impl.dart';
+import '../../features/create_room/domain/repositories/create_room_repo.dart';
 import '../../features/profile/data/repos/profile_repo_impl.dart';
 import '../../features/profile/domain/repos/profile_repo.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
@@ -61,6 +63,7 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<StoreRepo>(
     () => StoreRepoImpl(stripeService: getIt<StoreStripeService>()),
   );
+  getIt.registerLazySingleton<CreateRoomRepo>(() => CreateRoomRepoImpl());
 
   // Cubits
   getIt.registerFactory<ProfileCubit>(
