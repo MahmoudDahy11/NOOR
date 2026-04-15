@@ -7,27 +7,34 @@ import '../cubit/store_cubit.dart';
 import 'ticket_balance_header.dart';
 import 'ticket_card_widget.dart';
 
-class StoreLoadedBody extends StatelessWidget {
+class StoreLoadedBody extends StatefulWidget {
   final StoreState state;
   const StoreLoadedBody({super.key, required this.state});
 
   @override
+  State<StoreLoadedBody> createState() => _StoreLoadedBodyState();
+}
+
+class _StoreLoadedBodyState extends State<StoreLoadedBody> {
+  final ValueNotifier<String?> _purchasingIdNotifier = ValueNotifier(null);
+
+  @override
+  void dispose() {
+    _purchasingIdNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final packages = switch (state) {
+    final packages = switch (widget.state) {
       StoreLoaded(:final packages) => packages,
-      StorePurchasing(:final packages) => packages,
       StorePurchaseSuccess(:final packages) => packages,
       _ => const <TicketPackageEntity>[],
     };
-    final balance = switch (state) {
+    final balance = switch (widget.state) {
       StoreLoaded(:final ticketBalance) => ticketBalance,
-      StorePurchasing(:final ticketBalance) => ticketBalance,
       StorePurchaseSuccess(:final ticketBalance) => ticketBalance,
       _ => 0,
-    };
-    final purchasingId = switch (state) {
-      StorePurchasing(:final purchasingPackageId) => purchasingPackageId,
-      _ => null,
     };
 
     final width = MediaQuery.sizeOf(context).width;
@@ -49,11 +56,19 @@ class StoreLoadedBody extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           sliver: SliverGrid(
             delegate: SliverChildBuilderDelegate(
-              (_, i) => TicketCardWidget(
-                package: packages[i],
-                isPurchasing: purchasingId == packages[i].id,
-                onTap: () =>
-                    context.read<StoreCubit>().purchasePackage(packages[i]),
+              (_, i) => ValueListenableBuilder<String?>(
+                valueListenable: _purchasingIdNotifier,
+                builder: (context, purchasingId, _) {
+                  return TicketCardWidget(
+                    package: packages[i],
+                    isPurchasing: purchasingId == packages[i].id,
+                    onTap: () async {
+                      _purchasingIdNotifier.value = packages[i].id;
+                      await context.read<StoreCubit>().purchasePackage(packages[i]);
+                      if (mounted) _purchasingIdNotifier.value = null;
+                    },
+                  );
+                },
               ),
               childCount: packages.length,
             ),

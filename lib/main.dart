@@ -57,10 +57,3 @@ class NoorApp extends StatelessWidget {
     );
   }
 }
-
-//dahym2028@gmail.com
-
-
-// test123@gmail.com 
-
-// test123456@gmail.com

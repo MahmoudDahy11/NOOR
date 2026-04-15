@@ -47,7 +47,6 @@ class _StoreView extends StatelessWidget {
         body: switch (state) {
           StoreLoading() => const _StoreShimmerBody(),
           StoreLoaded() ||
-          StorePurchasing() ||
           StorePurchaseSuccess() => StoreLoadedBody(state: state),
           StoreFailure() => _StoreErrorBody(
             message: state.message,

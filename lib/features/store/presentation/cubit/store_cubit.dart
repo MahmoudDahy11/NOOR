@@ -1,8 +1,6 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
 import '../../domain/entity/ticket_package_entity.dart';
@@ -49,37 +47,10 @@ class StoreCubit extends Cubit<StoreState> {
         ? current.ticketBalance
         : (current as StorePurchaseSuccess).ticketBalance;
 
-    // Get customerId from Firestore
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) {
-      emit(const StoreFailure('User not authenticated.'));
-      return;
-    }
-
-    final userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .get();
-    final customerId = userDoc.data()?['stripeCustomerId'] as String?;
-
-    if (customerId == null || customerId.isEmpty) {
-      emit(const StoreFailure('No payment method found. Please add a card.'));
-      return;
-    }
-
-    emit(
-      StorePurchasing(
-        packages: currentPackages,
-        ticketBalance: currentBalance,
-        purchasingPackageId: package.id,
-      ),
-    );
-
     log('[Store] Purchasing package: ${package.name} - \$${package.price}');
 
     final result = await _repo.purchasePackage(
       package: package,
-      customerId: customerId,
     );
 
     result.fold(

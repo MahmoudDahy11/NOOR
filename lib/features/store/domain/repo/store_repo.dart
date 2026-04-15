@@ -10,7 +10,6 @@ abstract class StoreRepo {
 
   Future<Either<CustomFailure, void>> purchasePackage({
     required TicketPackageEntity package,
-    required String customerId,
   });
 
   Future<Either<CustomFailure, int>> getTicketBalance();
