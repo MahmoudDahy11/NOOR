@@ -14,7 +14,8 @@ class InterestsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Interests', style: AppTextStyles.titleLarge),
+          if (interests.isNotEmpty)
+            const Text('Interests', style: AppTextStyles.titleLarge),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,

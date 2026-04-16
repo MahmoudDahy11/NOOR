@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -17,6 +19,9 @@ class LiveRoomDataSource {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
 
+  Timer? _firestoreUpdateTimer;
+  int _pendingIncrements = 0;
+
   String get uid => _auth.currentUser!.uid;
 
   Stream<int> watchTotalCounter(String roomId) => _counterRef(
@@ -30,11 +35,25 @@ class LiveRoomDataSource {
   ).onValue.map((event) => (event.snapshot.value as int?) ?? 0);
 
   Future<void> incrementCounters(String roomId) async {
+    final userId = uid;
     final basePath = '${AppKeys.liveCountersPath}/$roomId';
     await _rtdb.ref().update({
       '$basePath/${AppKeys.liveCounterTotal}': ServerValue.increment(1),
-      '$basePath/${AppKeys.liveCounterParticipants}/$uid':
+      '$basePath/${AppKeys.liveCounterParticipants}/$userId':
           ServerValue.increment(1),
+    });
+
+    _pendingIncrements++;
+    if (_firestoreUpdateTimer?.isActive ?? false) {
+      _firestoreUpdateTimer!.cancel();
+    }
+    _firestoreUpdateTimer = Timer(const Duration(seconds: 2), () {
+      if (_pendingIncrements == 0) return;
+      final countToUpdate = _pendingIncrements;
+      _pendingIncrements = 0;
+      _firestore.collection(AppKeys.usersCollection).doc(userId).update({
+        AppKeys.userStatsTotalCounts: FieldValue.increment(countToUpdate),
+      });
     });
   }
 
@@ -70,8 +89,14 @@ class LiveRoomDataSource {
   }
 
   Future<void> completeRoom(String roomId) async {
+    final snapshot = await _rtdb
+        .ref('${AppKeys.liveCountersPath}/$roomId/${AppKeys.liveCounterTotal}')
+        .get();
+    final finalCount = (snapshot.value as int?) ?? 0;
+
     await _firestore.collection(AppKeys.roomsCollection).doc(roomId).update({
       AppKeys.roomStatus: AppKeys.statusCompleted,
+      AppKeys.roomCurrentProgress: finalCount,
     });
     await _rtdb.ref('${AppKeys.liveCountersPath}/$roomId').remove();
   }
