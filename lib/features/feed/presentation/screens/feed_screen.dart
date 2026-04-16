@@ -56,15 +56,26 @@ class _FeedView extends StatelessWidget {
       listener: _handleState,
       builder: (context, state) => Scaffold(
         backgroundColor: const Color(0xFF0A1F14),
-        body: Column(
-          children: [
-            const FeedHeader(),
-            FeedTabBar(
-              activeTab: _currentTab(state),
-              onTabChanged: (t) => context.read<FeedCubit>().switchTab(t),
-            ),
-            Expanded(child: _buildBody(context, state)),
-          ],
+        body: NotificationListener<ScrollNotification>(
+          onNotification: (n) {
+            if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
+              context.read<FeedCubit>().loadMore();
+            }
+            return false;
+          },
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              const SliverToBoxAdapter(child: FeedHeader()),
+              SliverToBoxAdapter(
+                child: FeedTabBar(
+                  activeTab: _currentTab(state),
+                  onTabChanged: (t) => context.read<FeedCubit>().switchTab(t),
+                ),
+              ),
+              _buildBody(context, state),
+            ],
+          ),
         ),
       ),
     );
@@ -72,19 +83,24 @@ class _FeedView extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, FeedState state) {
     return switch (state) {
-      FeedLoading() => const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
+      FeedLoading() => const SliverFillRemaining(
+        child: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
       ),
       FeedLoaded() => FeedListBody(state: state),
       FeedJoining() => FeedListBody(
         state: FeedLoaded(rooms: state.rooms, activeTab: state.activeTab),
         joiningId: state.joiningRoomId,
       ),
-      FeedFailure() => FeedErrorBody(
-        message: state.message,
-        onRetry: () => context.read<FeedCubit>().loadFeed(),
+      FeedFailure() => SliverFillRemaining(
+        hasScrollBody: false,
+        child: FeedErrorBody(
+          message: state.message,
+          onRetry: () => context.read<FeedCubit>().loadFeed(),
+        ),
       ),
-      _ => const SizedBox.shrink(),
+      _ => const SliverToBoxAdapter(child: SizedBox.shrink()),
     };
   }
 }
