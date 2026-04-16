@@ -36,8 +36,16 @@ class FeedRepoImpl implements FeedRepo {
       }
 
       final snap = await query.get();
+      final now = DateTime.now();
       final rooms = snap.docs
           .map((d) => FeedRoomModel.fromFirestore(d.data(), d.id))
+          .where((room) {
+            // Keep public active rooms that haven't expired yet
+            if (status == 'active' && room.expiresAt != null) {
+              return room.expiresAt!.isAfter(now);
+            }
+            return true;
+          })
           .toList();
       return right(rooms);
     } catch (e) {
@@ -54,9 +62,16 @@ class FeedRepoImpl implements FeedRepo {
         final snap = await tx.get(roomRef);
         if (!snap.exists) throw Exception('Room not found.');
         final status = snap.data()?[AppKeys.roomStatus] as String?;
+        final expiresAt = (snap.data()?[AppKeys.roomExpiresAt] as Timestamp?)?.toDate();
+        
         if (status != 'active') {
-          throw Exception('Room is not active yet.');
+          throw Exception('Room is not active.');
         }
+
+        if (expiresAt != null && DateTime.now().isAfter(expiresAt)) {
+          throw Exception('Room has expired.');
+        }
+
         final participants = List<String>.from(
           snap.data()?[AppKeys.roomParticipants] ?? [],
         );

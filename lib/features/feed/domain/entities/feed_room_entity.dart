@@ -44,4 +44,5 @@ class FeedRoomEntity {
 
   bool get isActive => status == 'active';
   bool get isPending => status == 'pending';
+  bool get isExpired => expiresAt != null && DateTime.now().isAfter(expiresAt!);
 }

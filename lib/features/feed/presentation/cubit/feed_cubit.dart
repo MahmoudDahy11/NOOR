@@ -95,6 +95,10 @@ class FeedCubit extends Cubit<FeedState> {
         emit(const FeedFailure('Room is not active yet.'));
         return;
       }
+      if (room.isExpired) {
+        emit(const FeedFailure('Room has expired.'));
+        return;
+      }
       joinRoom(roomId);
     });
   }
