@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../../../core/error/failure.dart';
 import '../../../account_setup/data/models/user_profile_model.dart';
 import '../../../account_setup/domain/entities/user_profile_entity.dart';
 import '../../../auth/data/service/local_storage.dart';
-import 'package:rxdart/rxdart.dart';
 import '../../../create_room/data/models/room_model.dart';
 import '../../domain/entities/profile_entity.dart';
 import '../../domain/repos/profile_repo.dart';

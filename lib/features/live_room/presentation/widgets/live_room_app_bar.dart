@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 /// Minimal dark-themed app bar for the Live Room screen.
@@ -78,7 +77,7 @@ class LiveRoomAppBar extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1B5E20).withOpacity(0.5),
+                      color: const Color(0xFF1B5E20).withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -98,10 +97,10 @@ class LiveRoomAppBar extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEF5350).withOpacity(0.15),
+                      color: const Color(0xFFEF5350).withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
-                        color: const Color(0xFFEF5350).withOpacity(0.3),
+                        color: const Color(0xFFEF5350).withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
