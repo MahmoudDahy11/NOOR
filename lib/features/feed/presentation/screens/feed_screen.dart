@@ -8,6 +8,7 @@ import 'package:tally_islamic/core/router/app_router.dart';
 import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../core/helper/show_snak_bar.dart';
+import '../../../notifications/domain/repositories/notification_repo.dart';
 import '../../domain/repositories/feed_repo.dart';
 import '../cubit/feed_cubit.dart';
 import '../widgets/feed_header.dart';
@@ -29,6 +30,8 @@ class FeedScreen extends StatelessWidget {
 
 class _FeedView extends StatelessWidget {
   const _FeedView();
+
+  NotificationRepo get _notificationRepo => getIt<NotificationRepo>();
 
   void _handleState(BuildContext context, FeedState state) {
     if (state is FeedJoinSuccess) {
@@ -54,48 +57,63 @@ class _FeedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<FeedCubit, FeedState>(
       listener: _handleState,
-      builder: (context, state) => Scaffold(
-        backgroundColor: const Color(0xFF0A1F14),
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            // Compute horizontal padding to constrain feed width gracefully to 700px on ultra-wide screens
-            final double hzPadding = constraints.maxWidth > 700
-                ? (constraints.maxWidth - 700) / 2
-                : 0;
+      builder: (context, state) => StreamBuilder<int>(
+        stream: _notificationRepo.watchUnreadCount(),
+        initialData: 0,
+        builder: (context, snapshot) {
+          final unreadCount = snapshot.data ?? 0;
 
-            return NotificationListener<ScrollNotification>(
-              onNotification: (n) {
-                if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
-                  context.read<FeedCubit>().loadMore();
-                }
-                return false;
-              },
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  SliverPadding(
-                    padding: EdgeInsets.symmetric(horizontal: hzPadding),
-                    sliver: const SliverToBoxAdapter(child: FeedHeader()),
-                  ),
-                  SliverPadding(
-                    padding: EdgeInsets.symmetric(horizontal: hzPadding),
-                    sliver: SliverToBoxAdapter(
-                      child: FeedTabBar(
-                        activeTab: _currentTab(state),
-                        onTabChanged: (t) =>
-                            context.read<FeedCubit>().switchTab(t),
+          return Scaffold(
+            backgroundColor: const Color(0xFF0A1F14),
+            body: LayoutBuilder(
+              builder: (context, constraints) {
+                // Compute horizontal padding to constrain feed width gracefully to 700px on ultra-wide screens
+                final double hzPadding = constraints.maxWidth > 700
+                    ? (constraints.maxWidth - 700) / 2
+                    : 0;
+
+                return NotificationListener<ScrollNotification>(
+                  onNotification: (n) {
+                    if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
+                      context.read<FeedCubit>().loadMore();
+                    }
+                    return false;
+                  },
+                  child: CustomScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    slivers: [
+                      SliverPadding(
+                        padding: EdgeInsets.symmetric(horizontal: hzPadding),
+                        sliver: SliverToBoxAdapter(
+                          child: FeedHeader(
+                            unreadCount: unreadCount,
+                            onNotificationTap: () {
+                              context.pushNamed(AppRouter.notificationsRoute);
+                            },
+                          ),
+                        ),
                       ),
-                    ),
+                      SliverPadding(
+                        padding: EdgeInsets.symmetric(horizontal: hzPadding),
+                        sliver: SliverToBoxAdapter(
+                          child: FeedTabBar(
+                            activeTab: _currentTab(state),
+                            onTabChanged: (t) =>
+                                context.read<FeedCubit>().switchTab(t),
+                          ),
+                        ),
+                      ),
+                      SliverPadding(
+                        padding: EdgeInsets.symmetric(horizontal: hzPadding),
+                        sliver: _buildBody(context, state),
+                      ),
+                    ],
                   ),
-                  SliverPadding(
-                    padding: EdgeInsets.symmetric(horizontal: hzPadding),
-                    sliver: _buildBody(context, state),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }

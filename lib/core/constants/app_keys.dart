@@ -7,6 +7,7 @@ class AppKeys {
   static const String ticketPackagesCollection = 'ticket_packages';
   static const String userTicketsCollection = 'user_tickets';
   static const String otpsCollection = 'otps';
+  static const String notificationsCollection = 'notifications';
 
   // User Keys
   static const String uId = 'uid';
@@ -68,6 +69,18 @@ class AppKeys {
   static const String statusCompleted = 'completed';
   static const String statusExpired = 'expired';
   static const String createdAt = 'createdAt'; // Generic fallback if needed
+
+  // Notification Keys
+  static const String notificationId = 'id';
+  static const String notificationTitle = 'title';
+  static const String notificationBody = 'body';
+  static const String notificationType = 'type';
+  static const String notificationData = 'data';
+  static const String notificationIsRead = 'isRead';
+  static const String notificationSentAt = 'sentAt';
+  static const String notificationOpenedAt = 'openedAt';
+  static const String notificationRoomId = 'roomId';
+  static const String notificationRoute = 'route';
 
   // RTDB — Live Counter Paths
   static const String liveCountersPath = 'live_counters';

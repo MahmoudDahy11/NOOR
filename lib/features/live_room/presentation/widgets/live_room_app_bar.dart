@@ -29,14 +29,17 @@ class LiveRoomAppBar extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                state.room.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFFE8F5E9),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  state.room.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFE8F5E9),
+                  ),
                 ),
               ),
               const SizedBox(height: 4),

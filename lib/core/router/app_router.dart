@@ -9,6 +9,7 @@ import '../../features/auth/presentation/pages/signin_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/home/presentation/screens/home.dart';
 import '../../features/live_room/presentation/screens/live_room_screen.dart';
+import '../../features/notifications/presentation/screens/notification_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/profile/presentation/screen/edit_profile_screen.dart';
 import '../../features/profile/presentation/screen/profile_screen.dart';
@@ -32,6 +33,7 @@ class AppRouter {
   static const String settingsRoute = '/settings';
   static const String addCardRoute = '/add-card';
   static const String liveRoomRoute = '/live-room';
+  static const String notificationsRoute = '/notifications';
 
   static final router = GoRouter(
     initialLocation: splashRoute,
@@ -104,6 +106,12 @@ class AppRouter {
         path: addCardRoute,
         pageBuilder: (context, state) =>
             _slidePage(state: state, child: const AddCardScreen()),
+      ),
+      GoRoute(
+        name: notificationsRoute,
+        path: notificationsRoute,
+        pageBuilder: (context, state) =>
+            _slidePage(state: state, child: const NotificationScreen()),
       ),
 
       // Live Room — parameterized: /live-room/:roomId

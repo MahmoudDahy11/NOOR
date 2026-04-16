@@ -22,6 +22,8 @@ import '../../features/feed/domain/repositories/feed_repo.dart';
 import '../../features/live_room/data/datasource/live_room_datasource.dart';
 import '../../features/live_room/data/repositories/live_room_repo_impl.dart';
 import '../../features/live_room/domain/repositories/live_room_repo.dart';
+import '../../features/notifications/data/repositories/notification_repo_impl.dart';
+import '../../features/notifications/domain/repositories/notification_repo.dart';
 import '../../features/profile/data/datasource/profile_datasource.dart';
 import '../../features/profile/data/repos/profile_repo_impl.dart';
 import '../../features/profile/domain/repos/profile_repo.dart';
@@ -102,6 +104,7 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<LiveRoomRepo>(
     () => LiveRoomRepoImpl(dataSource: getIt<LiveRoomDataSource>()),
   );
+  getIt.registerLazySingleton<NotificationRepo>(() => NotificationRepoImpl());
   // Cubits
   getIt.registerFactory<ProfileCubit>(
     () => ProfileCubit(

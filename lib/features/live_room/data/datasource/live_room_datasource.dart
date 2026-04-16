@@ -109,7 +109,9 @@ class LiveRoomDataSource {
   void _ensureRoomIsJoinable(Map<String, dynamic> data) {
     final status = data[AppKeys.roomStatus] as String? ?? AppKeys.statusPending;
     final expiresAt = (data[AppKeys.roomExpiresAt] as Timestamp?)?.toDate();
-    if (status != AppKeys.statusActive) throw Exception('Room is not active.');
+    if (status != AppKeys.statusActive) {
+      throw Exception('Room is not active.');
+    }
     if (expiresAt != null && DateTime.now().isAfter(expiresAt)) {
       throw Exception('Room has expired.');
     }
