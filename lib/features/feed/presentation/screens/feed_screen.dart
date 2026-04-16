@@ -33,7 +33,10 @@ class _FeedView extends StatelessWidget {
   void _handleState(BuildContext context, FeedState state) {
     if (state is FeedJoinSuccess) {
       showSnakBar(context, 'Joined room! 🕌');
-      context.goNamed(AppRouter.liveRoomRoute);
+      context.goNamed(
+        AppRouter.liveRoomRoute,
+        pathParameters: {'roomId': state.roomId},
+      );
     } else if (state is FeedFailure) {
       log('Feed Failure: ${state.message}');
       showSnakBar(context, state.message, isError: true);
