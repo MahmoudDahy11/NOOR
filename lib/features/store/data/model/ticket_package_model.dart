@@ -1,3 +1,4 @@
+import '../../../../core/constants/app_keys.dart';
 import '../../domain/entity/ticket_package_entity.dart';
 
 class TicketPackageModel extends TicketPackageEntity {
@@ -16,18 +17,18 @@ class TicketPackageModel extends TicketPackageEntity {
   ) =>
       TicketPackageModel(
         id: docId,
-        name: json['name'] ?? '',
-        ticketCount: json['ticketCount'] ?? 0,
-        price: (json['price'] as num).toDouble(),
-        currency: json['currency'] ?? 'usd',
-        isPopular: json['isPopular'] ?? false,
+        name: json[AppKeys.name] ?? '',
+        ticketCount: json[AppKeys.packageTicketCount] ?? 0,
+        price: (json[AppKeys.packagePrice] as num).toDouble(),
+        currency: json[AppKeys.packageCurrency] ?? 'usd',
+        isPopular: json[AppKeys.packageIsPopular] ?? false,
       );
 
   Map<String, dynamic> toFirestore() => {
-        'name': name,
-        'ticketCount': ticketCount,
-        'price': price,
-        'currency': currency,
-        'isPopular': isPopular,
+        AppKeys.name: name,
+        AppKeys.packageTicketCount: ticketCount,
+        AppKeys.packagePrice: price,
+        AppKeys.packageCurrency: currency,
+        AppKeys.packageIsPopular: isPopular,
       };
 }

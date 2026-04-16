@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../../../core/constants/app_keys.dart';
 import '../../domain/entity/user_entity.dart';
 
 /*
@@ -48,9 +49,9 @@ class UserModel {
    */
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      uId: json['uid'] as String,
-      name: json['name'] as String? ?? '',
-      email: json['email'] as String? ?? '',
+      uId: json[AppKeys.uId] as String,
+      name: json[AppKeys.name] as String? ?? '',
+      email: json[AppKeys.email] as String? ?? '',
     );
   }
   /*
@@ -58,6 +59,6 @@ class UserModel {
    * maps UserModel properties to JSON properties
    */
   Map<String, String> toJson() {
-    return {'uid': uId, 'name': name, 'email': email};
+    return {AppKeys.uId: uId, AppKeys.name: name, AppKeys.email: email};
   }
 }

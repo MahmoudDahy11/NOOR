@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../../core/constants/app_keys.dart';
 import '../../../../core/error/custom_excption.dart';
 import 'local_storage.dart';
 
@@ -111,7 +112,7 @@ class FirebaseService {
   Future<void> sendPasswordResetEmail({required String email}) async {
     try {
       final userDoc = await firestore
-          .collection('users')
+          .collection(AppKeys.usersCollection)
           .where('email', isEqualTo: email)
           .get();
 
@@ -185,7 +186,7 @@ class FirebaseService {
 
       // 2. Delete user's document from Firestore
       final uid = user.uid;
-      await firestore.collection('users').doc(uid).delete();
+      await firestore.collection(AppKeys.usersCollection).doc(uid).delete();
 
       // 3. Delete the user from FirebaseAuth
       await user.delete();

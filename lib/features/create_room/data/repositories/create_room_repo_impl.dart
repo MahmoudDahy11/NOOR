@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../../../core/constants/app_keys.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/create_room_params.dart';
 import '../../domain/entities/room_entity.dart';
@@ -29,7 +30,7 @@ class CreateRoomRepoImpl implements CreateRoomRepo {
       final userData = await _dataSource.getUserData();
 
       if (params.isPaid) {
-        final balance = (userData['ticket_balance'] ?? 0) as int;
+        final balance = (userData[AppKeys.ticketBalance] ?? 0) as int;
         if (balance < params.ticketsRequired) {
           return left(
             CustomFailure(errMessage: 'Not enough tickets. Visit the store.'),
@@ -40,8 +41,8 @@ class CreateRoomRepoImpl implements CreateRoomRepo {
       final roomId = _dataSource.generateRoomId();
       final creator = RoomCreatorModel(
         id: _uid,
-        name: userData['displayName'] ?? '',
-        photo: userData['avatarAsset'] ?? '',
+        name: userData[AppKeys.displayName] ?? '',
+        photo: userData[AppKeys.avatarAsset] ?? '',
       );
 
       final room = RoomModel(
@@ -53,7 +54,7 @@ class CreateRoomRepoImpl implements CreateRoomRepo {
         currentProgress: 0,
         creator: creator,
         createdAt: DateTime.now(),
-        status: 'pending',
+        status: AppKeys.statusPending,
         isPublic: params.isPublic,
         participants: [_uid],
         durationHours: params.durationHours,

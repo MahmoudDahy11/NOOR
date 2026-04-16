@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/room_entity.dart';
 
@@ -62,7 +64,7 @@ class RoomGoalField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => RoomFormField(
-    controller: controller, label: 'Collective Goal',
+    controller: controller, label: AppStrings.collectiveGoal,
     hint: '100', keyboardType: TextInputType.number, suffix: 'counts',
     validator: (v) {
       final n = int.tryParse(v ?? '');
@@ -81,7 +83,7 @@ class VisibilityToggleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(children: [
-    const Text('Visibility', style: TextStyle(fontSize: 13,
+    const Text(AppStrings.visibility, style: TextStyle(fontSize: 13,
         fontWeight: FontWeight.w600, color: Color(0xFF374151))),
     const Spacer(),
     GestureDetector(

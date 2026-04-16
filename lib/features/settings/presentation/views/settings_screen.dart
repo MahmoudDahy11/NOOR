@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tally_islamic/core/theme/app_theme.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/helper/show_snak_bar.dart';
 import '../../../../core/router/app_router.dart';
@@ -50,7 +51,7 @@ class _SettingsView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: const Text('Settings', style: AppTextStyles.titleLarge),
+          title: const Text(AppStrings.settings, style: AppTextStyles.titleLarge),
           backgroundColor: AppTheme.light.scaffoldBackgroundColor,
           elevation: 0,
           leading: IconButton(

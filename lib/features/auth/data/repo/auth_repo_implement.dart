@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:tally_islamic/core/error/failure.dart';
+import '../../../../core/constants/app_keys.dart';
 
 import '../../../../core/error/custom_excption.dart';
 import '../../domain/entity/user_entity.dart';
@@ -111,12 +112,12 @@ class FirebaseAuthRepoImplement extends FirebaseAuthRepo {
     try {
       final user = await _firebaseService.signInWithGoogle();
 
-      await _firestore.collection('users').doc(user.uid).set({
-        'uid': user.uid,
-        'email': user.email,
-        'name': user.displayName ?? '',
-        'photoUrl': user.photoURL ?? '',
-        'createdAt': FieldValue.serverTimestamp(),
+      await _firestore.collection(AppKeys.usersCollection).doc(user.uid).set({
+        AppKeys.uId: user.uid,
+        AppKeys.email: user.email,
+        AppKeys.displayName: user.displayName ?? '',
+        AppKeys.photoUrl: user.photoURL ?? '',
+        AppKeys.userCreatedAt: FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
       await LocalStorageService.saveUserData(

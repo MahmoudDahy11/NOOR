@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../core/constants/app_keys.dart';
 import '../../domain/entity/user_ticket_entity.dart';
 
 class UserTicketModel extends UserTicketEntity {
@@ -18,20 +19,20 @@ class UserTicketModel extends UserTicketEntity {
     String docId,
   ) => UserTicketModel(
     id: docId,
-    userId: json['userId'] ?? '',
-    packageId: json['packageId'] ?? '',
-    ticketCount: json['ticketCount'] ?? 0,
-    pricePaid: (json['pricePaid'] as num).toDouble(),
-    stripePaymentIntentId: json['stripePaymentIntentId'] ?? '',
-    purchasedAt: (json['purchasedAt'] as Timestamp).toDate(),
+    userId: json[AppKeys.userId] ?? '',
+    packageId: json[AppKeys.userTicketPackageId] ?? '',
+    ticketCount: json[AppKeys.packageTicketCount] ?? 0,
+    pricePaid: (json[AppKeys.userTicketPricePaid] as num).toDouble(),
+    stripePaymentIntentId: json[AppKeys.userTicketStripePaymentIntentId] ?? '',
+    purchasedAt: (json[AppKeys.userTicketPurchasedAt] as Timestamp).toDate(),
   );
 
   Map<String, dynamic> toFirestore() => {
-    'userId': userId,
-    'packageId': packageId,
-    'ticketCount': ticketCount,
-    'pricePaid': pricePaid,
-    'stripePaymentIntentId': stripePaymentIntentId,
-    'purchasedAt': Timestamp.fromDate(purchasedAt),
+    AppKeys.userId: userId,
+    AppKeys.userTicketPackageId: packageId,
+    AppKeys.packageTicketCount: ticketCount,
+    AppKeys.userTicketPricePaid: pricePaid,
+    AppKeys.userTicketStripePaymentIntentId: stripePaymentIntentId,
+    AppKeys.userTicketPurchasedAt: Timestamp.fromDate(purchasedAt),
   };
 }

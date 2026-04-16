@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/room_entity.dart';
 
@@ -17,7 +19,7 @@ class FormHandle extends StatelessWidget {
         decoration: BoxDecoration(color: color,
             borderRadius: BorderRadius.circular(2))),
       const SizedBox(width: 10),
-      const Text('Create Room', style: TextStyle(fontSize: 20,
+      const Text(AppStrings.createRoom, style: TextStyle(fontSize: 20,
           fontWeight: FontWeight.w800, color: Color(0xFF1A1C1C))),
     ]),
   ]);
@@ -49,7 +51,7 @@ class CreateRoomSubmitButton extends StatelessWidget {
           ? const SizedBox(width: 22, height: 22,
               child: CircularProgressIndicator(
                   color: Colors.white, strokeWidth: 2.5))
-          : const Text('Create Room', style: TextStyle(
+          : const Text(AppStrings.createRoom, style: TextStyle(
               fontSize: 16, fontWeight: FontWeight.w700)),
     ),
   );

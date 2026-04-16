@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class DhikrSelectorWidget extends StatelessWidget {
@@ -15,7 +17,7 @@ class DhikrSelectorWidget extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Text('Dhikr', style: TextStyle(fontSize: 13,
+      const Text(AppStrings.dhikr, style: TextStyle(fontSize: 13,
           fontWeight: FontWeight.w600, color: Color(0xFF374151))),
       const SizedBox(height: 10),
       ValueListenableBuilder(
@@ -26,7 +28,7 @@ class DhikrSelectorWidget extends StatelessWidget {
             ..._options.map((d) => DhikrChip(
               label: d, isSelected: selected == d,
               onTap: () => notifier.value = d)),
-            DhikrChip(label: 'Custom ✏️', isSelected: selected == 'custom',
+            DhikrChip(label: AppStrings.custom, isSelected: selected == 'custom',
                 color: AppColors.gold,
                 onTap: () => notifier.value = 'custom'),
           ],

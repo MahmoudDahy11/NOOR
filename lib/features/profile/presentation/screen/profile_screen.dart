@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tally_islamic/core/helper/show_snak_bar.dart';
+import '../../../../core/constants/app_strings.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/router/app_router.dart';
@@ -110,12 +111,12 @@ class _ProfileView extends StatelessWidget {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Sign Out'),
-          content: const Text('Are you sure you want to sign out?'),
+          title: const Text(AppStrings.signOut),
+          content: const Text(AppStrings.signOutConfirm),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+              child: const Text(AppStrings.cancel),
             ),
             TextButton(
               onPressed: () {
@@ -123,7 +124,7 @@ class _ProfileView extends StatelessWidget {
                 context.read<ProfileCubit>().signOut();
               },
               child: const Text(
-                'Sign Out',
+                AppStrings.signOut,
                 style: TextStyle(color: AppColors.error),
               ),
             ),

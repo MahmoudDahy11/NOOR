@@ -1,4 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:tally_islamic/core/constants/app_keys.dart';
 
 /*
  * LocalStorageService class
@@ -9,10 +10,10 @@ import 'package:hive_flutter/hive_flutter.dart';
  */
 class LocalStorageService {
   // Keys for user data
-  static const String _uidKey = 'uid';
-  static const String _emailKey = 'email';
-  static const String _nameKey = 'name';
-  static const String _photoUrlKey = 'photoUrl';
+  static const String _uidKey = AppKeys.uId;
+  static const String _emailKey = AppKeys.email;
+  static const String _nameKey = AppKeys.name;
+  static const String _photoUrlKey = AppKeys.photoUrl;
   static const String _isLoggedInKey = 'isLoggedIn';
   static const String boxName = 'userBox';
 
@@ -43,10 +44,10 @@ class LocalStorageService {
   static Map<String, dynamic> getUserData() {
     final box = Hive.box(boxName);
     return {
-      'uid': box.get(_uidKey, defaultValue: ''),
-      'email': box.get(_emailKey, defaultValue: ''),
-      'name': box.get(_nameKey, defaultValue: ''),
-      'photoUrl': box.get(_photoUrlKey, defaultValue: ''),
+      AppKeys.uId: box.get(_uidKey, defaultValue: ''),
+      AppKeys.email: box.get(_emailKey, defaultValue: ''),
+      AppKeys.name: box.get(_nameKey, defaultValue: ''),
+      AppKeys.photoUrl: box.get(_photoUrlKey, defaultValue: ''),
     };
   }
 

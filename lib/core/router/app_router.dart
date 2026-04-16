@@ -8,7 +8,7 @@ import '../../features/auth/presentation/pages/otp_page.dart';
 import '../../features/auth/presentation/pages/reset_password_page.dart';
 import '../../features/auth/presentation/pages/signin_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
-import '../../features/home/home.dart';
+import '../../features/home/presentation/screens/home.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/profile/presentation/screen/edit_profile_screen.dart';
 import '../../features/profile/presentation/screen/profile_screen.dart';
@@ -76,7 +76,7 @@ class AppRouter {
         name: homeRoute,
         path: homeRoute,
         pageBuilder: (context, state) =>
-            _slidePage(state: state, child: const Home()),
+            _slidePage(state: state, child: const HomeScreen()),
       ),
       GoRoute(
         name: profileRoute,

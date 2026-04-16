@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../core/constants/app_keys.dart';
 import '../../domain/entities/room_entity.dart';
 
 class RoomCreatorModel extends RoomCreatorEntity {
@@ -11,12 +12,16 @@ class RoomCreatorModel extends RoomCreatorEntity {
 
   factory RoomCreatorModel.fromMap(Map<String, dynamic> map) =>
       RoomCreatorModel(
-        id: map['id'] ?? '',
-        name: map['name'] ?? '',
-        photo: map['photo'] ?? '',
+        id: map[AppKeys.roomId] ?? '',
+        name: map[AppKeys.roomName] ?? '',
+        photo: map[AppKeys.roomPhoto] ?? '',
       );
 
-  Map<String, dynamic> toMap() => {'id': id, 'name': name, 'photo': photo};
+  Map<String, dynamic> toMap() => {
+        AppKeys.roomId: id,
+        AppKeys.roomName: name,
+        AppKeys.roomPhoto: photo,
+      };
 }
 
 class RoomModel extends RoomEntity {
@@ -37,43 +42,43 @@ class RoomModel extends RoomEntity {
     super.startedAt,
   });
 
-  factory RoomModel.fromFirestore(Map<String, dynamic> json, String docId) =>
+    factory RoomModel.fromFirestore(Map<String, dynamic> json, String docId) =>
       RoomModel(
         id: docId,
-        name: json['name'] ?? '',
-        type: json['type'] ?? 'free',
-        dhikr: json['dhikr'] ?? '',
-        goal: json['goal'] ?? 0,
-        currentProgress: json['currentProgress'] ?? 0,
+        name: json[AppKeys.roomName] ?? '',
+        type: json[AppKeys.roomType] ?? AppKeys.typeFree,
+        dhikr: json[AppKeys.roomDhikr] ?? '',
+        goal: json[AppKeys.roomGoal] ?? 0,
+        currentProgress: json[AppKeys.roomCurrentProgress] ?? 0,
         creator: RoomCreatorModel.fromMap(
-            json['creator'] as Map<String, dynamic>? ?? {}),
-        createdAt: (json['createdAt'] as Timestamp).toDate(),
-        expiresAt: json['expiresAt'] != null
-            ? (json['expiresAt'] as Timestamp).toDate()
+            json[AppKeys.roomCreator] as Map<String, dynamic>? ?? {}),
+        createdAt: (json[AppKeys.roomCreatedAt] as Timestamp).toDate(),
+        expiresAt: json[AppKeys.roomExpiresAt] != null
+            ? (json[AppKeys.roomExpiresAt] as Timestamp).toDate()
             : null,
-        startedAt: json['startedAt'] != null
-            ? (json['startedAt'] as Timestamp).toDate()
+        startedAt: json[AppKeys.roomStartedAt] != null
+            ? (json[AppKeys.roomStartedAt] as Timestamp).toDate()
             : null,
-        status: json['status'] ?? 'pending',
-        isPublic: json['isPublic'] ?? false,
-        participants: List<String>.from(json['participants'] ?? []),
-        durationHours: (json['durationHours'] as num).toDouble(),
+        status: json[AppKeys.roomStatus] ?? AppKeys.statusPending,
+        isPublic: json[AppKeys.roomIsPublic] ?? false,
+        participants: List<String>.from(json[AppKeys.roomParticipants] ?? []),
+        durationHours: (json[AppKeys.roomDurationHours] as num).toDouble(),
       );
 
   Map<String, dynamic> toFirestore() => {
-        'name': name,
-        'type': type,
-        'dhikr': dhikr,
-        'goal': goal,
-        'currentProgress': currentProgress,
-        'creator': (creator as RoomCreatorModel).toMap(),
-        'createdAt': Timestamp.fromDate(createdAt),
-        'expiresAt': expiresAt != null ? Timestamp.fromDate(expiresAt!) : null,
-        'startedAt':
+        AppKeys.roomName: name,
+        AppKeys.roomType: type,
+        AppKeys.roomDhikr: dhikr,
+        AppKeys.roomGoal: goal,
+        AppKeys.roomCurrentProgress: currentProgress,
+        AppKeys.roomCreator: (creator as RoomCreatorModel).toMap(),
+        AppKeys.roomCreatedAt: Timestamp.fromDate(createdAt),
+        AppKeys.roomExpiresAt: expiresAt != null ? Timestamp.fromDate(expiresAt!) : null,
+        AppKeys.roomStartedAt:
             startedAt != null ? Timestamp.fromDate(startedAt!) : null,
-        'status': status,
-        'isPublic': isPublic,
-        'participants': participants,
-        'durationHours': durationHours,
+        AppKeys.roomStatus: status,
+        AppKeys.roomIsPublic: isPublic,
+        AppKeys.roomParticipants: participants,
+        AppKeys.roomDurationHours: durationHours,
       };
 }

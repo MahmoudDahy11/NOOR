@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 
+import '../../../../core/constants/app_keys.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/create_room_params.dart';
 import '../models/room_model.dart';
@@ -16,20 +17,20 @@ class RoomTransactionHelper {
   ) async {
     try {
       await firestore.runTransaction((tx) async {
-        final roomRef = firestore.collection('rooms').doc(room.id);
-        final userRef = firestore.collection('users').doc(uid);
+        final roomRef = firestore.collection(AppKeys.roomsCollection).doc(room.id);
+        final userRef = firestore.collection(AppKeys.usersCollection).doc(uid);
 
         // 1. ALL READS FIRST
         final userSnap = await tx.get(userRef);
 
         if (params.isPaid) {
-          final balance = (userSnap.data()?['ticket_balance'] ?? 0) as int;
+          final balance = (userSnap.data()?[AppKeys.ticketBalance] ?? 0) as int;
           if (balance < params.ticketsRequired) {
             throw Exception('Not enough tickets.');
           }
           // 2. ALL WRITES LAST
           tx.update(userRef, {
-            'ticket_balance': balance - params.ticketsRequired,
+            AppKeys.ticketBalance: balance - params.ticketsRequired,
           });
         }
 
@@ -50,10 +51,10 @@ class RoomTransactionHelper {
       final expiresAt = now.add(
         Duration(minutes: (durationHours * 60).round()),
       );
-      await firestore.collection('rooms').doc(roomId).update({
-        'status': 'active',
-        'startedAt': Timestamp.fromDate(now),
-        'expiresAt': Timestamp.fromDate(expiresAt),
+      await firestore.collection(AppKeys.roomsCollection).doc(roomId).update({
+        AppKeys.roomStatus: 'active',
+        AppKeys.roomStartedAt: Timestamp.fromDate(now),
+        AppKeys.roomExpiresAt: Timestamp.fromDate(expiresAt),
       });
       return right(null);
     } catch (e) {

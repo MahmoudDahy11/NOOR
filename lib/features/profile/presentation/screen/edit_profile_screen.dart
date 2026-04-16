@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tally_islamic/core/helper/show_snak_bar.dart';
+import '../../../../core/constants/app_strings.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -76,7 +77,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: const Text(AppStrings.editProfile),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.textPrimary,
@@ -127,7 +128,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
                         },
                       ),
                       const SizedBox(height: 32),
-                      const Text('Display Name', style: AppTextStyles.titleLarge),
+                      const Text(AppStrings.displayName, style: AppTextStyles.titleLarge),
                       const SizedBox(height: 12),
                       CustomTextField(
                         controller: _nameController,
@@ -137,7 +138,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
                             value == null || value.isEmpty ? 'Required' : null,
                       ),
                       const SizedBox(height: 24),
-                      const Text('Bio', style: AppTextStyles.titleLarge),
+                      const Text(AppStrings.bio, style: AppTextStyles.titleLarge),
                       const SizedBox(height: 12),
                       CustomTextField(
                         controller: _bioController,

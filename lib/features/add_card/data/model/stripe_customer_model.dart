@@ -1,3 +1,4 @@
+import '../../../../core/constants/app_keys.dart';
 import '../../domain/entity/stripe_customer_entity.dart';
 
 class StripeCustomerModel extends StripeCustomerEntity {
@@ -5,13 +6,13 @@ class StripeCustomerModel extends StripeCustomerEntity {
 
   factory StripeCustomerModel.fromJson(Map<String, dynamic> json) =>
       StripeCustomerModel(
-        customerId: json['id'] ?? '',
-        email: json['email'] ?? '',
+        customerId: json[AppKeys.stripeId] ?? '',
+        email: json[AppKeys.email] ?? '',
       );
 
   Map<String, dynamic> toFirestore() => {
-    'stripeCustomerId': customerId,
-    'stripeEmail': email,
-    'cardAddedAt': DateTime.now().toIso8601String(),
+    AppKeys.stripeCustomerId: customerId,
+    AppKeys.stripeEmail: email,
+    AppKeys.userCardAddedAt: DateTime.now().toIso8601String(),
   };
 }

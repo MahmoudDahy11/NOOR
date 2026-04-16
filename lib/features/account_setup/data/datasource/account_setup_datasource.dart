@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../core/constants/app_keys.dart';
 import '../models/user_profile_model.dart';
 
 /// AccountSetup Data Source - Direct Firestore operations
@@ -13,7 +14,7 @@ class AccountSetupDataSource {
   Future<void> saveProfile(UserProfileModel profile) async {
     try {
       await _firestore
-          .collection('users')
+          .collection(AppKeys.usersCollection)
           .doc(profile.uid)
           .set(profile.toFirestore());
     } catch (e) {
@@ -24,7 +25,7 @@ class AccountSetupDataSource {
   /// Check if user profile exists in Firestore
   Future<bool> hasUserProfile(String uid) async {
     try {
-      final doc = await _firestore.collection('users').doc(uid).get();
+      final doc = await _firestore.collection(AppKeys.usersCollection).doc(uid).get();
       return doc.exists;
     } catch (e) {
       throw Exception('Failed to check profile existence: $e');
@@ -34,7 +35,7 @@ class AccountSetupDataSource {
   /// Get user profile from Firestore
   Future<UserProfileModel?> getUserProfile(String uid) async {
     try {
-      final doc = await _firestore.collection('users').doc(uid).get();
+      final doc = await _firestore.collection(AppKeys.usersCollection).doc(uid).get();
       if (!doc.exists) return null;
       return UserProfileModel.fromFirestore(doc.data() ?? {});
     } catch (e) {

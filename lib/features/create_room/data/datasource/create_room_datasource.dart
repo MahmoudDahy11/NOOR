@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
+import '../../../../core/constants/app_keys.dart';
 import '../../domain/entities/create_room_params.dart';
 import '../models/room_model.dart';
 import '../repositories/room_transaction_helper.dart';
@@ -28,7 +29,7 @@ class CreateRoomDataSource {
   /// Get user data from Firestore
   Future<Map<String, dynamic>> getUserData() async {
     try {
-      final userDoc = await _firestore.collection('users').doc(_uid).get();
+      final userDoc = await _firestore.collection(AppKeys.usersCollection).doc(_uid).get();
       if (!userDoc.exists) {
         throw Exception('User profile not found.');
       }
@@ -74,7 +75,7 @@ class CreateRoomDataSource {
       log('[DataSource] Setting RTDB counter for room: $roomId');
       await _rtdb
           .ref('live_counters/$roomId')
-          .set({'c': 0})
+          .set({AppKeys.roomCount: 0})
           .timeout(const Duration(seconds: 5));
     } catch (e) {
       log('[DataSource] RTDB set failed or timed out: $e');
@@ -85,7 +86,7 @@ class CreateRoomDataSource {
   /// Get room by ID
   Future<RoomModel?> getRoom(String roomId) async {
     try {
-      final snap = await _firestore.collection('rooms').doc(roomId).get();
+      final snap = await _firestore.collection(AppKeys.roomsCollection).doc(roomId).get();
       if (!snap.exists) return null;
       return RoomModel.fromFirestore(snap.data() ?? {}, snap.id);
     } catch (e) {
@@ -96,8 +97,8 @@ class CreateRoomDataSource {
   /// Get duration for a room
   Future<double> getRoomDuration(String roomId) async {
     try {
-      final snap = await _firestore.collection('rooms').doc(roomId).get();
-      return (snap.data()?['durationHours'] as num).toDouble();
+      final snap = await _firestore.collection(AppKeys.roomsCollection).doc(roomId).get();
+      return (snap.data()?[AppKeys.roomDurationHours] as num).toDouble();
     } catch (e) {
       throw Exception('Failed to get room duration: $e');
     }
@@ -122,9 +123,9 @@ class CreateRoomDataSource {
   Future<List<RoomModel>> getUserRooms() async {
     try {
       final snap = await _firestore
-          .collection('rooms')
-          .where('creator.id', isEqualTo: _uid)
-          .orderBy('createdAt', descending: true)
+          .collection(AppKeys.roomsCollection)
+          .where(AppKeys.roomCreatorId, isEqualTo: _uid)
+          .orderBy(AppKeys.roomCreatedAt, descending: true)
           .get();
       return snap.docs
           .map((d) => RoomModel.fromFirestore(d.data(), d.id))

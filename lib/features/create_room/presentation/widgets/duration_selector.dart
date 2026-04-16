@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class DurationSelectorWidget extends StatelessWidget {
@@ -28,7 +29,7 @@ class DurationSelectorWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(children: [
-          const Text('Duration', style: TextStyle(fontSize: 13,
+          const Text(AppStrings.duration, style: TextStyle(fontSize: 13,
               fontWeight: FontWeight.w600, color: Color(0xFF374151))),
           const Spacer(),
           Text('${_tickets(selectedHours)} ticket(s)',

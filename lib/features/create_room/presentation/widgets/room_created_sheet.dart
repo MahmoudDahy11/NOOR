@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/room_entity.dart';
 import 'room_id_card.dart';
@@ -34,10 +36,10 @@ class RoomCreatedSheet extends StatelessWidget {
               color: AppColors.primary, size: 36),
         ),
         const SizedBox(height: 16),
-        const Text('Room Created!', style: TextStyle(fontSize: 20,
+        const Text(AppStrings.roomCreated, style: TextStyle(fontSize: 20,
             fontWeight: FontWeight.w800, color: Color(0xFF1A1C1C))),
         const SizedBox(height: 8),
-        Text('Start now or later from your profile.',
+        Text(AppStrings.roomCreatedBody,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
         const SizedBox(height: 20),

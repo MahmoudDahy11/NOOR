@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 
+import '../../../../core/constants/app_keys.dart';
 import '../../../../core/env/app_env.dart';
 
 /*
@@ -29,33 +30,33 @@ class OtpService {
   }
 
   Future<void> saveOtp(String uid, String otp) async {
-    await _firestore.collection('otps').doc(uid).set({
-      'otp': otp,
-      'createdAt': FieldValue.serverTimestamp(),
-      'expiresAt': DateTime.now().add(otpValidity),
-      'canResendAt': DateTime.now().add(resendCooldown),
-      'verified': false,
+    await _firestore.collection(AppKeys.otpsCollection).doc(uid).set({
+      AppKeys.otpValue: otp,
+      AppKeys.otpCreatedAt: FieldValue.serverTimestamp(),
+      AppKeys.otpExpiresAt: DateTime.now().add(otpValidity),
+      AppKeys.otpCanResendAt: DateTime.now().add(resendCooldown),
+      AppKeys.otpVerified: false,
     });
   }
 
   Future<bool> verifyOtp(String uid, String enteredOtp) async {
-    final snap = await _firestore.collection('otps').doc(uid).get();
+    final snap = await _firestore.collection(AppKeys.otpsCollection).doc(uid).get();
     if (!snap.exists) return false;
 
     final data = snap.data()!;
-    final otp = data['otp'];
-    final expiresAt = (data['expiresAt'] as Timestamp).toDate();
+    final otpValue = data[AppKeys.otpValue];
+    final expiresAt = (data[AppKeys.otpExpiresAt] as Timestamp).toDate();
 
     if (DateTime.now().isAfter(expiresAt)) {
       return false;
     }
 
-    final isValid = otp == enteredOtp;
+    final isValid = otpValue == enteredOtp;
 
     if (isValid) {
-      await _firestore.collection('otps').doc(uid).update({
-        'verified': true,
-        'verifiedAt': FieldValue.serverTimestamp(),
+      await _firestore.collection(AppKeys.otpsCollection).doc(uid).update({
+        AppKeys.otpVerified: true,
+        AppKeys.otpVerifiedAt: FieldValue.serverTimestamp(),
       });
     }
 
@@ -63,21 +64,21 @@ class OtpService {
   }
 
   Future<bool> canResendOtp(String uid) async {
-    final snap = await _firestore.collection('otps').doc(uid).get();
+    final snap = await _firestore.collection(AppKeys.otpsCollection).doc(uid).get();
     if (!snap.exists) return true;
 
     final data = snap.data()!;
-    final canResendAt = (data['canResendAt'] as Timestamp).toDate();
+    final canResendAt = (data[AppKeys.otpCanResendAt] as Timestamp).toDate();
 
     return DateTime.now().isAfter(canResendAt);
   }
 
   Future<bool> isOtpVerified(String uid) async {
-    final snap = await _firestore.collection('otps').doc(uid).get();
+    final snap = await _firestore.collection(AppKeys.otpsCollection).doc(uid).get();
     if (!snap.exists) return false;
 
     final data = snap.data()!;
-    return data['verified'] == true;
+    return data[AppKeys.otpVerified] == true;
   }
 
   Future<void> sendOtpToEmail(String email, String otp) async {

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../../../core/constants/app_keys.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/feed_room_entity.dart';
 import '../../domain/repositories/feed_repo.dart';
@@ -24,10 +25,10 @@ class FeedRepoImpl implements FeedRepo {
   }) async {
     try {
       var query = _firestore
-          .collection('rooms')
-          .where('isPublic', isEqualTo: true)
-          .where('status', isEqualTo: status)
-          .orderBy('createdAt', descending: true)
+          .collection(AppKeys.roomsCollection)
+          .where(AppKeys.roomIsPublic, isEqualTo: true)
+          .where(AppKeys.roomStatus, isEqualTo: status)
+          .orderBy(AppKeys.roomCreatedAt, descending: true)
           .limit(_pageSize);
 
       if (lastRoom != null) {
@@ -49,19 +50,19 @@ class FeedRepoImpl implements FeedRepo {
     try {
       final uid = _auth.currentUser!.uid;
       await _firestore.runTransaction((tx) async {
-        final roomRef = _firestore.collection('rooms').doc(roomId);
+        final roomRef = _firestore.collection(AppKeys.roomsCollection).doc(roomId);
         final snap = await tx.get(roomRef);
         if (!snap.exists) throw Exception('Room not found.');
-        final status = snap.data()?['status'] as String?;
+        final status = snap.data()?[AppKeys.roomStatus] as String?;
         if (status != 'active') {
           throw Exception('Room is not active yet.');
         }
         final participants = List<String>.from(
-          snap.data()?['participants'] ?? [],
+          snap.data()?[AppKeys.roomParticipants] ?? [],
         );
         if (!participants.contains(uid)) {
           tx.update(roomRef, {
-            'participants': FieldValue.arrayUnion([uid]),
+            AppKeys.roomParticipants: FieldValue.arrayUnion([uid]),
           });
         }
       });
@@ -77,7 +78,7 @@ class FeedRepoImpl implements FeedRepo {
   ) async {
     try {
       final snap = await _firestore
-          .collection('rooms')
+          .collection(AppKeys.roomsCollection)
           .doc(roomId.toUpperCase())
           .get();
       if (!snap.exists) {

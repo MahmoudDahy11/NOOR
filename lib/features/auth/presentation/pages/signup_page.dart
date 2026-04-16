@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/helper/show_snak_bar.dart';
 import '../../../../core/router/app_router.dart';
@@ -211,7 +212,7 @@ class _SignupViewState extends State<_SignupView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("Already have an account? "),
+        const Text(AppStrings.alreadyHaveAccount),
         TextButton(
           onPressed: () => context.pushNamed(AppRouter.signinRoute),
           child: const Text(

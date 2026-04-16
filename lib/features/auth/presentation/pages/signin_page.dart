@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/helper/show_snak_bar.dart';
 import '../../../../core/router/app_router.dart';
@@ -191,7 +192,7 @@ class _SigninViewState extends State<_SigninView> {
                   const SizedBox(height: 60),
                   _buildLogo(),
                   const SizedBox(height: 40),
-                  const Text("Sign In", style: AppTextStyles.displayLarge),
+                  const Text(AppStrings.signIn, style: AppTextStyles.displayLarge),
                   const SizedBox(height: 8),
                   const Text(
                     "Welcome back to Tally",
@@ -229,7 +230,7 @@ class _SigninViewState extends State<_SigninView> {
                   const SizedBox(height: 32),
                   BlocBuilder<LoginCubit, LoginState>(
                     builder: (context, state) => CustomGradientButton(
-                      text: "Sign In",
+                      text: AppStrings.signIn,
                       isLoading: state is LoginLoading,
                       onPressed: _handleSignIn,
                     ),
@@ -270,7 +271,7 @@ class _SigninViewState extends State<_SigninView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("Don't have an account? "),
+        const Text(AppStrings.dontHaveAccount),
         TextButton(
           onPressed: () => context.pushNamed(AppRouter.signupRoute),
           child: const Text(

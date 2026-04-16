@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../core/constants/app_keys.dart';
 import '../../domain/entities/feed_room_entity.dart';
 
 class FeedRoomModel extends FeedRoomEntity {
@@ -23,27 +24,27 @@ class FeedRoomModel extends FeedRoomEntity {
     String docId,
   ) {
     final creatorMap =
-        json['creator'] as Map<String, dynamic>? ?? {};
+        json[AppKeys.roomCreator] as Map<String, dynamic>? ?? {};
     return FeedRoomModel(
       id: docId,
-      name: json['name'] ?? '',
-      dhikr: json['dhikr'] ?? '',
-      goal: json['goal'] ?? 0,
-      currentProgress: json['currentProgress'] ?? 0,
-      status: json['status'] ?? 'pending',
-      isPublic: json['isPublic'] ?? false,
-      type: json['type'] ?? 'free',
+      name: json[AppKeys.roomName] ?? '',
+      dhikr: json[AppKeys.roomDhikr] ?? '',
+      goal: json[AppKeys.roomGoal] ?? 0,
+      currentProgress: json[AppKeys.roomCurrentProgress] ?? 0,
+      status: json[AppKeys.roomStatus] ?? AppKeys.statusPending,
+      isPublic: json[AppKeys.roomIsPublic] ?? false,
+      type: json[AppKeys.roomType] ?? AppKeys.typeFree,
       creator: FeedRoomCreator(
-        id: creatorMap['id'] ?? '',
-        name: creatorMap['name'] ?? '',
-        photo: creatorMap['photo'] ?? '',
+        id: creatorMap[AppKeys.roomId] ?? '',
+        name: creatorMap[AppKeys.roomName] ?? '',
+        photo: creatorMap[AppKeys.roomPhoto] ?? '',
       ),
-      createdAt: (json['createdAt'] as Timestamp).toDate(),
-      expiresAt: json['expiresAt'] != null
-          ? (json['expiresAt'] as Timestamp).toDate()
+      createdAt: (json[AppKeys.roomCreatedAt] as Timestamp).toDate(),
+      expiresAt: json[AppKeys.roomExpiresAt] != null
+          ? (json[AppKeys.roomExpiresAt] as Timestamp).toDate()
           : null,
       participantCount:
-          (json['participants'] as List?)?.length ?? 0,
+          (json[AppKeys.roomParticipants] as List?)?.length ?? 0,
     );
   }
 }

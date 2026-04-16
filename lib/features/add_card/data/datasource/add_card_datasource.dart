@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tally_islamic/core/api/api_service.dart';
+import '../../../../core/constants/app_keys.dart';
 
 import '../../../../core/env/app_env.dart';
 import '../model/stripe_customer_model.dart';
@@ -11,8 +12,6 @@ class AddCardDataSource {
   final ApiService _apiService;
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
-
-  static const _stripeBase = 'https://api.stripe.com/v1';
 
   AddCardDataSource({
     required ApiService apiService,
@@ -31,8 +30,8 @@ class AddCardDataSource {
       }
 
       // Check if customer already exists in Firestore
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      final existingId = doc.data()?['stripeCustomerId'] as String?;
+      final doc = await _firestore.collection(AppKeys.usersCollection).doc(user.uid).get();
+      final existingId = doc.data()?[AppKeys.stripeCustomerId] as String?;
 
       if (existingId != null && existingId.isNotEmpty) {
         return StripeCustomerModel(
@@ -43,13 +42,13 @@ class AddCardDataSource {
 
       // Create new Stripe customer using restricted key
       final response = await _apiService.post(
-        url: '$_stripeBase/customers',
+        url: '${AppKeys.stripeBaseUrl}/customers',
         contentType: Headers.formUrlEncodedContentType,
         token: AppEnv.stripeRestrictedKey,
         body: {
-          'email': user.email,
-          'name': doc.data()?['displayName'] ?? '',
-          'metadata': {'firebaseUid': user.uid},
+          AppKeys.email: user.email,
+          AppKeys.name: doc.data()?[AppKeys.displayName] ?? '',
+          'metadata': {AppKeys.stripeMetadataFirebaseUid: user.uid},
         },
       );
 
@@ -57,7 +56,7 @@ class AddCardDataSource {
 
       // Save to Firestore
       await _firestore
-          .collection('users')
+          .collection(AppKeys.usersCollection)
           .doc(user.uid)
           .update(model.toFirestore());
 
@@ -75,28 +74,28 @@ class AddCardDataSource {
     try {
       // Attach payment method to customer
       await _apiService.post(
-        url: '$_stripeBase/payment_methods/$paymentMethodId/attach',
+        url: '${AppKeys.stripeBaseUrl}/payment_methods/$paymentMethodId/attach',
         contentType: Headers.formUrlEncodedContentType,
         token: AppEnv.stripeRestrictedKey,
-        body: {'customer': customerId},
+        body: {AppKeys.stripeCustomer: customerId},
       );
 
       // Set as default payment method
       await _apiService.post(
-        url: '$_stripeBase/customers/$customerId',
+        url: '${AppKeys.stripeBaseUrl}/customers/$customerId',
         contentType: Headers.formUrlEncodedContentType,
         token: AppEnv.stripeRestrictedKey,
         body: {
-          'invoice_settings': {'default_payment_method': paymentMethodId},
+          AppKeys.stripeInvoiceSettings: {AppKeys.stripeDefaultPaymentMethod: paymentMethodId},
         },
       );
 
       // Save paymentMethodId to Firestore
       final uid = _auth.currentUser?.uid;
       if (uid != null) {
-        await _firestore.collection('users').doc(uid).update({
-          'defaultPaymentMethodId': paymentMethodId,
-          'hasCard': true,
+        await _firestore.collection(AppKeys.usersCollection).doc(uid).update({
+          AppKeys.defaultPaymentMethodId: paymentMethodId,
+          AppKeys.hasCard: true,
         });
       }
     } catch (e) {
@@ -107,8 +106,8 @@ class AddCardDataSource {
   /// Check if user has a card saved
   Future<bool> hasCard(String uid) async {
     try {
-      final doc = await _firestore.collection('users').doc(uid).get();
-      return doc.data()?['hasCard'] == true;
+      final doc = await _firestore.collection(AppKeys.usersCollection).doc(uid).get();
+      return doc.data()?[AppKeys.hasCard] == true;
     } catch (e) {
       throw Exception('Failed to check card: $e');
     }

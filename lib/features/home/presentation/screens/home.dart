@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tally_islamic/features/store/presentation/screen/store_screen.dart';
 
-import '../create_room/domain/entities/room_entity.dart';
-import '../create_room/presentation/screens/create_room_sheet.dart';
-import '../create_room/presentation/widgets/create_room_type_sheet.dart';
-import '../feed/presentation/screens/feed_screen.dart';
-import '../profile/presentation/screen/profile_screen.dart';
-import 'presentation/cubit/home_cubit.dart';
-import 'presentation/widgets/home_nav_bar.dart';
-import 'presentation/widgets/join_room_sheet.dart';
+import '../../../create_room/domain/entities/room_entity.dart';
+import '../../../create_room/presentation/screens/create_room_sheet.dart';
+import '../../../create_room/presentation/widgets/create_room_type_sheet.dart';
+import '../../../feed/presentation/screens/feed_screen.dart';
+import '../../../profile/presentation/screen/profile_screen.dart';
+import '../cubit/home_cubit.dart';
+import '../widgets/home_nav_bar.dart';
+import '../widgets/join_room_sheet.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

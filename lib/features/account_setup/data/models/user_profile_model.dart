@@ -1,3 +1,4 @@
+import '../../../../core/constants/app_keys.dart';
 import '../../domain/entities/user_profile_entity.dart';
 
 class UserProfileModel extends UserProfileEntity {
@@ -18,20 +19,20 @@ class UserProfileModel extends UserProfileEntity {
       );
 
   Map<String, dynamic> toFirestore() => {
-        'uid': uid,
-        'displayName': displayName,
-        'avatarAsset': avatarAsset,
-        'bio': bio,
-        'interests': interests,
-        'createdAt': DateTime.now().toIso8601String(),
+        AppKeys.uId: uid,
+        AppKeys.displayName: displayName,
+        AppKeys.avatarAsset: avatarAsset,
+        AppKeys.bio: bio,
+        AppKeys.interests: interests,
+        AppKeys.roomCreatedAt: DateTime.now().toIso8601String(),
       };
 
   factory UserProfileModel.fromFirestore(Map<String, dynamic> json) =>
       UserProfileModel(
-        uid: json['uid'] ?? '',
-        displayName: json['displayName'] ?? '',
-        avatarAsset: json['avatarAsset'] ?? 'assets/avatars/avatar_1.svg',
-        bio: json['bio'] ?? '',
-        interests: List<String>.from(json['interests'] ?? []),
+        uid: json[AppKeys.uId] ?? '',
+        displayName: json[AppKeys.displayName] ?? '',
+        avatarAsset: json[AppKeys.avatarAsset] ?? 'assets/avatars/avatar_1.svg',
+        bio: json[AppKeys.bio] ?? '',
+        interests: List<String>.from(json[AppKeys.interests] ?? []),
       );
 }
