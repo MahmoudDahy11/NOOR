@@ -61,7 +61,10 @@ class _CreateRoomSheetView extends StatelessWidget {
                 log('[Activation] Room started: ${room.id}');
                 if (sheetContext.mounted) Navigator.of(sheetContext).pop();
                 // Navigate to the live room screen
-                GoRouter.of(navigator.context).go(AppRouter.liveRoomRoute);
+                GoRouter.of(navigator.context).goNamed(
+                  AppRouter.liveRoomRoute,
+                  pathParameters: {'roomId': room.id},
+                );
               },
             );
           },

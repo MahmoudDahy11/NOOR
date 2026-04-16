@@ -69,17 +69,18 @@ class CreateRoomDataSource {
     }
   }
 
-  /// Set RTDB counter for live counting
+  /// Set RTDB counter for live counting.
+  /// Initialises `live_counters/{roomId}/total` to 0.
   Future<void> setRtdbCounter(String roomId) async {
     try {
       log('[DataSource] Setting RTDB counter for room: $roomId');
       await _rtdb
-          .ref('live_counters/$roomId')
-          .set({AppKeys.roomCount: 0})
+          .ref('${AppKeys.liveCountersPath}/$roomId')
+          .set({AppKeys.liveCounterTotal: 0})
           .timeout(const Duration(seconds: 5));
     } catch (e) {
       log('[DataSource] RTDB set failed or timed out: $e');
-      // Non-blocking - still return success since Firestore transaction completed
+      // Non-blocking — Firestore transaction already completed
     }
   }
 

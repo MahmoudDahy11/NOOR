@@ -11,7 +11,7 @@ void showSnakBar(BuildContext context, String message, {bool isError = false}) {
           TweenAnimationBuilder<double>(
             tween: Tween(begin: 0.0, end: 1.0),
             duration: const Duration(milliseconds: 500),
-            curve: Curves.elasticOut, 
+            curve: Curves.elasticOut,
             builder: (context, value, child) {
               return Transform.scale(
                 scale: value,

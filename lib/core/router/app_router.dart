@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tally_islamic/features/live_room/live.dart';
 
 import '../../features/account_setup/presentation/screens/account_setup_screen.dart';
 import '../../features/add_card/presentation/screen/add_card_screen.dart';
@@ -9,6 +8,7 @@ import '../../features/auth/presentation/pages/reset_password_page.dart';
 import '../../features/auth/presentation/pages/signin_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/home/presentation/screens/home.dart';
+import '../../features/live_room/presentation/screens/live_room_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/profile/presentation/screen/edit_profile_screen.dart';
 import '../../features/profile/presentation/screen/profile_screen.dart';
@@ -105,11 +105,18 @@ class AppRouter {
         pageBuilder: (context, state) =>
             _slidePage(state: state, child: const AddCardScreen()),
       ),
+
+      // Live Room — parameterized: /live-room/:roomId
       GoRoute(
         name: liveRoomRoute,
-        path: liveRoomRoute,
-        pageBuilder: (context, state) =>
-            _slidePage(state: state, child: const LiveRoomScreen()),
+        path: '$liveRoomRoute/:roomId',
+        pageBuilder: (context, state) {
+          final roomId = state.pathParameters['roomId']!;
+          return _slidePage(
+            state: state,
+            child: LiveRoomScreen(roomId: roomId),
+          );
+        },
       ),
     ],
   );

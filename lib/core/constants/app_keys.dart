@@ -65,7 +65,14 @@ class AppKeys {
   static const String typeFree = 'free';
   static const String statusPending = 'pending';
   static const String statusActive = 'active';
+  static const String statusCompleted = 'completed';
+  static const String statusExpired = 'expired';
   static const String createdAt = 'createdAt'; // Generic fallback if needed
+
+  // RTDB — Live Counter Paths
+  static const String liveCountersPath = 'live_counters';
+  static const String liveCounterTotal = 'total';
+  static const String liveCounterParticipants = 'participants';
 
   // Stripe & Payment API Keys
   static const String stripeEmail = 'stripeEmail';

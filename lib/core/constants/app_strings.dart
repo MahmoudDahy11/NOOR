@@ -46,6 +46,22 @@ class AppStrings {
 
   // Live Room
   static const liveRoom = 'Live Room';
+  static const totalLiveCount = 'TOTAL LIVE COUNT';
+  static const liveNow = 'LIVE NOW';
+  static const yourProgress = 'YOUR PROGRESS';
+  static const tapToCount = 'Tap anywhere to count';
+  static const goalReached = '🎉 Goal reached! MashaAllah!';
+  static const leaveRoomTitle = 'Leave Room?';
+  static const leaveRoomBody = 'Your personal count will be preserved.';
+  static const resetCountTitle = 'Reset Counter?';
+  static const resetCountBody =
+      'This will reset the total count and all participant counts to zero.';
+  static const leave = 'Leave';
+  static const reset = 'Reset';
+  static const touch = 'TOUCH';
+  static const volumeKeys = 'VOLUME\nKEYS';
+  static const remoteClick = 'REMOTE\nCLICK';
+  static const shakePhone = 'SHAKE\nPHONE';
 
   // Profile
   static const signOut = 'Sign Out';
