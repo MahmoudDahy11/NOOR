@@ -14,15 +14,14 @@ class InterestsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Interests',
-            style: AppTextStyles.titleLarge,
-          ),
+          const Text('Interests', style: AppTextStyles.titleLarge),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: interests.map((interest) => _buildChip(interest)).toList(),
+            children: interests
+                .map((interest) => _buildChip(interest))
+                .toList(),
           ),
         ],
       ),

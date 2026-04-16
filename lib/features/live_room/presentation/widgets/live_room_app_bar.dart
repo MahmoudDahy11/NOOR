@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tally_islamic/core/theme/app_colors.dart';
 
 import '../cubit/live_room_cubit.dart';
 import 'live_room_dialogs.dart';
@@ -21,7 +22,7 @@ class LiveRoomAppBar extends StatelessWidget {
             onPressed: () => showLeaveRoomDialog(context, cubit.leaveRoom),
             icon: const Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: Color(0xFF81C784),
+              color: AppColors.primary,
             ),
           ),
           const Spacer(),

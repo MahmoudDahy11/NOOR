@@ -30,16 +30,13 @@ class ProfileHeader extends StatelessWidget {
           child: CircleAvatar(
             radius: 50,
             backgroundColor: AppColors.background,
-            child: avatar.endsWith('.svg') 
-              ? SvgPicture.asset(avatar)
-              : Image.asset(avatar),
+            child: avatar.endsWith('.svg')
+                ? SvgPicture.asset(avatar)
+                : Image.asset(avatar),
           ),
         ),
         const SizedBox(height: 16),
-        Text(
-          name,
-          style: AppTextStyles.headlineMedium,
-        ),
+        Text(name, style: AppTextStyles.headlineMedium),
         if (userName != null) ...[
           const SizedBox(height: 4),
           Text(

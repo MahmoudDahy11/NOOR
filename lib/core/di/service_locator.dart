@@ -1,11 +1,3 @@
-/*
- * this fior setting up the GetIt service locator
- * it registers services, repositories, and cubits for dependency injection
- * to use, call getIt<T>() to retrieve an instance of type T
- * for example, getIt<ApiService>() returns the registered ApiService instance
- * make sure to call getItSetup() during app initialization
- */
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
@@ -88,7 +80,10 @@ void setupServiceLocator() {
     ),
   );
   getIt.registerLazySingleton<ProfileRepo>(
-    () => ProfileRepoImpl(dataSource: getIt<ProfileDataSource>()),
+    () => ProfileRepoImpl(
+      dataSource: getIt<ProfileDataSource>(),
+      authRepo: getIt<FirebaseAuthRepo>(),
+    ),
   );
   getIt.registerLazySingleton<AddCardRepo>(
     () => AddCardRepoImpl(dataSource: getIt<AddCardDataSource>()),
@@ -103,9 +98,7 @@ void setupServiceLocator() {
     () => CreateRoomRepoImpl(dataSource: getIt<CreateRoomDataSource>()),
   );
   getIt.registerLazySingleton<FeedRepo>(() => FeedRepoImpl());
-  getIt.registerLazySingleton<LiveRoomDataSource>(
-    () => LiveRoomDataSource(),
-  );
+  getIt.registerLazySingleton<LiveRoomDataSource>(() => LiveRoomDataSource());
   getIt.registerLazySingleton<LiveRoomRepo>(
     () => LiveRoomRepoImpl(dataSource: getIt<LiveRoomDataSource>()),
   );

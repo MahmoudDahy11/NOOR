@@ -11,21 +11,20 @@ class UserProfileModel extends UserProfileEntity {
   });
 
   factory UserProfileModel.fromEntity(UserProfileEntity e) => UserProfileModel(
-        uid: e.uid,
-        displayName: e.displayName,
-        avatarAsset: e.avatarAsset,
-        bio: e.bio,
-        interests: e.interests,
-      );
+    uid: e.uid,
+    displayName: e.displayName,
+    avatarAsset: e.avatarAsset,
+    bio: e.bio,
+    interests: e.interests,
+  );
 
   Map<String, dynamic> toFirestore() => {
-        AppKeys.uId: uid,
-        AppKeys.displayName: displayName,
-        AppKeys.avatarAsset: avatarAsset,
-        AppKeys.bio: bio,
-        AppKeys.interests: interests,
-        AppKeys.roomCreatedAt: DateTime.now().toIso8601String(),
-      };
+    AppKeys.uId: uid,
+    AppKeys.displayName: displayName,
+    AppKeys.avatarAsset: avatarAsset,
+    AppKeys.bio: bio,
+    AppKeys.interests: interests,
+  };
 
   factory UserProfileModel.fromFirestore(Map<String, dynamic> json) =>
       UserProfileModel(

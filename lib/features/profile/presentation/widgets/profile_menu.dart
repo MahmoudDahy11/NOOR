@@ -53,11 +53,7 @@ class ProfileMenu extends StatelessWidget {
           color: themeColor.withAlpha((0.1 * 255).toInt()),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(
-          icon,
-          color: themeColor,
-          size: 20,
-        ),
+        child: Icon(icon, color: themeColor, size: 20),
       ),
       title: Text(
         title,

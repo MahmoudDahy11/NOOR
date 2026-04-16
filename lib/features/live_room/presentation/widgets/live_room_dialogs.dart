@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tally_islamic/core/theme/app_colors.dart';
 
 import '../cubit/live_room_cubit.dart';
 
@@ -76,7 +77,7 @@ class LiveRoomMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
-      color: const Color(0xFF143D28),
+      color: AppColors.primary,
       onSelected: (value) {
         if (value == 'reset') showResetCounterDialog(context, cubit.resetCount);
         if (value == 'end') showEndRoomDialog(context, cubit.endRoom);

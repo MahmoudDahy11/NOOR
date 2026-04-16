@@ -51,10 +51,7 @@ class ProfileStats extends StatelessWidget {
           style: AppTextStyles.titleLarge.copyWith(color: AppColors.primary),
         ),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: AppTextStyles.bodyMedium.copyWith(fontSize: 12),
-        ),
+        Text(label, style: AppTextStyles.bodyMedium.copyWith(fontSize: 12)),
       ],
     );
   }
