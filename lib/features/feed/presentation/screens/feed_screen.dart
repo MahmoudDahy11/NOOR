@@ -56,26 +56,45 @@ class _FeedView extends StatelessWidget {
       listener: _handleState,
       builder: (context, state) => Scaffold(
         backgroundColor: const Color(0xFF0A1F14),
-        body: NotificationListener<ScrollNotification>(
-          onNotification: (n) {
-            if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
-              context.read<FeedCubit>().loadMore();
-            }
-            return false;
-          },
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              const SliverToBoxAdapter(child: FeedHeader()),
-              SliverToBoxAdapter(
-                child: FeedTabBar(
-                  activeTab: _currentTab(state),
-                  onTabChanged: (t) => context.read<FeedCubit>().switchTab(t),
-                ),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            // Compute horizontal padding to constrain feed width gracefully to 700px on ultra-wide screens
+            final double hzPadding = constraints.maxWidth > 700
+                ? (constraints.maxWidth - 700) / 2
+                : 0;
+
+            return NotificationListener<ScrollNotification>(
+              onNotification: (n) {
+                if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
+                  context.read<FeedCubit>().loadMore();
+                }
+                return false;
+              },
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: hzPadding),
+                    sliver: const SliverToBoxAdapter(child: FeedHeader()),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: hzPadding),
+                    sliver: SliverToBoxAdapter(
+                      child: FeedTabBar(
+                        activeTab: _currentTab(state),
+                        onTabChanged: (t) =>
+                            context.read<FeedCubit>().switchTab(t),
+                      ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: hzPadding),
+                    sliver: _buildBody(context, state),
+                  ),
+                ],
               ),
-              _buildBody(context, state),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
