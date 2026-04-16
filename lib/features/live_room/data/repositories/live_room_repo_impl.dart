@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failure.dart';
@@ -9,10 +7,10 @@ import '../datasource/live_room_datasource.dart';
 import '../models/live_room_model.dart';
 
 class LiveRoomRepoImpl implements LiveRoomRepo {
-  final LiveRoomDataSource _dataSource;
-
   LiveRoomRepoImpl({required LiveRoomDataSource dataSource})
-      : _dataSource = dataSource;
+    : _dataSource = dataSource;
+
+  final LiveRoomDataSource _dataSource;
 
   @override
   Stream<int> watchTotalCounter(String roomId) =>
@@ -23,63 +21,49 @@ class LiveRoomRepoImpl implements LiveRoomRepo {
       _dataSource.watchPersonalCounter(roomId);
 
   @override
-  Future<Either<CustomFailure, void>> incrementCounter(String roomId) async {
-    try {
-      await _dataSource.incrementCounters(roomId);
-      return right(null);
-    } catch (e) {
-      log('[LiveRoomRepo] Increment failed: $e');
-      return left(CustomFailure(errMessage: e.toString()));
-    }
-  }
+  Future<Either<CustomFailure, void>> incrementCounter(String roomId) =>
+      _runVoid(() => _dataSource.incrementCounters(roomId));
 
   @override
-  Future<Either<CustomFailure, LiveRoomEntity>> getRoomDetails(
-    String roomId,
-  ) async {
-    try {
-      final data = await _dataSource.getRoomData(roomId);
-      final model = LiveRoomModel.fromFirestore(data, roomId);
-      return right(model);
-    } catch (e) {
-      log('[LiveRoomRepo] getRoomDetails failed: $e');
-      return left(CustomFailure(errMessage: e.toString()));
-    }
-  }
+  Future<Either<CustomFailure, LiveRoomEntity>> getRoomDetails(String roomId) =>
+      _runValue(() async {
+        final data = await _dataSource.getRoomData(roomId);
+        return LiveRoomModel.fromFirestore(data, roomId);
+      });
 
   @override
-  Future<Either<CustomFailure, void>> resetCounter(String roomId) async {
-    try {
-      await _dataSource.resetCounters(roomId);
-      return right(null);
-    } catch (e) {
-      log('[LiveRoomRepo] resetCounter failed: $e');
-      return left(CustomFailure(errMessage: e.toString()));
-    }
-  }
+  Future<Either<CustomFailure, void>> resetCounter(String roomId) =>
+      _runVoid(() => _dataSource.resetCounters(roomId));
 
   @override
   bool isCreator(String creatorId) => _dataSource.isCreator(creatorId);
 
   @override
-  Future<Either<CustomFailure, void>> leaveRoom(String roomId) async {
+  Future<Either<CustomFailure, void>> leaveRoom(String roomId) =>
+      _runVoid(() => _dataSource.removeParticipant(roomId));
+
+  @override
+  Future<Either<CustomFailure, void>> endRoom(String roomId) =>
+      _runVoid(() => _dataSource.completeRoom(roomId));
+
+  Future<Either<CustomFailure, void>> _runVoid(
+    Future<void> Function() action,
+  ) async {
     try {
-      await _dataSource.removeParticipant(roomId);
+      await action();
       return right(null);
-    } catch (e) {
-      log('[LiveRoomRepo] leaveRoom failed: $e');
-      return left(CustomFailure(errMessage: e.toString()));
+    } catch (error) {
+      return left(CustomFailure(errMessage: error.toString()));
     }
   }
 
-  @override
-  Future<Either<CustomFailure, void>> endRoom(String roomId) async {
+  Future<Either<CustomFailure, T>> _runValue<T>(
+    Future<T> Function() action,
+  ) async {
     try {
-      await _dataSource.completeRoom(roomId);
-      return right(null);
-    } catch (e) {
-      log('[LiveRoomRepo] endRoom failed: $e');
-      return left(CustomFailure(errMessage: e.toString()));
+      return right(await action());
+    } catch (error) {
+      return left(CustomFailure(errMessage: error.toString()));
     }
   }
 }

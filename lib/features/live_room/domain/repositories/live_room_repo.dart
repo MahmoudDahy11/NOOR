@@ -29,7 +29,7 @@ abstract class LiveRoomRepo {
 
   /// Removes the current user from the Firestore `participants` array.
   Future<Either<CustomFailure, void>> leaveRoom(String roomId);
-  
+
   /// Marks the room as completed (admin-only).
   Future<Either<CustomFailure, void>> endRoom(String roomId);
 }

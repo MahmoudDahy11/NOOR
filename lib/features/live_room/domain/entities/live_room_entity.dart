@@ -38,6 +38,5 @@ class LiveRoomEntity {
   bool get isPaid => type == 'paid';
   bool get isActive => status == 'active';
   bool get isCompleted => status == 'completed';
-  bool get isExpired =>
-      expiresAt != null && DateTime.now().isAfter(expiresAt!);
+  bool get isExpired => expiresAt != null && DateTime.now().isAfter(expiresAt!);
 }

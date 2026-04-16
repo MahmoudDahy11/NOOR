@@ -1,6 +1,7 @@
-part of 'live_room_cubit.dart';
+import 'package:meta/meta.dart';
 
-/// The four interaction modes available in a Live Room.
+import '../../domain/entities/live_room_entity.dart';
+
 enum InteractionMode { touch, volume, remote, shake }
 
 @immutable
@@ -13,14 +14,6 @@ final class LiveRoomInitial extends LiveRoomState {}
 final class LiveRoomLoading extends LiveRoomState {}
 
 final class LiveRoomLoaded extends LiveRoomState {
-  final LiveRoomEntity room;
-  final int totalCount;
-  final int personalCount;
-  final InteractionMode activeMode;
-  final bool goalReached;
-  final bool isAdmin;
-  final Duration remainingTime;
-
   const LiveRoomLoaded({
     required this.room,
     required this.totalCount,
@@ -31,6 +24,14 @@ final class LiveRoomLoaded extends LiveRoomState {
     this.remainingTime = Duration.zero,
   });
 
+  final LiveRoomEntity room;
+  final int totalCount;
+  final int personalCount;
+  final InteractionMode activeMode;
+  final bool goalReached;
+  final bool isAdmin;
+  final Duration remainingTime;
+
   LiveRoomLoaded copyWith({
     LiveRoomEntity? room,
     int? totalCount,
@@ -39,22 +40,21 @@ final class LiveRoomLoaded extends LiveRoomState {
     bool? goalReached,
     bool? isAdmin,
     Duration? remainingTime,
-  }) {
-    return LiveRoomLoaded(
-      room: room ?? this.room,
-      totalCount: totalCount ?? this.totalCount,
-      personalCount: personalCount ?? this.personalCount,
-      activeMode: activeMode ?? this.activeMode,
-      goalReached: goalReached ?? this.goalReached,
-      isAdmin: isAdmin ?? this.isAdmin,
-      remainingTime: remainingTime ?? this.remainingTime,
-    );
-  }
+  }) => LiveRoomLoaded(
+    room: room ?? this.room,
+    totalCount: totalCount ?? this.totalCount,
+    personalCount: personalCount ?? this.personalCount,
+    activeMode: activeMode ?? this.activeMode,
+    goalReached: goalReached ?? this.goalReached,
+    isAdmin: isAdmin ?? this.isAdmin,
+    remainingTime: remainingTime ?? this.remainingTime,
+  );
 }
 
 final class LiveRoomError extends LiveRoomState {
-  final String message;
   const LiveRoomError(this.message);
+
+  final String message;
 }
 
 final class LiveRoomLeft extends LiveRoomState {}
