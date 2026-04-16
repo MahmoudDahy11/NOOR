@@ -5,9 +5,9 @@ import 'package:tally_islamic/features/store/presentation/screen/store_screen.da
 import '../create_room/domain/entities/room_entity.dart';
 import '../create_room/presentation/screens/create_room_sheet.dart';
 import '../create_room/presentation/widgets/create_room_type_sheet.dart';
+import '../feed/presentation/screens/feed_screen.dart';
 import '../profile/presentation/screen/profile_screen.dart';
 import 'presentation/cubit/home_cubit.dart';
-import 'presentation/screens/feed_placeholder_screen.dart';
 import 'presentation/widgets/home_nav_bar.dart';
 import 'presentation/widgets/join_room_sheet.dart';
 
@@ -24,7 +24,7 @@ class _HomeView extends StatelessWidget {
   const _HomeView();
 
   static const _screens = [
-    FeedPlaceholderScreen(),
+    FeedScreen(),
     StoreScreen(),
     SizedBox.shrink(), // FAB — handled separately
     ProfileScreen(),

@@ -79,7 +79,9 @@ class _StoreShimmerBody extends StatelessWidget {
               crossAxisCount: MediaQuery.sizeOf(context).width > 600 ? 3 : 2,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
-              childAspectRatio: MediaQuery.sizeOf(context).width > 600 ? 1.5 : 0.75,
+              childAspectRatio: MediaQuery.sizeOf(context).width > 600
+                  ? 1.5
+                  : 0.75,
             ),
           ),
         ),
