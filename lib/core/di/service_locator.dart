@@ -111,6 +111,9 @@ void setupServiceLocator() {
   );
   // Cubits
   getIt.registerFactory<ProfileCubit>(
-    () => ProfileCubit(profileRepo: getIt<ProfileRepo>()),
+    () => ProfileCubit(
+      profileRepo: getIt<ProfileRepo>(),
+      createRoomRepo: getIt<CreateRoomRepo>(),
+    ),
   );
 }

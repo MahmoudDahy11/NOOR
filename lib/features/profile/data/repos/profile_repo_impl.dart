@@ -26,11 +26,15 @@ class ProfileRepoImpl implements ProfileRepo {
       // Get user stats
       final stats = await _dataSource.getUserStats(uid);
 
+      // Get pending rooms
+      final pendingRooms = await _dataSource.getPendingRooms(uid);
+
       final profile = ProfileEntity(
         user: userModel,
         roomsJoined: stats['roomsJoined'] ?? 0,
         totalCounts: stats['totalCounts'] ?? 0,
         roomsCreated: stats['roomsCreated'] ?? 0,
+        pendingRooms: pendingRooms,
       );
 
       return Right(profile);

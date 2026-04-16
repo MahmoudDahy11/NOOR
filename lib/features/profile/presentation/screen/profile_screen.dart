@@ -13,6 +13,7 @@ import '../widgets/interests_section.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu.dart';
 import '../widgets/profile_shimmer.dart';
+import '../widgets/pending_rooms_section.dart';
 import '../widgets/profile_stats.dart';
 import '../widgets/ticket_inventory_placeholder.dart';
 
@@ -39,6 +40,12 @@ class _ProfileView extends StatelessWidget {
         listener: (context, state) {
           if (state is ProfileSignOutSuccess) {
             context.goNamed(AppRouter.signinRoute);
+          } else if (state is ProfileRoomStartedSuccess) {
+            showSnakBar(context, 'Room started successfully! 🕌');
+            context.goNamed(
+              AppRouter.liveRoomRoute,
+              pathParameters: {'roomId': state.roomId},
+            );
           } else if (state is ProfileError) {
             showSnakBar(context, state.message , isError: true);
           }
@@ -75,6 +82,11 @@ class _ProfileView extends StatelessWidget {
                     ),
                     const SizedBox(height: 30),
                     const TicketInventoryPlaceholder(),
+                    const SizedBox(height: 30),
+                    PendingRoomsSection(
+                      rooms: profile.pendingRooms,
+                      onStart: (id) => context.read<ProfileCubit>().startRoom(id),
+                    ),
                     const SizedBox(height: 30),
                     InterestsSection(interests: profile.user.interests),
                     const SizedBox(height: 30),

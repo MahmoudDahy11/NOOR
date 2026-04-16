@@ -15,3 +15,7 @@ class ProfileError extends ProfileState {
   ProfileError({required this.message});
 }
 class ProfileSignOutSuccess extends ProfileState {}
+class ProfileRoomStartedSuccess extends ProfileState {
+  final String roomId;
+  ProfileRoomStartedSuccess({required this.roomId});
+}

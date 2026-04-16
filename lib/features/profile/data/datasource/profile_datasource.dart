@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../core/constants/app_keys.dart';
 import '../../../account_setup/data/models/user_profile_model.dart';
+import '../../../create_room/data/models/room_model.dart';
 
 /// Profile Data Source - Firestore operations for user profiles
 class ProfileDataSource {
@@ -55,6 +56,24 @@ class ProfileDataSource {
       };
     } catch (e) {
       throw Exception('Failed to get stats: $e');
+    }
+  }
+
+  /// Get user-created rooms that are in 'pending' status
+  Future<List<RoomModel>> getPendingRooms(String uid) async {
+    try {
+      final snapshot = await _firestore
+          .collection(AppKeys.roomsCollection)
+          .where('${AppKeys.roomCreator}.${AppKeys.roomId}', isEqualTo: uid)
+          .where(AppKeys.roomStatus, isEqualTo: AppKeys.statusPending)
+          .orderBy(AppKeys.roomCreatedAt, descending: true)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => RoomModel.fromFirestore(doc.data(), doc.id))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to get pending rooms: $e');
     }
   }
 }
