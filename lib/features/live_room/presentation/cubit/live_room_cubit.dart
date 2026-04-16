@@ -38,8 +38,8 @@ class LiveRoomCubit extends Cubit<LiveRoomState> {
   static const _shakeCooldown = Duration(milliseconds: 500);
 
   LiveRoomCubit({required LiveRoomRepo repo, required this.roomId})
-      : _repo = repo,
-        super(LiveRoomInitial());
+    : _repo = repo,
+      super(LiveRoomInitial());
 
   // ---------------------------------------------------------------------------
   // Public API
@@ -59,14 +59,16 @@ class LiveRoomCubit extends Cubit<LiveRoomState> {
       (room) {
         log('[LiveRoom] Room loaded: ${room.name}');
         final isAdmin = _repo.isCreator(room.creatorId);
-        emit(LiveRoomLoaded(
-          room: room,
-          totalCount: 0,
-          personalCount: 0,
-          activeMode: InteractionMode.touch,
-          goalReached: false,
-          isAdmin: isAdmin,
-        ));
+        emit(
+          LiveRoomLoaded(
+            room: room,
+            totalCount: 0,
+            personalCount: 0,
+            activeMode: InteractionMode.touch,
+            goalReached: false,
+            isAdmin: isAdmin,
+          ),
+        );
         _startCounterStreams();
       },
     );
@@ -134,35 +136,46 @@ class LiveRoomCubit extends Cubit<LiveRoomState> {
     emit(LiveRoomLeft());
   }
 
+  /// Ends the room for everyone (admin-only guard).
+  Future<void> endRoom() async {
+    final current = state;
+    if (current is! LiveRoomLoaded || !current.isAdmin) {
+      log('[LiveRoom] End denied — not admin');
+      return;
+    }
+
+    log('[LiveRoom] Ending room: $roomId');
+    _stopShakeListener();
+
+    final result = await _repo.endRoom(roomId);
+    result.fold((f) => log('[LiveRoom] End failed: ${f.errMessage}'), (_) {
+      log('[LiveRoom] Room ended successfully');
+      emit(LiveRoomLeft()); // Navigation handled by UI listener
+    });
+  }
+
   // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------
 
   void _startCounterStreams() {
-    _totalSub = _repo.watchTotalCounter(roomId).listen(
-      (count) {
-        final s = state;
-        if (s is LiveRoomLoaded) {
-          final reached =
-              s.room.goal > 0 && count >= s.room.goal && !s.goalReached;
-          emit(s.copyWith(
-            totalCount: count,
-            goalReached: s.goalReached || reached,
-          ));
-        }
-      },
-      onError: (e) => log('[LiveRoom] Total stream error: $e'),
-    );
+    _totalSub = _repo.watchTotalCounter(roomId).listen((count) {
+      final s = state;
+      if (s is LiveRoomLoaded) {
+        final reached =
+            s.room.goal > 0 && count >= s.room.goal && !s.goalReached;
+        emit(
+          s.copyWith(totalCount: count, goalReached: s.goalReached || reached),
+        );
+      }
+    }, onError: (e) => log('[LiveRoom] Total stream error: $e'));
 
-    _personalSub = _repo.watchPersonalCounter(roomId).listen(
-      (count) {
-        final s = state;
-        if (s is LiveRoomLoaded) {
-          emit(s.copyWith(personalCount: count));
-        }
-      },
-      onError: (e) => log('[LiveRoom] Personal stream error: $e'),
-    );
+    _personalSub = _repo.watchPersonalCounter(roomId).listen((count) {
+      final s = state;
+      if (s is LiveRoomLoaded) {
+        emit(s.copyWith(personalCount: count));
+      }
+    }, onError: (e) => log('[LiveRoom] Personal stream error: $e'));
   }
 
   void _startShakeListener() {

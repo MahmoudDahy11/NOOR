@@ -11,6 +11,15 @@ class ProfileDataSource {
   ProfileDataSource({FirebaseFirestore? firestore})
     : _firestore = firestore ?? FirebaseFirestore.instance;
 
+  /// Get user profile from Firestore as a Stream
+  Stream<UserProfileModel?> watchUserProfile(String uid) {
+    return _firestore
+        .collection(AppKeys.usersCollection)
+        .doc(uid)
+        .snapshots()
+        .map((doc) => doc.exists ? UserProfileModel.fromFirestore(doc.data() ?? {}) : null);
+  }
+
   /// Get user profile from Firestore
   Future<UserProfileModel?> getUserProfile(String uid) async {
     try {
@@ -57,6 +66,19 @@ class ProfileDataSource {
     } catch (e) {
       throw Exception('Failed to get stats: $e');
     }
+  }
+
+  /// Get user-created rooms that are in 'pending' status as a Stream
+  Stream<List<RoomModel>> watchPendingRooms(String uid) {
+    return _firestore
+        .collection(AppKeys.roomsCollection)
+        .where('${AppKeys.roomCreator}.${AppKeys.roomId}', isEqualTo: uid)
+        .where(AppKeys.roomStatus, isEqualTo: AppKeys.statusPending)
+        .orderBy(AppKeys.roomCreatedAt, descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => RoomModel.fromFirestore(doc.data(), doc.id))
+            .toList());
   }
 
   /// Get user-created rooms that are in 'pending' status

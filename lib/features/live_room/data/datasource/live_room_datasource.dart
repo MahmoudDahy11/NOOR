@@ -92,6 +92,19 @@ class LiveRoomDataSource {
     });
   }
 
+  /// Marks the room as completed in Firestore and removes the RTDB counters.
+  Future<void> completeRoom(String roomId) async {
+    log('[LiveRoomDS] Completing room: $roomId');
+    
+    // 1. Update status in Firestore
+    await _firestore.collection(AppKeys.roomsCollection).doc(roomId).update({
+      AppKeys.roomStatus: AppKeys.statusCompleted,
+    });
+
+    // 2. Remove RTDB counters as they are no longer needed
+    await _rtdb.ref('${AppKeys.liveCountersPath}/$roomId').remove();
+  }
+
   /// Returns `true` when the current UID matches [creatorId].
   bool isCreator(String creatorId) => uid == creatorId;
 }

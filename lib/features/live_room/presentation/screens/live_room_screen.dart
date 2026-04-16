@@ -124,9 +124,11 @@ class _LiveRoomViewState extends State<_LiveRoomView> {
                 // App bar
                 LiveRoomAppBar(
                   roomName: state.room.name,
+                  roomId: state.room.id,
                   isAdmin: state.isAdmin,
                   onLeave: cubit.leaveRoom,
                   onReset: state.isAdmin ? cubit.resetCount : null,
+                  onEnd: state.isAdmin ? cubit.endRoom : null,
                 ),
 
                 const SizedBox(height: 8),

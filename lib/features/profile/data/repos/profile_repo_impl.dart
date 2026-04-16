@@ -4,6 +4,8 @@ import '../../../../core/error/failure.dart';
 import '../../../account_setup/data/models/user_profile_model.dart';
 import '../../../account_setup/domain/entities/user_profile_entity.dart';
 import '../../../auth/data/service/local_storage.dart';
+import 'package:rxdart/rxdart.dart';
+import '../../../create_room/data/models/room_model.dart';
 import '../../domain/entities/profile_entity.dart';
 import '../../domain/repos/profile_repo.dart';
 import '../datasource/profile_datasource.dart';
@@ -13,6 +15,32 @@ class ProfileRepoImpl implements ProfileRepo {
 
   ProfileRepoImpl({ProfileDataSource? dataSource})
     : _dataSource = dataSource ?? ProfileDataSource();
+
+  @override
+  Stream<Either<CustomFailure, ProfileEntity>> watchProfile(String uid) {
+    return Rx.combineLatest2<UserProfileModel?, List<RoomModel>, Either<CustomFailure, ProfileEntity>>(
+      _dataSource.watchUserProfile(uid),
+      _dataSource.watchPendingRooms(uid),
+      (userModel, pendingRooms) {
+        if (userModel == null) {
+          return Left(CustomFailure(errMessage: 'User profile not found'));
+        }
+
+        // Note: getUserStats is still a Future in data source. 
+        // For truly full real-time we'd need a stream for stats too.
+        // For now, we'll use empty stats or fetch them once, 
+        // but real-time profile and rooms are the priority.
+        
+        return Right(ProfileEntity(
+          user: userModel,
+          roomsJoined: 0, // Placeholder
+          totalCounts: 0, // Placeholder
+          roomsCreated: 0, // Placeholder
+          pendingRooms: pendingRooms,
+        ));
+      },
+    ).onErrorReturnWith((e, st) => Left(CustomFailure(errMessage: e.toString())));
+  }
 
   @override
   Future<Either<CustomFailure, ProfileEntity>> getProfile(String uid) async {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import '../../../account_setup/domain/entities/user_profile_entity.dart';
@@ -11,6 +12,7 @@ part 'profile_state.dart';
 class ProfileCubit extends Cubit<ProfileState> {
   final ProfileRepo _profileRepo;
   final CreateRoomRepo _createRoomRepo;
+  StreamSubscription? _profileSubscription;
 
   ProfileCubit({
     required ProfileRepo profileRepo,
@@ -20,34 +22,32 @@ class ProfileCubit extends Cubit<ProfileState> {
        super(ProfileInitial());
 
   Future<void> getProfile() async {
-    emit(ProfileLoading());
     final uid = LocalStorageService.getUserId();
-
     if (uid == null) {
-      if (!isClosed) {
-        emit(ProfileError(message: 'User session not found'));
-      }
+      emit(ProfileError(message: 'User session not found'));
       return;
     }
 
-    final result = await _profileRepo.getProfile(uid);
-    if (isClosed) return;
-    result.fold(
-      (failure) => emit(ProfileError(message: failure.errMessage)),
-      (profile) => emit(ProfileSuccess(profile: profile)),
-    );
+    _profileSubscription?.cancel();
+    emit(ProfileLoading());
+
+    _profileSubscription = _profileRepo.watchProfile(uid).listen((result) {
+      result.fold(
+        (failure) => emit(ProfileError(message: failure.errMessage)),
+        (profile) => emit(ProfileSuccess(profile: profile)),
+      );
+    }, onError: (e) => emit(ProfileError(message: e.toString())));
   }
 
   Future<void> updateProfile(UserProfileEntity profile) async {
-    emit(ProfileLoading());
+    // We don't need to emit ProfileLoading here if we want to avoid full screen shimmer
+    // during background sync, but user might want a small indicator.
+    // For now, we'll just call update, and the stream will push the new values.
     final result = await _profileRepo.updateProfile(profile);
-    if (isClosed) return;
-    result.fold((failure) => emit(ProfileError(message: failure.errMessage)), (
-      _,
-    ) {
-      emit(ProfileUpdateSuccess());
-      getProfile(); // Refresh profile after update
-    });
+    result.fold(
+      (failure) => emit(ProfileError(message: failure.errMessage)),
+      (_) => emit(ProfileUpdateSuccess()),
+    );
   }
 
   Future<void> startRoom(String roomId) async {
@@ -66,5 +66,11 @@ class ProfileCubit extends Cubit<ProfileState> {
       (failure) => emit(ProfileError(message: failure.errMessage)),
       (_) => emit(ProfileSignOutSuccess()),
     );
+  }
+
+  @override
+  Future<void> close() {
+    _profileSubscription?.cancel();
+    return super.close();
   }
 }

@@ -12,6 +12,11 @@ abstract class ProfileRepo {
    */
   Future<Either<CustomFailure, ProfileEntity>> getProfile(String uid);
   /*
+   * Watches the user profile information in real-time
+   * Returns a Stream of Either a CustomFailure or a ProfileEntity
+   */
+  Stream<Either<CustomFailure, ProfileEntity>> watchProfile(String uid);
+  /*
    * Updates the user profile information
    * Takes a UserProfileEntity as input and returns Either a CustomFailure or void on success
    * Interacts with the data source (e.g., Firestore) to persist the updated profile data

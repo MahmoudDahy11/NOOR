@@ -71,4 +71,15 @@ class LiveRoomRepoImpl implements LiveRoomRepo {
       return left(CustomFailure(errMessage: e.toString()));
     }
   }
+
+  @override
+  Future<Either<CustomFailure, void>> endRoom(String roomId) async {
+    try {
+      await _dataSource.completeRoom(roomId);
+      return right(null);
+    } catch (e) {
+      log('[LiveRoomRepo] endRoom failed: $e');
+      return left(CustomFailure(errMessage: e.toString()));
+    }
+  }
 }
