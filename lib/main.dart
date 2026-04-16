@@ -1,16 +1,140 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:math' show Random;
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:tally_islamic/firebase_options.dart';
 
+import 'core/constants/app_keys.dart';
 import 'core/di/service_locator.dart';
 import 'core/env/app_env.dart';
 import 'core/router/app_router.dart';
+import 'core/services/local_notification_service.dart';
 import 'features/auth/data/service/local_storage.dart';
+
+Future<void> _handleRemoteMessageNavigation(RemoteMessage message) async {
+  final roomId =
+      message.data[AppKeys.roomId]?.toString() ??
+      message.data[AppKeys.notificationRoomId]?.toString();
+
+  if (roomId == null || roomId.isEmpty) return;
+
+  AppRouter.router.pushNamed(
+    AppRouter.liveRoomRoute,
+    pathParameters: {AppKeys.roomId: roomId},
+  );
+}
+
+Future<void> _configureFirebaseMessaging() async {
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  FirebaseMessaging.onMessage.listen((message) async {
+    final roomId =
+        message.data[AppKeys.roomId]?.toString() ??
+        message.data[AppKeys.notificationRoomId]?.toString();
+
+    await LocalNotificationService.showHeadsUpNotification(
+      id: message.messageId?.hashCode ?? Random().nextInt(1 << 20),
+      title:
+          message.notification?.title ??
+          message.data[AppKeys.notificationTitle] ??
+          'Room Started',
+      body:
+          message.notification?.body ??
+          message.data[AppKeys.notificationBody] ??
+          'A live room is waiting for you.',
+      payload: jsonEncode({AppKeys.roomId: roomId}),
+    );
+  });
+
+  FirebaseMessaging.onMessageOpenedApp.listen(_handleRemoteMessageNavigation);
+}
+
+Future<void> _handleInitialNotificationRoutes() async {
+  await LocalNotificationService.handleLaunchDetails();
+
+  final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+  if (initialMessage != null) {
+    await _handleRemoteMessageNavigation(initialMessage);
+  }
+}
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await LocalStorageService.init();
+  await LocalNotificationService.initialize();
+
+  final authUid = FirebaseAuth.instance.currentUser?.uid;
+  final cachedUid = LocalStorageService.getUserId();
+  final uid = authUid ?? cachedUid;
+
+  if (uid != null && uid.isNotEmpty) {
+    final notificationId =
+        message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString();
+    final data = Map<String, dynamic>.from(message.data);
+    final roomId = data[AppKeys.notificationRoomId] ?? data[AppKeys.roomId];
+
+    await FirebaseFirestore.instance
+        .collection(AppKeys.usersCollection)
+        .doc(uid)
+        .collection(AppKeys.notificationsCollection)
+        .doc(notificationId)
+        .set({
+          AppKeys.notificationId: notificationId,
+          AppKeys.notificationTitle:
+              message.notification?.title ??
+              data[AppKeys.notificationTitle] ??
+              'Tally Islamic',
+          AppKeys.notificationBody:
+              message.notification?.body ??
+              data[AppKeys.notificationBody] ??
+              '',
+          AppKeys.notificationType: data[AppKeys.notificationType] ?? 'system',
+          AppKeys.notificationRoomId: roomId,
+          AppKeys.notificationRoute: data[AppKeys.notificationRoute],
+          AppKeys.notificationData: data,
+          AppKeys.notificationIsRead: false,
+          AppKeys.notificationSentAt: FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+  }
+
+  await LocalNotificationService.showHeadsUpNotification(
+    id: message.messageId?.hashCode ?? Random().nextInt(1 << 20),
+    title:
+        message.notification?.title ??
+        message.data[AppKeys.notificationTitle] ??
+        'Room Started',
+    body:
+        message.notification?.body ??
+        message.data[AppKeys.notificationBody] ??
+        'A live room is waiting for you.',
+    payload: jsonEncode({
+      AppKeys.roomId:
+          message.data[AppKeys.roomId]?.toString() ??
+          message.data[AppKeys.notificationRoomId]?.toString(),
+    }),
+  );
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +153,9 @@ Future<void> main() async {
 
   // 3. Initialize Local Storage & Stripe
   await LocalStorageService.init();
+  await LocalNotificationService.initialize();
+  await _configureFirebaseMessaging();
+  await LocalNotificationService.handleLaunchDetails();
 
   try {
     Stripe.publishableKey = AppEnv.stripePublishableKey;
@@ -41,6 +168,10 @@ Future<void> main() async {
   setupServiceLocator();
 
   runApp(DevicePreview(enabled: false, builder: (context) => const NoorApp()));
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _handleInitialNotificationRoutes();
+  });
 }
 
 class NoorApp extends StatelessWidget {

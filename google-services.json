@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "1012204243775",
+    "firebase_url": "https://suits-d4a64-default-rtdb.firebaseio.com",
+    "project_id": "suits-d4a64",
+    "storage_bucket": "suits-d4a64.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012204243775:android:7a38fd295e6b26799fa18a",
+        "android_client_info": {
+          "package_name": "com.example.suits"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012204243775-j8jdjds04jkib4do004o5b90q8qofhnv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.suits",
+            "certificate_hash": "4c8cc6d4e89731f65e286f08e50bd59b0c2e7bb9"
+          }
+        },
+        {
+          "client_id": "1012204243775-n9r04cjidogk24ouqen7s59g1e6q28rv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB80oMMqepsM0THIlTLI872qz-km8PN07I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012204243775-n9r04cjidogk24ouqen7s59g1e6q28rv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1012204243775-dmcdhaigf3v0279fg4ju7h6i7m4nqqe5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tallyIslamic"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012204243775:android:10a1e9f8d7c5d3c39fa18a",
+        "android_client_info": {
+          "package_name": "com.example.tally_islamic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012204243775-3ueo07vrft9ure3p4q24uinpg394g4vp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tally_islamic",
+            "certificate_hash": "2fc44e48062751481bcc3c66b08ffd7a1bb5fb89"
+          }
+        },
+        {
+          "client_id": "1012204243775-n9r04cjidogk24ouqen7s59g1e6q28rv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB80oMMqepsM0THIlTLI872qz-km8PN07I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012204243775-n9r04cjidogk24ouqen7s59g1e6q28rv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1012204243775-dmcdhaigf3v0279fg4ju7h6i7m4nqqe5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tallyIslamic"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

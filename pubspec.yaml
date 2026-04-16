@@ -40,7 +40,9 @@ dependencies:
   flutter_dotenv: ^5.0.2
   firebase_core: ^4.6.0
   firebase_auth: ^6.3.0
+  firebase_messaging: ^16.0.0
   flutter_stripe: ^9.0.0
+  flutter_local_notifications: ^19.4.2
   bloc: ^8.1.0
   meta: ^1.11.0
   device_preview: ^1.2.0
