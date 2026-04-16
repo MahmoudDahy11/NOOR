@@ -27,6 +27,7 @@ class LiveRoomCubit extends Cubit<LiveRoomState> {
   StreamSubscription<int>? _totalSub;
   StreamSubscription<int>? _personalSub;
   StreamSubscription<AccelerometerEvent>? _shakeSub;
+  Timer? _countdownTimer;
 
   // --- Throttle: prevent rapid-fire RTDB writes ---
   DateTime _lastIncrement = DateTime(0);
@@ -59,6 +60,11 @@ class LiveRoomCubit extends Cubit<LiveRoomState> {
       (room) {
         log('[LiveRoom] Room loaded: ${room.name}');
         final isAdmin = _repo.isCreator(room.creatorId);
+
+        final remaining = room.expiresAt != null
+            ? room.expiresAt!.difference(DateTime.now())
+            : Duration.zero;
+
         emit(
           LiveRoomLoaded(
             room: room,
@@ -67,9 +73,11 @@ class LiveRoomCubit extends Cubit<LiveRoomState> {
             activeMode: InteractionMode.touch,
             goalReached: false,
             isAdmin: isAdmin,
+            remainingTime: remaining,
           ),
         );
         _startCounterStreams();
+        _startCountdown(room.expiresAt);
       },
     );
   }
@@ -194,6 +202,25 @@ class LiveRoomCubit extends Cubit<LiveRoomState> {
     log('[LiveRoom] Shake listener started');
   }
 
+  void _startCountdown(DateTime? expiresAt) {
+    _countdownTimer?.cancel();
+    if (expiresAt == null) return;
+
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final s = state;
+      if (s is! LiveRoomLoaded) return;
+
+      final remaining = expiresAt.difference(DateTime.now());
+      if (remaining.isNegative) {
+        timer.cancel();
+        log('[LiveRoom] Time expired! Ending room.');
+        emit(LiveRoomLeft());
+      } else {
+        emit(s.copyWith(remainingTime: remaining));
+      }
+    });
+  }
+
   void _stopShakeListener() {
     _shakeSub?.cancel();
     _shakeSub = null;
@@ -209,6 +236,7 @@ class LiveRoomCubit extends Cubit<LiveRoomState> {
     _totalSub?.cancel();
     _personalSub?.cancel();
     _shakeSub?.cancel();
+    _countdownTimer?.cancel();
     log('[LiveRoom] Cubit closed — all subscriptions cancelled');
     return super.close();
   }

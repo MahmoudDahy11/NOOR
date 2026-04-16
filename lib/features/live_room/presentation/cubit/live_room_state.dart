@@ -19,6 +19,7 @@ final class LiveRoomLoaded extends LiveRoomState {
   final InteractionMode activeMode;
   final bool goalReached;
   final bool isAdmin;
+  final Duration remainingTime;
 
   const LiveRoomLoaded({
     required this.room,
@@ -27,6 +28,7 @@ final class LiveRoomLoaded extends LiveRoomState {
     required this.activeMode,
     required this.goalReached,
     required this.isAdmin,
+    this.remainingTime = Duration.zero,
   });
 
   LiveRoomLoaded copyWith({
@@ -36,6 +38,7 @@ final class LiveRoomLoaded extends LiveRoomState {
     InteractionMode? activeMode,
     bool? goalReached,
     bool? isAdmin,
+    Duration? remainingTime,
   }) {
     return LiveRoomLoaded(
       room: room ?? this.room,
@@ -44,6 +47,7 @@ final class LiveRoomLoaded extends LiveRoomState {
       activeMode: activeMode ?? this.activeMode,
       goalReached: goalReached ?? this.goalReached,
       isAdmin: isAdmin ?? this.isAdmin,
+      remainingTime: remainingTime ?? this.remainingTime,
     );
   }
 }

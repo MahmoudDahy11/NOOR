@@ -129,6 +129,7 @@ class _LiveRoomViewState extends State<_LiveRoomView> {
                   onLeave: cubit.leaveRoom,
                   onReset: state.isAdmin ? cubit.resetCount : null,
                   onEnd: state.isAdmin ? cubit.endRoom : null,
+                  remainingTime: state.remainingTime,
                 ),
 
                 const SizedBox(height: 8),
