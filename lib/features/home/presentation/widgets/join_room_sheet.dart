@@ -1,7 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tally_islamic/core/di/service_locator.dart';
 import 'package:tally_islamic/core/helper/show_snak_bar.dart';
+import 'package:tally_islamic/core/router/app_router.dart';
+import 'package:tally_islamic/features/live_room/domain/repositories/live_room_repo.dart';
 
 import 'join_room_widgets.dart';
 
@@ -28,14 +32,30 @@ class _JoinRoomSheetState extends State<JoinRoomSheet> {
       showSnakBar(context, 'Room ID must be 8 characters.', isError: true);
       return;
     }
+
     setState(() => _isLoading = true);
-    log('[JoinRoom] Attempting to join room: $id');
-    await Future.delayed(const Duration(seconds: 1));
+    log('[JoinRoom] Verifying room ID: $id');
+
+    final repo = getIt<LiveRoomRepo>();
+    final result = await repo.getRoomDetails(id);
+
     if (!mounted) return;
     setState(() => _isLoading = false);
 
-    showSnakBar(context, 'Joining room $id...', isError: false);
-    Navigator.pop(context);
+    result.fold(
+      (failure) {
+        log('[JoinRoom] Verification failed: ${failure.errMessage}');
+        showSnakBar(context, 'Room not found or invalid ID.', isError: true);
+      },
+      (room) {
+        log('[JoinRoom] Room verified: ${room.name}. Navigating...');
+        Navigator.pop(context); // Close sheet
+        context.pushNamed(
+          AppRouter.liveRoomRoute,
+          pathParameters: {'roomId': id},
+        );
+      },
+    );
   }
 
   @override
