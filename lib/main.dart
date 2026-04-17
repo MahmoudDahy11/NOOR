@@ -6,17 +6,16 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:tally_islamic/core/di/service_locator.dart';
+import 'package:tally_islamic/core/env/app_env.dart';
+import 'package:tally_islamic/core/router/app_router.dart';
+import 'package:tally_islamic/core/services/local_notification_service.dart';
+import 'package:tally_islamic/core/services/notification_message_handler.dart';
+import 'package:tally_islamic/core/services/push_token_service.dart';
+import 'package:tally_islamic/core/services/remote_notification_store_service.dart';
+import 'package:tally_islamic/core/services/room_activation_notification_service.dart';
+import 'package:tally_islamic/features/auth/data/service/local_storage.dart';
 import 'package:tally_islamic/firebase_options.dart';
-
-import 'core/di/service_locator.dart';
-import 'core/env/app_env.dart';
-import 'core/router/app_router.dart';
-import 'core/services/local_notification_service.dart';
-import 'core/services/notification_message_handler.dart';
-import 'core/services/push_token_service.dart';
-import 'core/services/remote_notification_store_service.dart';
-import 'core/services/room_activation_notification_service.dart';
-import 'features/auth/data/service/local_storage.dart';
 
 Future<void> _handleRemoteMessageNavigation(RemoteMessage message) async {
   await NotificationMessageHandler.navigateFromMessage(
@@ -96,7 +95,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 1. Load Environment Variables
-  await dotenv.load(fileName: '.env');
+  await dotenv.load(fileName: 'assets/.env');
 
   // 2. Initialize Firebase
   try {

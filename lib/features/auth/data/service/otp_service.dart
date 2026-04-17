@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 
-import '../../../../core/constants/app_keys.dart';
-import '../../../../core/env/app_env.dart';
+import 'package:tally_islamic/core/constants/app_keys.dart';
+import 'package:tally_islamic/core/env/app_env.dart';
 
 /*
  * OtpService class

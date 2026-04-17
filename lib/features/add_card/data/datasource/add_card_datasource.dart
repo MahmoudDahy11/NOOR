@@ -2,9 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tally_islamic/core/api/api_service.dart';
-import '../../../../core/constants/app_keys.dart';
-
-import '../../../../core/env/app_env.dart';
+import 'package:tally_islamic/core/constants/app_keys.dart';
+import 'package:tally_islamic/core/env/app_env.dart';
 import '../model/stripe_customer_model.dart';
 
 /// AddCard Data Source - Stripe and Firestore operations
