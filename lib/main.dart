@@ -15,6 +15,7 @@ import 'core/services/local_notification_service.dart';
 import 'core/services/notification_message_handler.dart';
 import 'core/services/push_token_service.dart';
 import 'core/services/remote_notification_store_service.dart';
+import 'core/services/room_activation_notification_service.dart';
 import 'features/auth/data/service/local_storage.dart';
 
 Future<void> _handleRemoteMessageNavigation(RemoteMessage message) async {
@@ -120,6 +121,7 @@ Future<void> main() async {
 
   // 4. Setup Dependency Injection
   setupServiceLocator();
+  RoomActivationNotificationService().start();
 
   runApp(DevicePreview(enabled: false, builder: (context) => const NoorApp()));
 

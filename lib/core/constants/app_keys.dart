@@ -9,6 +9,7 @@ class AppKeys {
   static const String otpsCollection = 'otps';
   static const String notificationsCollection = 'notifications';
   static const String notifyMeCollection = 'notifyMe';
+  static const String notifyMeNotifiedAt = 'notifiedAt';
 
   // User Keys
   static const String uId = 'uid';
