@@ -33,11 +33,11 @@ jobs:
       - name: Check Formatting
         run: dart format --set-exit-if-changed .
 
-      # خطوة حل مشكلة الملفات الناقصة (AppEnv & .env)
+      # خطوة حل مشكلة الملفات الناقصة (تم إزالة الـ import غير المستخدم)
       - name: Create Dummy Env Files
         run: |
           mkdir -p lib/core/env
-          echo "import 'package:flutter_dotenv/flutter_dotenv.dart'; class AppEnv { AppEnv._(); static String get stripePublishableKey => ''; static String get stripeSecretKey => ''; static String get stripeCustomerId => ''; static String get otpPasswordAccount => ''; static String get stripeRestrictedKey => ''; static bool get isConfigured => false; }" > lib/core/env/app_env.dart
+          echo "class AppEnv { AppEnv._(); static String get stripePublishableKey => ''; static String get stripeSecretKey => ''; static String get stripeCustomerId => ''; static String get otpPasswordAccount => ''; static String get stripeRestrictedKey => ''; static bool get isConfigured => false; }" > lib/core/env/app_env.dart
           mkdir -p assets
           touch assets/.env
 
