@@ -11,21 +11,24 @@ class LocalNotificationService {
 
   static final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
+  static const String channelId = 'room_started_channel';
+  static const String _channelName = 'Room Started Alerts';
+  static const String _channelDescription =
+      'Heads-up alerts for live room start notifications.';
+  static const String _notificationIcon = 'ic_launcher_notif';
 
   static const AndroidNotificationChannel _roomStartedChannel =
       AndroidNotificationChannel(
-        'room_started_channel',
-        'Room Started Alerts',
-        description: 'Heads-up alerts for live room start notifications.',
+        channelId,
+        _channelName,
+        description: _channelDescription,
         importance: Importance.max,
         playSound: true,
         enableVibration: true,
       );
 
   static Future<void> initialize() async {
-    const androidSettings = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
-    );
+    const androidSettings = AndroidInitializationSettings(_notificationIcon);
     const iosSettings = DarwinInitializationSettings();
 
     const settings = InitializationSettings(
@@ -47,40 +50,79 @@ class LocalNotificationService {
     await androidImplementation?.createNotificationChannel(_roomStartedChannel);
   }
 
+  static String? buildRoomPayload(String? roomId) {
+    if (roomId == null || roomId.isEmpty) {
+      return null;
+    }
+
+    return jsonEncode({
+      AppKeys.notificationRoute: AppRouter.liveRoomRoute,
+      AppKeys.notificationRoomId: roomId,
+    });
+  }
+
+  static String? extractRoomIdFromPayload(String? payload) {
+    if (payload == null || payload.isEmpty) {
+      return null;
+    }
+
+    try {
+      final decoded = jsonDecode(payload);
+      if (decoded is Map<String, dynamic>) {
+        final roomId =
+            decoded[AppKeys.notificationRoomId]?.toString() ??
+            decoded[AppKeys.roomId]?.toString();
+        if (roomId != null && roomId.isNotEmpty) {
+          return roomId;
+        }
+      }
+    } catch (_) {
+      if (!payload.startsWith('{')) {
+        return payload;
+      }
+    }
+
+    return null;
+  }
+
   static Future<void> showHeadsUpNotification({
     required int id,
     required String title,
     required String body,
     String? payload,
   }) async {
-    const notificationDetails = NotificationDetails(
-      android: AndroidNotificationDetails(
-        'room_started_channel',
-        'Room Started Alerts',
-        channelDescription:
-            'Heads-up alerts for live room start notifications.',
-        icon: '@mipmap/ic_launcher',
-        importance: Importance.max,
-        priority: Priority.high,
-        ticker: 'Tally Islamic',
-        color: Color(0xFF2E8B57),
-      ),
-      iOS: DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-      ),
-    );
+    final safePayload = extractRoomIdFromPayload(payload) == null
+        ? payload
+        : buildRoomPayload(extractRoomIdFromPayload(payload));
 
-    await _plugin.show(id, title, body, notificationDetails, payload: payload);
+    try {
+      await _plugin.show(
+        id,
+        title,
+        body,
+        _buildNotificationDetails(_notificationIcon),
+        payload: safePayload,
+      );
+    } catch (_) {
+      await _plugin.show(
+        id,
+        title,
+        body,
+        _buildNotificationDetails(_notificationIcon),
+        payload: safePayload,
+      );
+    }
   }
 
-  static Future<void> handleLaunchDetails() async {
+  static Future<bool> handleLaunchDetails() async {
     final launchDetails = await _plugin.getNotificationAppLaunchDetails();
     final response = launchDetails?.notificationResponse;
     if (response != null) {
       await _handleNotificationTap(response.payload);
+      return true;
     }
+
+    return false;
   }
 
   @pragma('vm:entry-point')
@@ -94,14 +136,8 @@ class LocalNotificationService {
     _handleNotificationTap(response.payload);
   }
 
-  static Future<void> _handleNotificationTap(String? payload) async {
-    if (payload == null || payload.isEmpty) return;
-
-    final roomId = payload.startsWith('{')
-        ? _extractRoomIdFromPayload(payload)
-        : payload;
-
-    if (roomId == null || roomId.isEmpty) return;
+  static Future<void> navigateToRoom(String roomId) async {
+    if (roomId.isEmpty) return;
 
     AppRouter.router.pushNamed(
       AppRouter.liveRoomRoute,
@@ -109,13 +145,30 @@ class LocalNotificationService {
     );
   }
 
-  static String? _extractRoomIdFromPayload(String payload) {
-    try {
-      final decoded = jsonDecode(payload);
-      if (decoded is Map<String, dynamic>) {
-        return decoded[AppKeys.roomId]?.toString();
-      }
-    } catch (_) {}
-    return null;
+  static Future<void> _handleNotificationTap(String? payload) async {
+    final roomId = extractRoomIdFromPayload(payload);
+    if (roomId == null || roomId.isEmpty) return;
+
+    await navigateToRoom(roomId);
+  }
+
+  static NotificationDetails _buildNotificationDetails(String androidIcon) {
+    return NotificationDetails(
+      android: AndroidNotificationDetails(
+        channelId,
+        _channelName,
+        channelDescription: _channelDescription,
+        icon: androidIcon,
+        importance: Importance.max,
+        priority: Priority.high,
+        ticker: 'Tally Islamic',
+        color: const Color(0xFF2E8B57),
+      ),
+      iOS: const DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
+    );
   }
 }

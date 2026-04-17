@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:developer';
-import 'dart:math' show Random;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_preview/device_preview.dart';
@@ -17,18 +15,13 @@ import 'core/di/service_locator.dart';
 import 'core/env/app_env.dart';
 import 'core/router/app_router.dart';
 import 'core/services/local_notification_service.dart';
+import 'core/services/notification_message_handler.dart';
 import 'features/auth/data/service/local_storage.dart';
 
 Future<void> _handleRemoteMessageNavigation(RemoteMessage message) async {
-  final roomId =
-      message.data[AppKeys.roomId]?.toString() ??
-      message.data[AppKeys.notificationRoomId]?.toString();
-
-  if (roomId == null || roomId.isEmpty) return;
-
-  AppRouter.router.pushNamed(
-    AppRouter.liveRoomRoute,
-    pathParameters: {AppKeys.roomId: roomId},
+  await NotificationMessageHandler.navigateFromMessage(
+    message,
+    navigateToRoom: LocalNotificationService.navigateToRoom,
   );
 }
 
@@ -47,33 +40,22 @@ Future<void> _configureFirebaseMessaging() async {
     sound: true,
   );
 
-  FirebaseMessaging.onMessage.listen((message) async {
-    final roomId =
-        message.data[AppKeys.roomId]?.toString() ??
-        message.data[AppKeys.notificationRoomId]?.toString();
-
-    await LocalNotificationService.showHeadsUpNotification(
-      id: message.messageId?.hashCode ?? Random().nextInt(1 << 20),
-      title:
-          message.notification?.title ??
-          message.data[AppKeys.notificationTitle] ??
-          'Room Started',
-      body:
-          message.notification?.body ??
-          message.data[AppKeys.notificationBody] ??
-          'A live room is waiting for you.',
-      payload: jsonEncode({AppKeys.roomId: roomId}),
-    );
-  });
+  FirebaseMessaging.onMessage.listen(
+    (message) => NotificationMessageHandler.handleForegroundMessage(
+      message,
+      showNotification: LocalNotificationService.showHeadsUpNotification,
+    ),
+  );
 
   FirebaseMessaging.onMessageOpenedApp.listen(_handleRemoteMessageNavigation);
 }
 
 Future<void> _handleInitialNotificationRoutes() async {
-  await LocalNotificationService.handleLaunchDetails();
+  final launchedFromLocalNotification =
+      await LocalNotificationService.handleLaunchDetails();
 
   final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-  if (initialMessage != null) {
+  if (!launchedFromLocalNotification && initialMessage != null) {
     await _handleRemoteMessageNavigation(initialMessage);
   }
 }
@@ -92,7 +74,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     final notificationId =
         message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString();
     final data = Map<String, dynamic>.from(message.data);
-    final roomId = data[AppKeys.notificationRoomId] ?? data[AppKeys.roomId];
+    final roomId = NotificationMessageHandler.extractRoomId(message);
 
     await FirebaseFirestore.instance
         .collection(AppKeys.usersCollection)
@@ -119,20 +101,10 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 
   await LocalNotificationService.showHeadsUpNotification(
-    id: message.messageId?.hashCode ?? Random().nextInt(1 << 20),
-    title:
-        message.notification?.title ??
-        message.data[AppKeys.notificationTitle] ??
-        'Room Started',
-    body:
-        message.notification?.body ??
-        message.data[AppKeys.notificationBody] ??
-        'A live room is waiting for you.',
-    payload: jsonEncode({
-      AppKeys.roomId:
-          message.data[AppKeys.roomId]?.toString() ??
-          message.data[AppKeys.notificationRoomId]?.toString(),
-    }),
+    id: NotificationMessageHandler.resolveNotificationId(message),
+    title: NotificationMessageHandler.resolveTitle(message),
+    body: NotificationMessageHandler.resolveBody(message),
+    payload: NotificationMessageHandler.buildPayload(message),
   );
 }
 
@@ -155,7 +127,6 @@ Future<void> main() async {
   await LocalStorageService.init();
   await LocalNotificationService.initialize();
   await _configureFirebaseMessaging();
-  await LocalNotificationService.handleLaunchDetails();
 
   try {
     Stripe.publishableKey = AppEnv.stripePublishableKey;
@@ -188,5 +159,3 @@ class NoorApp extends StatelessWidget {
     );
   }
 }
-
-//

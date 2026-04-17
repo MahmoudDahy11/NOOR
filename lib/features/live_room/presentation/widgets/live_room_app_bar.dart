@@ -89,7 +89,7 @@ class _InfoChip extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          fontSize: 15,
+          fontSize: 14,
           fontWeight: FontWeight.w600,
           color: color,
           letterSpacing: 0.5,
