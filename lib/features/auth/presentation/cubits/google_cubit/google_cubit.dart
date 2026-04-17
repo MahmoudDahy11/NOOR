@@ -7,7 +7,6 @@ import '../../../../add_card/domain/repo/add_card_repo.dart';
 import '../../../domain/repo/auth_repo.dart';
 part 'google_state.dart';
 
-
 /*
  * GoogleCubit class
  * extends Cubit with GoogleState
@@ -26,9 +25,9 @@ class GoogleCubit extends Cubit<GoogleState> {
     try {
       if (isClosed) return;
       emit(GoogleLoading());
-      
+
       final result = await firebaseAuthrepo.signInWithGoogle();
-      
+
       if (isClosed) return;
 
       await result.fold(
@@ -36,7 +35,9 @@ class GoogleCubit extends Cubit<GoogleState> {
         (unit) async {
           final user = FirebaseAuth.instance.currentUser;
           if (user != null) {
-            final profileResult = await _accountSetupRepo.hasUserProfile(user.uid);
+            final profileResult = await _accountSetupRepo.hasUserProfile(
+              user.uid,
+            );
             await profileResult.fold(
               (failure) async => emit(GoogleSuccess(needsAccountSetup: true)),
               (exists) async {
@@ -44,7 +45,10 @@ class GoogleCubit extends Cubit<GoogleState> {
                   final cardResult = await _addCardRepo.hasCard(user.uid);
                   cardResult.fold(
                     (failure) => emit(
-                      GoogleSuccess(needsAccountSetup: false, needsAddCard: true),
+                      GoogleSuccess(
+                        needsAccountSetup: false,
+                        needsAddCard: true,
+                      ),
                     ),
                     (hasCard) => emit(
                       GoogleSuccess(

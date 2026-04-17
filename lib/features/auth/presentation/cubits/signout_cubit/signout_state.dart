@@ -1,6 +1,5 @@
 part of 'signout_cubit.dart';
 
-
 /*
  * SignoutState class
  * base state class for SignoutCubit

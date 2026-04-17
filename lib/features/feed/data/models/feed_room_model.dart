@@ -19,12 +19,8 @@ class FeedRoomModel extends FeedRoomEntity {
     super.expiresAt,
   });
 
-  factory FeedRoomModel.fromFirestore(
-    Map<String, dynamic> json,
-    String docId,
-  ) {
-    final creatorMap =
-        json[AppKeys.roomCreator] as Map<String, dynamic>? ?? {};
+  factory FeedRoomModel.fromFirestore(Map<String, dynamic> json, String docId) {
+    final creatorMap = json[AppKeys.roomCreator] as Map<String, dynamic>? ?? {};
     return FeedRoomModel(
       id: docId,
       name: json[AppKeys.roomName] ?? '',
@@ -43,8 +39,7 @@ class FeedRoomModel extends FeedRoomEntity {
       expiresAt: json[AppKeys.roomExpiresAt] != null
           ? (json[AppKeys.roomExpiresAt] as Timestamp).toDate()
           : null,
-      participantCount:
-          (json[AppKeys.roomParticipants] as List?)?.length ?? 0,
+      participantCount: (json[AppKeys.roomParticipants] as List?)?.length ?? 0,
     );
   }
 }

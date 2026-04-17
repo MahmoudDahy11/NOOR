@@ -79,7 +79,10 @@ class _OnboardingViewState extends State<_OnboardingView> {
                 valueListenable: _currentIndexNotifier,
                 builder: (context, currentIndex, _) {
                   return OnboardingContentCard(
-                    page: _pages[currentIndex == i ? i : i], // We need to pass the page corresponding to i
+                    page:
+                        _pages[currentIndex == i
+                            ? i
+                            : i], // We need to pass the page corresponding to i
                     // However, we want the card to stay linked to the page i
                     // But use the currentIndex for button text and dots
                     currentIndex: currentIndex,

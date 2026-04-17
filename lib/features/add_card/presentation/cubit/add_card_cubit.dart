@@ -4,15 +4,14 @@ import 'package:meta/meta.dart';
 
 import '../../domain/repo/add_card_repo.dart';
 
-
 part 'add_card_state.dart';
 
 class AddCardCubit extends Cubit<AddCardState> {
   final AddCardRepo _repo;
 
   AddCardCubit({required AddCardRepo repo})
-      : _repo = repo,
-        super(AddCardInitial());
+    : _repo = repo,
+      super(AddCardInitial());
 
   /// Step 1 — called on screen init:
   /// create or fetch Stripe customer
@@ -50,9 +49,7 @@ class AddCardCubit extends Cubit<AddCardState> {
         (_) => emit(AddCardSuccess()),
       );
     } on StripeException catch (e) {
-      emit(AddCardFailure(
-        e.error.localizedMessage ?? 'Card setup failed.',
-      ));
+      emit(AddCardFailure(e.error.localizedMessage ?? 'Card setup failed.'));
     } catch (e) {
       emit(AddCardFailure(e.toString()));
     }

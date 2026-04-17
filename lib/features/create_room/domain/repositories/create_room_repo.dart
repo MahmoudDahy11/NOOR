@@ -8,9 +8,7 @@ abstract class CreateRoomRepo {
   /// Creates room in Firestore + initializes RTDB counter.
   /// Deducts tickets if paid room.
   /// Room starts as 'pending' — user activates later.
-  Future<Either<CustomFailure, RoomEntity>> createRoom(
-    CreateRoomParams params,
-  );
+  Future<Either<CustomFailure, RoomEntity>> createRoom(CreateRoomParams params);
 
   /// Activates a pending room — sets status to 'active' and expiresAt.
   Future<Either<CustomFailure, void>> startRoom(String roomId);

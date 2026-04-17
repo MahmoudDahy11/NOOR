@@ -14,21 +14,20 @@ class TicketPackageModel extends TicketPackageEntity {
   factory TicketPackageModel.fromFirestore(
     Map<String, dynamic> json,
     String docId,
-  ) =>
-      TicketPackageModel(
-        id: docId,
-        name: json[AppKeys.name] ?? '',
-        ticketCount: json[AppKeys.packageTicketCount] ?? 0,
-        price: (json[AppKeys.packagePrice] as num).toDouble(),
-        currency: json[AppKeys.packageCurrency] ?? 'usd',
-        isPopular: json[AppKeys.packageIsPopular] ?? false,
-      );
+  ) => TicketPackageModel(
+    id: docId,
+    name: json[AppKeys.name] ?? '',
+    ticketCount: json[AppKeys.packageTicketCount] ?? 0,
+    price: (json[AppKeys.packagePrice] as num).toDouble(),
+    currency: json[AppKeys.packageCurrency] ?? 'usd',
+    isPopular: json[AppKeys.packageIsPopular] ?? false,
+  );
 
   Map<String, dynamic> toFirestore() => {
-        AppKeys.name: name,
-        AppKeys.packageTicketCount: ticketCount,
-        AppKeys.packagePrice: price,
-        AppKeys.packageCurrency: currency,
-        AppKeys.packageIsPopular: isPopular,
-      };
+    AppKeys.name: name,
+    AppKeys.packageTicketCount: ticketCount,
+    AppKeys.packagePrice: price,
+    AppKeys.packageCurrency: currency,
+    AppKeys.packageIsPopular: isPopular,
+  };
 }

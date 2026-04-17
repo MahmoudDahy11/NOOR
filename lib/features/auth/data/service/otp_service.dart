@@ -40,7 +40,10 @@ class OtpService {
   }
 
   Future<bool> verifyOtp(String uid, String enteredOtp) async {
-    final snap = await _firestore.collection(AppKeys.otpsCollection).doc(uid).get();
+    final snap = await _firestore
+        .collection(AppKeys.otpsCollection)
+        .doc(uid)
+        .get();
     if (!snap.exists) return false;
 
     final data = snap.data()!;
@@ -64,7 +67,10 @@ class OtpService {
   }
 
   Future<bool> canResendOtp(String uid) async {
-    final snap = await _firestore.collection(AppKeys.otpsCollection).doc(uid).get();
+    final snap = await _firestore
+        .collection(AppKeys.otpsCollection)
+        .doc(uid)
+        .get();
     if (!snap.exists) return true;
 
     final data = snap.data()!;
@@ -74,7 +80,10 @@ class OtpService {
   }
 
   Future<bool> isOtpVerified(String uid) async {
-    final snap = await _firestore.collection(AppKeys.otpsCollection).doc(uid).get();
+    final snap = await _firestore
+        .collection(AppKeys.otpsCollection)
+        .doc(uid)
+        .get();
     if (!snap.exists) return false;
 
     final data = snap.data()!;

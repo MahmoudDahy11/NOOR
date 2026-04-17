@@ -26,7 +26,7 @@ class SignoutCubit extends Cubit<SignoutState> {
     result.fold(
       (failure) => emit(SignOutFailure(errMessage: failure.errMessage)),
       (_) async {
-          GetIt.I.reset();
+        GetIt.I.reset();
         emit(SignOutSuccess());
       },
     );

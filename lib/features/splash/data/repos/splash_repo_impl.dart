@@ -25,26 +25,22 @@ class SplashRepoImpl implements SplashRepo {
       if (loggedIn && user != null) {
         final result = await _accountSetupRepo.hasUserProfile(user.uid);
 
-        return await result.fold(
-          (failure) async => Left(failure),
-          (profileExists) async {
-            if (profileExists) {
-              final cardResult = await _addCardRepo.hasCard(user.uid);
-              return cardResult.fold(
-                (failure) => Left(failure),
-                (hasCard) {
-                  if (hasCard) {
-                    return const Right('home');
-                  } else {
-                    return const Right('add_card');
-                  }
-                },
-              );
-            } else {
-              return const Right('account_setup');
-            }
-          },
-        );
+        return await result.fold((failure) async => Left(failure), (
+          profileExists,
+        ) async {
+          if (profileExists) {
+            final cardResult = await _addCardRepo.hasCard(user.uid);
+            return cardResult.fold((failure) => Left(failure), (hasCard) {
+              if (hasCard) {
+                return const Right('home');
+              } else {
+                return const Right('add_card');
+              }
+            });
+          } else {
+            return const Right('account_setup');
+          }
+        });
       } else {
         return const Right('onboarding');
       }

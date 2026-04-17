@@ -1,6 +1,5 @@
 part of 'signup_cubit.dart';
 
-
 /*
  * SignupState class
  * base state class for SignupCubit
@@ -20,6 +19,6 @@ final class SignupFailure extends SignupState {
 }
 
 final class SignupSuccess extends SignupState {
-   final UserEntity user;
+  final UserEntity user;
   SignupSuccess(this.user);
 }

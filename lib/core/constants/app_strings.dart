@@ -81,5 +81,4 @@ class AppStrings {
   static const cardAddedBody = 'Your payment card has been\nsecurely saved.';
   static const continueToHome = 'Continue to Home';
   static const preparingSecureSession = 'Preparing secure session...';
-
 }

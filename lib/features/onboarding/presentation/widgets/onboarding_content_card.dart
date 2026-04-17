@@ -51,8 +51,6 @@ class OnboardingContentCard extends StatelessWidget {
     );
   }
 
-  
-
   Widget _buildTitle() {
     return RichText(
       text: TextSpan(

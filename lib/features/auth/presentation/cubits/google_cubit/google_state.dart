@@ -1,6 +1,5 @@
 part of 'google_cubit.dart';
 
-
 /*
  * GoogleState class
  * base state class for GoogleCubit

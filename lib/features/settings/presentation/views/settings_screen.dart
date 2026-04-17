@@ -51,7 +51,10 @@ class _SettingsView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: const Text(AppStrings.settings, style: AppTextStyles.titleLarge),
+          title: const Text(
+            AppStrings.settings,
+            style: AppTextStyles.titleLarge,
+          ),
           backgroundColor: AppTheme.light.scaffoldBackgroundColor,
           elevation: 0,
           leading: IconButton(

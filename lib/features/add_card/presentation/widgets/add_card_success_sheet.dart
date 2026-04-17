@@ -20,28 +20,41 @@ class AddCardSuccessSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 72, height: 72,
+            width: 72,
+            height: 72,
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.check_circle_rounded,
-                color: AppColors.primary, size: 40),
+            child: const Icon(
+              Icons.check_circle_rounded,
+              color: AppColors.primary,
+              size: 40,
+            ),
           ),
           const SizedBox(height: 20),
-          const Text('Card Added!',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800,
-                color: Color(0xFF1A1C1C)),
+          const Text(
+            'Card Added!',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF1A1C1C),
+            ),
           ),
           const SizedBox(height: 8),
-          const Text('Your payment card has been\nsecurely saved.',
+          const Text(
+            'Your payment card has been\nsecurely saved.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: AppColors.textSecondary,
-                height: 1.5),
+            style: TextStyle(
+              fontSize: 14,
+              color: AppColors.textSecondary,
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: 28),
           SizedBox(
-            width: double.infinity, height: 52,
+            width: double.infinity,
+            height: 52,
             child: ElevatedButton(
               onPressed: onContinue,
               style: ElevatedButton.styleFrom(
@@ -52,8 +65,10 @@ class AddCardSuccessSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              child: const Text('Continue to Home',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+              child: const Text(
+                'Continue to Home',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
             ),
           ),
         ],

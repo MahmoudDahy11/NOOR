@@ -3,7 +3,7 @@ class OnboardingPageModel {
   final String titleRegular;
   final String titleItalic;
   final String body;
-  final String? subtitle; 
+  final String? subtitle;
 
   const OnboardingPageModel({
     required this.imagePath,

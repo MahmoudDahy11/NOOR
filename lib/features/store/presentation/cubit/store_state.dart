@@ -20,7 +20,6 @@ final class StoreLoaded extends StoreState {
   const StoreLoaded({required this.packages, required this.ticketBalance});
 }
 
-
 final class StorePurchaseSuccess extends StoreState {
   final List<TicketPackageEntity> packages;
   final int ticketBalance;

@@ -14,8 +14,8 @@ class StoreDataSource {
   StoreDataSource({
     required FirebaseFirestore firestore,
     required FirebaseAuth auth,
-  })  : _firestore = firestore,
-        _auth = auth;
+  }) : _firestore = firestore,
+       _auth = auth;
 
   String get _uid => _auth.currentUser!.uid;
 
@@ -37,7 +37,10 @@ class StoreDataSource {
   /// Get current user's ticket balance
   Future<int> getTicketBalance() async {
     try {
-      final doc = await _firestore.collection(AppKeys.usersCollection).doc(_uid).get();
+      final doc = await _firestore
+          .collection(AppKeys.usersCollection)
+          .doc(_uid)
+          .get();
       return (doc.data()?[AppKeys.ticketBalance] ?? 0) as int;
     } catch (e) {
       throw Exception('Failed to get ticket balance: $e');
@@ -47,7 +50,10 @@ class StoreDataSource {
   /// Get stripe customer ID
   Future<String?> getStripeCustomerId() async {
     try {
-      final doc = await _firestore.collection(AppKeys.usersCollection).doc(_uid).get();
+      final doc = await _firestore
+          .collection(AppKeys.usersCollection)
+          .doc(_uid)
+          .get();
       return doc.data()?[AppKeys.stripeCustomerId] as String?;
     } catch (e) {
       throw Exception('Failed to get customer id: $e');
@@ -61,8 +67,12 @@ class StoreDataSource {
   }) async {
     try {
       await _firestore.runTransaction((tx) async {
-        final userRef = _firestore.collection(AppKeys.usersCollection).doc(_uid);
-        final ticketRef = _firestore.collection(AppKeys.userTicketsCollection).doc();
+        final userRef = _firestore
+            .collection(AppKeys.usersCollection)
+            .doc(_uid);
+        final ticketRef = _firestore
+            .collection(AppKeys.userTicketsCollection)
+            .doc();
         final snap = await tx.get(userRef);
         final balance = (snap.data()?[AppKeys.ticketBalance] ?? 0) as int;
 
@@ -79,7 +89,9 @@ class StoreDataSource {
           ).toFirestore(),
         );
 
-        tx.update(userRef, {AppKeys.ticketBalance: balance + package.ticketCount});
+        tx.update(userRef, {
+          AppKeys.ticketBalance: balance + package.ticketCount,
+        });
       });
     } catch (e) {
       throw Exception('Failed to save ticket transaction: $e');
@@ -93,7 +105,9 @@ class StoreDataSource {
   }) async {
     try {
       await _firestore.runTransaction((tx) async {
-        final userRef = _firestore.collection(AppKeys.usersCollection).doc(_uid);
+        final userRef = _firestore
+            .collection(AppKeys.usersCollection)
+            .doc(_uid);
         final ticketRef = _firestore
             .collection(AppKeys.userTicketsCollection)
             .doc(userTicketId);

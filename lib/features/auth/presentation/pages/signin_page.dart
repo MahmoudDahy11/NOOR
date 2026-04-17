@@ -192,7 +192,10 @@ class _SigninViewState extends State<_SigninView> {
                   const SizedBox(height: 60),
                   _buildLogo(),
                   const SizedBox(height: 40),
-                  const Text(AppStrings.signIn, style: AppTextStyles.displayLarge),
+                  const Text(
+                    AppStrings.signIn,
+                    style: AppTextStyles.displayLarge,
+                  ),
                   const SizedBox(height: 8),
                   const Text(
                     "Welcome back to Tally",

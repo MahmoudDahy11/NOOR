@@ -33,47 +33,76 @@ class CardVisualWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('TALLY',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800,
-                    color: Colors.white, letterSpacing: 2),
+              const Text(
+                'TALLY',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  letterSpacing: 2,
+                ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.gold.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: AppColors.gold.withValues(alpha: 0.4)),
+                  border: Border.all(
+                    color: AppColors.gold.withValues(alpha: 0.4),
+                  ),
                 ),
-                child: const Text('SECURE',
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700,
-                      color: AppColors.gold, letterSpacing: 1),
+                child: const Text(
+                  'SECURE',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.gold,
+                    letterSpacing: 1,
+                  ),
                 ),
               ),
             ],
           ),
           const Spacer(),
-          const Text('•••• •••• •••• ••••',
-            style: TextStyle(fontSize: 20, color: Colors.white70,
-                letterSpacing: 4, fontWeight: FontWeight.w300),
+          const Text(
+            '•••• •••• •••• ••••',
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white70,
+              letterSpacing: 4,
+              fontWeight: FontWeight.w300,
+            ),
           ),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('MM / YY',
-                style: TextStyle(fontSize: 12, color: Colors.white54,
-                    letterSpacing: 1),
+              const Text(
+                'MM / YY',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white54,
+                  letterSpacing: 1,
+                ),
               ),
               Row(
                 children: [
-                  Container(width: 28, height: 28,
+                  Container(
+                    width: 28,
+                    height: 28,
                     decoration: const BoxDecoration(
-                      shape: BoxShape.circle, color: Color(0xFFEB001B),
+                      shape: BoxShape.circle,
+                      color: Color(0xFFEB001B),
                     ),
                   ),
                   Transform.translate(
                     offset: const Offset(-10, 0),
-                    child: Container(width: 28, height: 28,
+                    child: Container(
+                      width: 28,
+                      height: 28,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: const Color(0xFFF79E1B).withValues(alpha: 0.85),

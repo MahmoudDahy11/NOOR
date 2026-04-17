@@ -13,15 +13,17 @@ class CreateRoomCubit extends Cubit<CreateRoomState> {
   final CreateRoomRepo _repo;
 
   CreateRoomCubit({required CreateRoomRepo repo})
-      : _repo = repo,
-        super(CreateRoomInitial());
+    : _repo = repo,
+      super(CreateRoomInitial());
 
   Future<void> createRoom(CreateRoomParams params) async {
     emit(CreateRoomLoading());
 
-    log('[CreateRoom] type=${params.type} dhikr=${params.dhikr} '
-        'goal=${params.goal} duration=${params.durationHours}h '
-        'tickets=${params.ticketsRequired} public=${params.isPublic}');
+    log(
+      '[CreateRoom] type=${params.type} dhikr=${params.dhikr} '
+      'goal=${params.goal} duration=${params.durationHours}h '
+      'tickets=${params.ticketsRequired} public=${params.isPublic}',
+    );
 
     try {
       final result = await _repo.createRoom(params);

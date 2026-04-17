@@ -64,7 +64,9 @@ class _StoreLoadedBodyState extends State<StoreLoadedBody> {
                     isPurchasing: purchasingId == packages[i].id,
                     onTap: () async {
                       _purchasingIdNotifier.value = packages[i].id;
-                      await context.read<StoreCubit>().purchasePackage(packages[i]);
+                      await context.read<StoreCubit>().purchasePackage(
+                        packages[i],
+                      );
                       if (mounted) _purchasingIdNotifier.value = null;
                     },
                   );

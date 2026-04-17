@@ -1,6 +1,5 @@
 part of 'facebook_cubit.dart';
 
-
 /* 
  * FacebookState class
  * base state class for FacebookCubit

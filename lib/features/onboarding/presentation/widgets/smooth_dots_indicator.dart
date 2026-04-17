@@ -12,7 +12,7 @@ class SmoothDotsIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const activeColor = Color(0xFF00A361); 
+    const activeColor = Color(0xFF00A361);
     const inactiveColor = Color(0xFFE0E0E0);
 
     return Row(

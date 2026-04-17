@@ -25,8 +25,8 @@ class StyledCardFieldWidget extends StatelessWidget {
         ],
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child:const CardField(
-        style:  TextStyle(
+      child: const CardField(
+        style: TextStyle(
           fontSize: 16,
           color: Color(0xFF1A1C1C),
           fontWeight: FontWeight.w500,
@@ -35,10 +35,7 @@ class StyledCardFieldWidget extends StatelessWidget {
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
-          hintStyle: TextStyle(
-            color: AppColors.textHint,
-            fontSize: 15,
-          ),
+          hintStyle: TextStyle(color: AppColors.textHint, fontSize: 15),
         ),
       ),
     );

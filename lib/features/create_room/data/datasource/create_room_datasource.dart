@@ -29,7 +29,10 @@ class CreateRoomDataSource {
   /// Get user data from Firestore
   Future<Map<String, dynamic>> getUserData() async {
     try {
-      final userDoc = await _firestore.collection(AppKeys.usersCollection).doc(_uid).get();
+      final userDoc = await _firestore
+          .collection(AppKeys.usersCollection)
+          .doc(_uid)
+          .get();
       if (!userDoc.exists) {
         throw Exception('User profile not found.');
       }
@@ -87,7 +90,10 @@ class CreateRoomDataSource {
   /// Get room by ID
   Future<RoomModel?> getRoom(String roomId) async {
     try {
-      final snap = await _firestore.collection(AppKeys.roomsCollection).doc(roomId).get();
+      final snap = await _firestore
+          .collection(AppKeys.roomsCollection)
+          .doc(roomId)
+          .get();
       if (!snap.exists) return null;
       return RoomModel.fromFirestore(snap.data() ?? {}, snap.id);
     } catch (e) {
@@ -98,7 +104,10 @@ class CreateRoomDataSource {
   /// Get duration for a room
   Future<double> getRoomDuration(String roomId) async {
     try {
-      final snap = await _firestore.collection(AppKeys.roomsCollection).doc(roomId).get();
+      final snap = await _firestore
+          .collection(AppKeys.roomsCollection)
+          .doc(roomId)
+          .get();
       return (snap.data()?[AppKeys.roomDurationHours] as num).toDouble();
     } catch (e) {
       throw Exception('Failed to get room duration: $e');

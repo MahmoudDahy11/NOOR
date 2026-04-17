@@ -30,7 +30,10 @@ class AddCardDataSource {
       }
 
       // Check if customer already exists in Firestore
-      final doc = await _firestore.collection(AppKeys.usersCollection).doc(user.uid).get();
+      final doc = await _firestore
+          .collection(AppKeys.usersCollection)
+          .doc(user.uid)
+          .get();
       final existingId = doc.data()?[AppKeys.stripeCustomerId] as String?;
 
       if (existingId != null && existingId.isNotEmpty) {
@@ -86,7 +89,9 @@ class AddCardDataSource {
         contentType: Headers.formUrlEncodedContentType,
         token: AppEnv.stripeRestrictedKey,
         body: {
-          AppKeys.stripeInvoiceSettings: {AppKeys.stripeDefaultPaymentMethod: paymentMethodId},
+          AppKeys.stripeInvoiceSettings: {
+            AppKeys.stripeDefaultPaymentMethod: paymentMethodId,
+          },
         },
       );
 
@@ -106,7 +111,10 @@ class AddCardDataSource {
   /// Check if user has a card saved
   Future<bool> hasCard(String uid) async {
     try {
-      final doc = await _firestore.collection(AppKeys.usersCollection).doc(uid).get();
+      final doc = await _firestore
+          .collection(AppKeys.usersCollection)
+          .doc(uid)
+          .get();
       return doc.data()?[AppKeys.hasCard] == true;
     } catch (e) {
       throw Exception('Failed to check card: $e');

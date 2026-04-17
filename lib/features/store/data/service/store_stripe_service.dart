@@ -45,7 +45,8 @@ class StoreStripeService {
         headers: {'Stripe-Version': '2024-12-18.acacia'},
         body: {AppKeys.stripeCustomer: customerId},
       );
-      final ephemeralKey = ephemeralKeyResponse.data[AppKeys.stripeSecret] as String;
+      final ephemeralKey =
+          ephemeralKeyResponse.data[AppKeys.stripeSecret] as String;
 
       // 3. Init payment sheet
       await Stripe.instance.initPaymentSheet(

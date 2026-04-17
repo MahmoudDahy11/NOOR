@@ -49,9 +49,7 @@ class StoreCubit extends Cubit<StoreState> {
 
     log('[Store] Purchasing package: ${package.name} - \$${package.price}');
 
-    final result = await _repo.purchasePackage(
-      package: package,
-    );
+    final result = await _repo.purchasePackage(package: package);
 
     result.fold(
       (failure) {

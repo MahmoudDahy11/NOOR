@@ -11,8 +11,8 @@ class AccountSetupCubit extends Cubit<AccountSetupState> {
   final AccountSetupRepo _repo;
 
   AccountSetupCubit({required AccountSetupRepo repo})
-      : _repo = repo,
-        super(AccountSetupInitial());
+    : _repo = repo,
+      super(AccountSetupInitial());
 
   Future<void> saveProfile({
     required String displayName,

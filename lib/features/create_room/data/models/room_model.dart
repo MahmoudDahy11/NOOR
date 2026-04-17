@@ -18,10 +18,10 @@ class RoomCreatorModel extends RoomCreatorEntity {
       );
 
   Map<String, dynamic> toMap() => {
-        AppKeys.roomId: id,
-        AppKeys.roomName: name,
-        AppKeys.roomPhoto: photo,
-      };
+    AppKeys.roomId: id,
+    AppKeys.roomName: name,
+    AppKeys.roomPhoto: photo,
+  };
 }
 
 class RoomModel extends RoomEntity {
@@ -42,7 +42,7 @@ class RoomModel extends RoomEntity {
     super.startedAt,
   });
 
-    factory RoomModel.fromFirestore(Map<String, dynamic> json, String docId) =>
+  factory RoomModel.fromFirestore(Map<String, dynamic> json, String docId) =>
       RoomModel(
         id: docId,
         name: json[AppKeys.roomName] ?? '',
@@ -51,7 +51,8 @@ class RoomModel extends RoomEntity {
         goal: json[AppKeys.roomGoal] ?? 0,
         currentProgress: json[AppKeys.roomCurrentProgress] ?? 0,
         creator: RoomCreatorModel.fromMap(
-            json[AppKeys.roomCreator] as Map<String, dynamic>? ?? {}),
+          json[AppKeys.roomCreator] as Map<String, dynamic>? ?? {},
+        ),
         createdAt: (json[AppKeys.roomCreatedAt] as Timestamp).toDate(),
         expiresAt: json[AppKeys.roomExpiresAt] != null
             ? (json[AppKeys.roomExpiresAt] as Timestamp).toDate()
@@ -66,19 +67,22 @@ class RoomModel extends RoomEntity {
       );
 
   Map<String, dynamic> toFirestore() => {
-        AppKeys.roomName: name,
-        AppKeys.roomType: type,
-        AppKeys.roomDhikr: dhikr,
-        AppKeys.roomGoal: goal,
-        AppKeys.roomCurrentProgress: currentProgress,
-        AppKeys.roomCreator: (creator as RoomCreatorModel).toMap(),
-        AppKeys.roomCreatedAt: Timestamp.fromDate(createdAt),
-        AppKeys.roomExpiresAt: expiresAt != null ? Timestamp.fromDate(expiresAt!) : null,
-        AppKeys.roomStartedAt:
-            startedAt != null ? Timestamp.fromDate(startedAt!) : null,
-        AppKeys.roomStatus: status,
-        AppKeys.roomIsPublic: isPublic,
-        AppKeys.roomParticipants: participants,
-        AppKeys.roomDurationHours: durationHours,
-      };
+    AppKeys.roomName: name,
+    AppKeys.roomType: type,
+    AppKeys.roomDhikr: dhikr,
+    AppKeys.roomGoal: goal,
+    AppKeys.roomCurrentProgress: currentProgress,
+    AppKeys.roomCreator: (creator as RoomCreatorModel).toMap(),
+    AppKeys.roomCreatedAt: Timestamp.fromDate(createdAt),
+    AppKeys.roomExpiresAt: expiresAt != null
+        ? Timestamp.fromDate(expiresAt!)
+        : null,
+    AppKeys.roomStartedAt: startedAt != null
+        ? Timestamp.fromDate(startedAt!)
+        : null,
+    AppKeys.roomStatus: status,
+    AppKeys.roomIsPublic: isPublic,
+    AppKeys.roomParticipants: participants,
+    AppKeys.roomDurationHours: durationHours,
+  };
 }

@@ -11,7 +11,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
 
   Future<void> sendResetLink(String email) async {
     emit(ForgetPasswordLoading());
-    if(isClosed) return;
+    if (isClosed) return;
     final result = await _firebaseAuthrepo.sendPasswordResetEmail(email);
     result.fold(
       (failure) => emit(ForgetPasswordFailure(errMessage: failure.errMessage)),

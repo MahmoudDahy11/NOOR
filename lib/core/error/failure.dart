@@ -125,7 +125,7 @@ class StripeFailure extends CustomFailure {
         return StripeFailure(
           errMessage: 'Connection to Stripe timed out. Please try again.',
         );
-      }
+    }
   }
 
   factory StripeFailure.fromGenericError(dynamic error) {

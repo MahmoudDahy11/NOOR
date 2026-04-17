@@ -64,8 +64,8 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
       context.read<ForgetPasswordCubit>().sendResetLink(
-            _emailController.text.trim(),
-          );
+        _emailController.text.trim(),
+      );
     } else {
       _autovalidateMode.value = AutovalidateMode.always;
     }

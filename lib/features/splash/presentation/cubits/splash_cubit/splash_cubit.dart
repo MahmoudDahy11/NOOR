@@ -18,8 +18,8 @@ class SplashCubit extends Cubit<SplashState> {
   final SplashRepo _splashRepo;
 
   SplashCubit({required SplashRepo splashRepo})
-      : _splashRepo = splashRepo,
-        super(SplashInitial());
+    : _splashRepo = splashRepo,
+      super(SplashInitial());
 
   Future<void> initializeApp() async {
     log("SplashCubit: Initialization started...");
@@ -35,7 +35,9 @@ class SplashCubit extends Cubit<SplashState> {
 
       result.fold(
         (failure) {
-          log("SplashCubit: Error determining navigation: ${failure.errMessage}");
+          log(
+            "SplashCubit: Error determining navigation: ${failure.errMessage}",
+          );
           emit(SplashError(message: failure.errMessage));
         },
         (navTarget) {

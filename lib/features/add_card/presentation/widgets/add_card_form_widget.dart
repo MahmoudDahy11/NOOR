@@ -32,16 +32,20 @@ class AddCardFormWidget extends StatelessWidget {
             child: Row(
               children: [
                 SizedBox(
-                  width: 12, height: 12,
+                  width: 12,
+                  height: 12,
                   child: CircularProgressIndicator(
                     strokeWidth: 1.5,
                     color: AppColors.primary.withValues(alpha: 0.6),
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text('Preparing secure session...',
-                  style: TextStyle(fontSize: 12,
-                      color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                Text(
+                  'Preparing secure session...',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary.withValues(alpha: 0.7),
+                  ),
                 ),
               ],
             ),
@@ -59,15 +63,22 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(width: 3, height: 16,
+        Container(
+          width: 3,
+          height: 16,
           decoration: BoxDecoration(
-            color: AppColors.gold, borderRadius: BorderRadius.circular(2),
+            color: AppColors.gold,
+            borderRadius: BorderRadius.circular(2),
           ),
         ),
         const SizedBox(width: 10),
-        Text(label,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1C1C)),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1A1C1C),
+          ),
         ),
       ],
     );

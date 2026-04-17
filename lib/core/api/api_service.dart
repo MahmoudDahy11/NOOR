@@ -17,10 +17,7 @@ class ApiService {
       data: body,
       options: Options(
         contentType: contentType,
-        headers: {
-          'Authorization': 'Bearer $token',
-          ...?headers,
-        },
+        headers: {'Authorization': 'Bearer $token', ...?headers},
       ),
     );
     return response;
@@ -34,9 +31,7 @@ class ApiService {
     final response = await _dio.get(
       url,
       queryParameters: queryParameters,
-      options: Options(
-        headers: {'Authorization': 'Bearer $token'},
-      ),
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
     return response;
   }

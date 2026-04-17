@@ -29,17 +29,21 @@ class FacebookCubit extends Cubit<FacebookState> {
     try {
       if (isClosed) return;
       emit(FacebookLoading());
-      
+
       final result = await firebaseAuthrepo.signinWithFacebook();
-      
+
       if (isClosed) return;
 
       await result.fold(
-        (failure) async => emit(FacebookFailure(errMessage: failure.errMessage)),
+        (failure) async =>
+            emit(FacebookFailure(errMessage: failure.errMessage)),
         (user) async {
-          final profileResult = await _accountSetupRepo.hasUserProfile(user.uId);
+          final profileResult = await _accountSetupRepo.hasUserProfile(
+            user.uId,
+          );
           await profileResult.fold(
-            (failure) async => emit(FacebookSuccess(user: user, needsAccountSetup: true)),
+            (failure) async =>
+                emit(FacebookSuccess(user: user, needsAccountSetup: true)),
             (exists) async {
               if (exists) {
                 final cardResult = await _addCardRepo.hasCard(user.uId);

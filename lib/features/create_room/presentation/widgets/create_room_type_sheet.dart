@@ -42,10 +42,7 @@ class CreateRoomTypeSheet extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Choose the type of room you want to start.',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 24),
           _TypeOption(
@@ -121,15 +118,15 @@ class _TypeOption extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded, color: color.withValues(alpha: 0.5)),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: color.withValues(alpha: 0.5),
+            ),
           ],
         ),
       ),

@@ -16,11 +16,8 @@ part 'login_state.dart';
  * emits loading, success, and failure states based on the login process
  */
 class LoginCubit extends Cubit<LoginState> {
-  LoginCubit(
-    this._firebaseAuthrepo,
-    this._accountSetupRepo,
-    this._addCardRepo,
-  ) : super(LoginInitial());
+  LoginCubit(this._firebaseAuthrepo, this._accountSetupRepo, this._addCardRepo)
+    : super(LoginInitial());
 
   final FirebaseAuthRepo _firebaseAuthrepo;
   final AccountSetupRepo _accountSetupRepo;
@@ -48,13 +45,18 @@ class LoginCubit extends Cubit<LoginState> {
             user.uId,
           );
           await profileResult.fold(
-            (failure) async => emit(LoginSuccess(user, needsAccountSetup: true)),
+            (failure) async =>
+                emit(LoginSuccess(user, needsAccountSetup: true)),
             (exists) async {
               if (exists) {
                 final cardResult = await _addCardRepo.hasCard(user.uId);
                 cardResult.fold(
                   (failure) => emit(
-                    LoginSuccess(user, needsAccountSetup: false, needsAddCard: true),
+                    LoginSuccess(
+                      user,
+                      needsAccountSetup: false,
+                      needsAddCard: true,
+                    ),
                   ),
                   (hasCard) => emit(
                     LoginSuccess(

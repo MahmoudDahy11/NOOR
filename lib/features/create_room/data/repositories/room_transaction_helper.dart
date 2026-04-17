@@ -17,7 +17,9 @@ class RoomTransactionHelper {
   ) async {
     try {
       await firestore.runTransaction((tx) async {
-        final roomRef = firestore.collection(AppKeys.roomsCollection).doc(room.id);
+        final roomRef = firestore
+            .collection(AppKeys.roomsCollection)
+            .doc(room.id);
         final userRef = firestore.collection(AppKeys.usersCollection).doc(uid);
 
         // 1. ALL READS FIRST

@@ -10,7 +10,9 @@ class SeedTicketPackages {
   SeedTicketPackages._();
 
   static Future<void> run() async {
-    final col = FirebaseFirestore.instance.collection(AppKeys.ticketPackagesCollection);
+    final col = FirebaseFirestore.instance.collection(
+      AppKeys.ticketPackagesCollection,
+    );
 
     final packages = [
       {

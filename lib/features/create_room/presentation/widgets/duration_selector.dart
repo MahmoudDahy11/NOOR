@@ -28,17 +28,31 @@ class DurationSelectorWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          const Text(AppStrings.duration, style: TextStyle(fontSize: 13,
-              fontWeight: FontWeight.w600, color: Color(0xFF374151))),
-          const Spacer(),
-          Text('${_tickets(selectedHours)} ticket(s)',
-            style: const TextStyle(fontSize: 12,
-                fontWeight: FontWeight.w600, color: AppColors.gold)),
-        ]),
+        Row(
+          children: [
+            const Text(
+              AppStrings.duration,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF374151),
+              ),
+            ),
+            const Spacer(),
+            Text(
+              '${_tickets(selectedHours)} ticket(s)',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppColors.gold,
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 10),
         Wrap(
-          spacing: 8, runSpacing: 8,
+          spacing: 8,
+          runSpacing: 8,
           children: _options.map((h) {
             final isSelected = selectedHours == h;
             return GestureDetector(
@@ -46,10 +60,11 @@ class DurationSelectorWidget extends StatelessWidget {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 8),
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.gold : Colors.transparent,
+                  color: isSelected ? AppColors.gold : Colors.transparent,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isSelected
@@ -58,9 +73,11 @@ class DurationSelectorWidget extends StatelessWidget {
                     width: 1.5,
                   ),
                 ),
-                child: Text(_label(h),
+                child: Text(
+                  _label(h),
                   style: TextStyle(
-                    fontSize: 13, fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
                     color: isSelected ? Colors.white : AppColors.gold,
                   ),
                 ),
