@@ -1,148 +1,173 @@
 <div align="center">
 
-![Noor Islamic Banner](/home/mahmoud-dahy/.gemini/antigravity/brain/cb84285b-3036-48b6-8d3a-af668e900caa/noor_app_banner_1776440415830.png)
+![Noor Islamic Banner](assets/images/readme/banner.png)
 
 # 🌙 Noor Islamic
-**Count Together, Grow Together.**
+### **Count Together, Grow Together.**
 
-[![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=flat&logo=Flutter&logoColor=white)](https://flutter.dev)
-[![Firebase](https://img.shields.io/badge/Firebase-%23039BE5.svg?style=flat&logo=Firebase&logoColor=white)](https://firebase.google.com/)
-[![BLoC](https://img.shields.io/badge/State%20Management-BLoC-red.svg?style=flat)](https://pub.dev/packages/flutter_bloc)
-[![Clean Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture-green.svg?style=flat)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+[![Flutter](https://img.shields.io/badge/Flutter-3.11.4-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Firebase](https://img.shields.io/badge/Firebase-Infrastructure-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
+[![BLoC](https://img.shields.io/badge/State_Management-BLoC/Cubit-DB4437?style=for-the-badge&logo=dart&logoColor=white)](https://pub.dev/packages/flutter_bloc)
+[![Clean Architecture](https://img.shields.io/badge/Architecture-Clean-00C853?style=for-the-badge)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+
+</div>
 
 ---
 
-**Noor Islamic** is a premium, community-focused Flutter application designed for mindfulness and collective remembrance. It allows users to join "Live Rooms" for synchronized dhikr counting, fostering a sense of spiritual connection across the globe.
+## 🎯 Project Goal
 
-[Features](#-key-features) • [Tech Stack](#-technical-stack) • [Architecture](#-modular-architecture) • [Getting Started](#-getting-started)
+The core mission of **Noor Islamic** is to bridge the gap between individual spiritual practice and global community connection. In an increasingly digital world, we aim to provide a sanctuary for the Ummah to engage in synchronized remembrance (dhikr). 
 
-</div>
+By leveraging real-time synchronization technology, Noor Islamic transforms the solitary act of counting into a collective journey, fostering a sense of shared purpose, spiritual accountability, and global brotherhood/sisterhood. Our goal is to make constant remembrance accessible, engaging, and deeply rooted in community.
+
+---
 
 ## ✨ Key Features
 
 ### 📡 Real-time Live Rooms
-Experience the power of collective counting. Join rooms hosted by others or create your own to synchronize your remembrance with a global community in real-time.
+Experience the power of collective dhikr. Join rooms hosted by others or lead your own to synchronize your remembrance with a global community in real-time.
+
+<p align="center">
+  <img src="assets/images/readme/live_room.png" width="80%" alt="Live Room Mockup">
+</p>
 
 ### 📳 Immersive Interaction
-Interact with the app without even looking at the screen. Multiple input modes designed for mindfulness:
-*   **Shake-to-Count**: Simply shake your device to increment the counter.
-*   **Volume Keys**: Use physical buttons for tactile feedback.
-*   **Full-Screen Touch**: Tap anywhere on the vibrant, minimalist interface.
-*   **Haptic Feedback**: Subtle vibrations provide confirmation for every count.
+Interact with the app without distraction. Designed for deep mindfulness with multiple input modes:
+*   **Shake-to-Count**: Increment your counter with a simple gesture.
+*   **Physical Feedback**: Full support for volume keys and haptic vibrations.
+*   **Minimalist UI**: Tap anywhere on the vibrant, clutter-free interface.
 
-### 🎯 Collective Goals
-Set goals for your rooms. Track the progress of the entire community as everyone works together to reach a spiritual milestone.
+<p align="center">
+  <img src="assets/images/readme/interaction.png" width="45%" alt="Interaction Mockup">
+</p>
 
 ### 💳 Premium Room Hosting
-Acquire tickets via a secure **Stripe** integration to host your own featured rooms and lead the community.
+Acquire "Hosting Tickets" via secure **Stripe** integration to feature your rooms and lead the community milestones.
+
+<p align="center">
+  <img src="assets/images/readme/stripe.png" width="45%" alt="Stripe Store Mockup">
+</p>
 
 ---
 
-## 🛠 Technical Stack
+## 🏗 Full Project Structure (Clean Architecture)
 
-Noor Islamic is built with a focus on performance, scalability, and maintainability:
+Noor Islamic is built with a strict separation of concerns, ensuring high maintainability and testability.
 
-*   **Framework**: [Flutter](https://flutter.dev) (Dart)
-*   **State Management**: [Bloc/Cubit](https://pub.dev/packages/flutter_bloc) for predictable state transitions.
-*   **Backend Services**: 
-    *   **Firebase Authentication**: Secure user sign-in.
-    *   **Cloud Firestore**: For persistent room and user metadata.
-    *   **Real-time Database**: For ultra-low latency counter synchronization.
-    *   **Firebase Cloud Messaging (FCM)**: Remote notifications for live events.
-*   **Payments**: [Stripe SDK](https://pub.dev/packages/flutter_stripe) for secure transactions.
-*   **Local Storage**: [Hive](https://pub.dev/packages/hive) for high-performance localized caching.
-    *   **Dependency Injection**: [GetIt](https://pub.dev/packages/get_it) for decoupled service management.
-*   **Network**: [Dio](https://pub.dev/packages/dio) for robust HTTP requests.
+```text
+.
+├── lib
+│   ├── main.dart                      # App entry & service bootstrap
+│   ├── firebase_options.dart          # Firebase platform config
+│   ├── core                           # Shared Architectural Core
+│   │   ├── di                         # GetIt Service Locator setup
+│   │   ├── env                        # DotEnv environment management
+│   │   ├── router                     # GoRouter declarative routing
+│   │   ├── api                        # Base Dio API service & interceptors
+│   │   ├── error                      # Failure & Exception handling
+│   │   ├── services                   # Global Services (FCM, Local Notifications)
+│   │   ├── theme                      # Design tokens (Colors, Text Styles)
+│   │   ├── utils & helper             # Global extension methods & UI helpers
+│   │   └── widgets                    # Atomic UI components (Buttons, Fields)
+│   └── features                       # Vertical Slices (Feature Modules)
+│       └── [feature_name]             # e.g., live_room, auth, store
+│           ├── domain                 # Business Logic (Pure Dart)
+│           │   ├── entity             # Plain Data Objects
+│           │   ├── repo               # Repository Interfaces
+│           │   └── usecase            # Specific Business Scenarios
+│           ├── data                   # Data Logic (Implementation)
+│           │   ├── datasource         # Remote/Local data fetchers
+│           │   ├── model              # JSON serialization & mapping
+│           │   └── repo               # Repository Implementations
+│           └── presentation           # UI Logic (Flutter)
+│               ├── cubit              # BLoC State Management
+│               └── widgets/view       # UI Layer components
+├── assets
+│   ├── images                         # Branding & Onboarding
+│   ├── avatars                        # User profile SVG assets
+│   └── readme                         # Documentation assets
+├── test                               # Symmetrical Testing Hierarchy
+│   ├── features                       # Feature unit & widget tests
+│   └── core                           # Shared components verification
+└── docs                               # Supplementary technical guides
+```
+
+---
+
+## 🛠 Dependency Orchestration
+
+| Dependency | Purpose | Implementation Layer |
+| :--- | :--- | :--- |
+| **Flutter BLoC** | State Management & Event Handling | `Presentation` (Cubits/Blocs) |
+| **Firebase Services** | Authentication, RTDB, Firestore, FCM | `Data` (Datasources) / `Core` (Services) |
+| **Flutter Stripe** | Secure Payment Processing & Tokenization | `Features/Store`, `Features/AddCard` |
+| **Go Router** | Declarative Routing & Deep Linking | `Core/Router` |
+| **Hive Flutter** | Ultra-fast NoSQL Local Storage | `Data` (Auth/Splash caching) |
+| **Get It** | Dependency Injection & Service Locating | `Core/Di` |
+| **Dio** | Robust HTTP Client with Interceptors | `Core/Api` |
+| **Sensors Plus** | Shake-to-Count Gesture Detection | `Features/LiveRoom` (Runtime logic) |
+
+---
+
+## 🧰 Essential Developer Toolchain
+
+To maintain the high quality and performance of Noor Islamic, we utilize the following specialized tools:
+
+*   **Device Preview**: Enables real-time UI/UX testing across multiple simulated device sizes and locales.
+*   **Flutter Launcher Icons**: Automates the generation of adaptive icons for both Android and iOS.
+*   **DartZ**: Provides functional programming constructs (Either, Left, Right) to handle errors gracefully in the Domain layer.
+*   **Shimmer & Confetti**: Enhances user experience with high-quality visual feedback and loading states.
+*   **Firebase Messaging**: Powers the remote notification engine for live room activations.
 
 ---
 
 ## 🏗 Modular Architecture
 
-The project follows the principles of **Clean Architecture**, ensuring that the business logic is independent of the UI and external frameworks.
-
 ```mermaid
 graph TD
-    A[Presentation Layer] --> B[Domain Layer]
-    C[Data Layer] --> B[Domain Layer]
-    
-    subgraph "Presentation"
-    A1[Widgets] --> A2[Blocs/Cubits]
+    subgraph "Presentation Layer (Flutter)"
+        A[Widgets] --> B[Cubits/Blocs]
     end
-    
-    subgraph "Domain"
-    B1[Entities]
-    B2[Usecases]
-    B3[Repository Interfaces]
-    end
-    
-    subgraph "Data"
-    C1[Repositories Implementation]
-    C2[Data Sources]
-    C3[Models]
-    end
-```
 
-### Folder Structure
-*   `lib/core`: Shared utilities, themes, constants, and dependency injection.
-*   `lib/features`: Feature-based modularity (e.g., `live_room`, `auth`, `store`).
-    *   `data/`: Raw data sources and repository implementations.
-    *   `domain/`: Business logic, entities, and repository definitions.
-    *   `presentation/`: UI components and state management.
+    subgraph "Domain Layer (Pure Dart)"
+        B --> C[Usecases]
+        C --> D[Entities]
+        C --> E[Repository Interfaces]
+    end
+
+    subgraph "Data Layer (Implementation)"
+        F[Repository Implementation] --> E
+        F --> G[Data Sources]
+        G --> H[Firebase / API / Hive]
+    end
+
+    style D fill:#00C853,stroke:#333,stroke-width:2px,color:#fff
+    style H fill:#FFCA28,stroke:#333,stroke-width:2px,color:#000
+```
 
 ---
 
 ## 🚀 Getting Started
 
-### Prerequisites
-*   Flutter SDK (^3.11.4)
-*   Operating System: iOS / Android / Web
-*   Firebase Project
-
-### Installation
-
-1.  **Clone the repository:**
+1.  **Clone & Install**:
     ```bash
     git clone https://github.com/your-username/tally_islamic.git
-    cd tally_islamic
-    ```
-
-2.  **Install dependencies:**
-    ```bash
     flutter pub get
     ```
 
-3.  **Setup Firebase:**
-    *   Add your `google-services.json` (Android) and `GoogleService-Info.plist` (iOS).
-    *   Enable Auth, Firestore, and Real-time Database in the console.
+2.  **Environment Setup**:
+    Add your `.env` to `assets/` and run `flutterfire configure` to generate `firebase_options.dart`.
 
-4.  **Configure Environment:**
-    *   Create a `.env` file in the root directory based on the provided configuration for Stripe and other services.
-
-5.  **Run the app:**
+3.  **Run**:
     ```bash
     flutter run
     ```
 
 ---
 
-## 🤝 Contributing
-
-We welcome contributions from the community! Whether it's fixing a bug, suggesting a feature, or improving documentation.
-
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the `LICENSE` file for details.
-
----
-
 <div align="center">
-Built with ❤️ for the Ummah.
+
+Built with ❤️ for the global Ummah.
+*May this work be a source of constant dhikr and blessing.*
+
 </div>
