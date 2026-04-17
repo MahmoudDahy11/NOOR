@@ -15,22 +15,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
       - name: Cache Flutter dependencies
         uses: actions/cache@v4
         with:
           path: /opt/hostedtoolcache/flutter
           key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: "stable"
-
       - name: Install dependencies
         run: flutter pub get
 
+      # تأكد من الفورمات قبل إضافة ملفات الـ Dummy
       - name: Check Formatting
         run: dart format --set-exit-if-changed .
+
+      # خطوة حل مشكلة الملفات الناقصة (AppEnv & .env)
+      - name: Create Dummy Env Files
+        run: |
+          mkdir -p lib/core/env
+          echo "import 'package:flutter_dotenv/flutter_dotenv.dart'; class AppEnv { AppEnv._(); static String get stripePublishableKey => ''; static String get stripeSecretKey => ''; static String get stripeCustomerId => ''; static String get otpPasswordAccount => ''; static String get stripeRestrictedKey => ''; static bool get isConfigured => false; }" > lib/core/env/app_env.dart
+          mkdir -p assets
+          touch assets/.env
 
       - name: Run Analyze
         run: flutter analyze
