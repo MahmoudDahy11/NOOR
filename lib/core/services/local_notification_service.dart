@@ -164,7 +164,7 @@ class LocalNotificationService {
         icon: androidIcon,
         importance: Importance.max,
         priority: Priority.high,
-        ticker: 'Tally Islamic',
+        ticker: 'Noor Islamic',
         color: const Color(0xFF2E8B57),
         enableVibration: true,
         playSound: true,

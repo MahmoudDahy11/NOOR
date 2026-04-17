@@ -20,7 +20,7 @@ class AppNotificationModel extends AppNotificationEntity {
   ) {
     return AppNotificationModel(
       id: documentId,
-      title: json[AppKeys.notificationTitle] as String? ?? 'Tally Islamic',
+      title: json[AppKeys.notificationTitle] as String? ?? 'Noor Islamic',
       body: json[AppKeys.notificationBody] as String? ?? '',
       type: json[AppKeys.notificationType] as String? ?? 'system',
       isRead: json[AppKeys.notificationIsRead] as bool? ?? false,

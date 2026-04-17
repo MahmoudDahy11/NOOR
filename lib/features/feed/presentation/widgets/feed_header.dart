@@ -34,7 +34,7 @@ class FeedHeader extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   const Text(
-                    'Tally Islamic',
+                    'Noor Islamic',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,

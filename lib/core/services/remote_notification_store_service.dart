@@ -35,7 +35,7 @@ class RemoteNotificationStoreService {
           AppKeys.notificationTitle:
               message.notification?.title ??
               data[AppKeys.notificationTitle] ??
-              'Tally Islamic',
+              'Noor Islamic',
           AppKeys.notificationBody:
               message.notification?.body ??
               data[AppKeys.notificationBody] ??
