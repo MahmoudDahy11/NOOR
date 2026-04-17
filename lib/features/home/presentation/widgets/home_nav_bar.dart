@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/theme/app_colors.dart';
 
 class HomeNavBar extends StatelessWidget {
@@ -29,7 +30,7 @@ class HomeNavBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 64,
+          height: 55,
           child: Row(
             children: [
               _NavItem(
@@ -76,8 +77,8 @@ class _FabButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 52,
-        height: 52,
+        width: 45,
+        height: 45,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [Color(0xFF1A6B3F), AppColors.primary],
