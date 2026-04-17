@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -93,9 +95,11 @@ class _EditProfileViewState extends State<EditProfileView> {
   void _handleReaction(BuildContext context, ProfileState state) {
     if (state.outcome == ProfileOutcome.updated) {
       showSnakBar(context, 'Profile updated successfully!');
+      log('Profile updated successfully!');
       Navigator.pop(context, true);
     } else if (state.outcome == ProfileOutcome.error && state.message != null) {
       showSnakBar(context, state.message!, isError: true);
+      log('Profile update failed: ${state.message}');
     }
   }
 }

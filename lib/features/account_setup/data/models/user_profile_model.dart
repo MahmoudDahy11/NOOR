@@ -26,12 +26,14 @@ class UserProfileModel extends UserProfileEntity {
     AppKeys.interests: interests,
   };
 
-  factory UserProfileModel.fromFirestore(Map<String, dynamic> json) =>
-      UserProfileModel(
-        uid: json[AppKeys.uId] ?? '',
-        displayName: json[AppKeys.displayName] ?? '',
-        avatarAsset: json[AppKeys.avatarAsset] ?? 'assets/avatars/avatar_1.svg',
-        bio: json[AppKeys.bio] ?? '',
-        interests: List<String>.from(json[AppKeys.interests] ?? []),
-      );
+  factory UserProfileModel.fromFirestore(
+    Map<String, dynamic> json, [
+    String? id,
+  ]) => UserProfileModel(
+    uid: json[AppKeys.uId] ?? id ?? '',
+    displayName: json[AppKeys.displayName] ?? '',
+    avatarAsset: json[AppKeys.avatarAsset] ?? 'assets/avatars/avatar_1.svg',
+    bio: json[AppKeys.bio] ?? '',
+    interests: List<String>.from(json[AppKeys.interests] ?? []),
+  );
 }

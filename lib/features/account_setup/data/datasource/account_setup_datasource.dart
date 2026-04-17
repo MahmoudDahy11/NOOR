@@ -25,7 +25,10 @@ class AccountSetupDataSource {
   /// Check if user profile exists in Firestore
   Future<bool> hasUserProfile(String uid) async {
     try {
-      final doc = await _firestore.collection(AppKeys.usersCollection).doc(uid).get();
+      final doc = await _firestore
+          .collection(AppKeys.usersCollection)
+          .doc(uid)
+          .get();
       return doc.exists;
     } catch (e) {
       throw Exception('Failed to check profile existence: $e');
@@ -35,9 +38,12 @@ class AccountSetupDataSource {
   /// Get user profile from Firestore
   Future<UserProfileModel?> getUserProfile(String uid) async {
     try {
-      final doc = await _firestore.collection(AppKeys.usersCollection).doc(uid).get();
+      final doc = await _firestore
+          .collection(AppKeys.usersCollection)
+          .doc(uid)
+          .get();
       if (!doc.exists) return null;
-      return UserProfileModel.fromFirestore(doc.data() ?? {});
+      return UserProfileModel.fromFirestore(doc.data() ?? {}, doc.id);
     } catch (e) {
       throw Exception('Failed to get profile: $e');
     }

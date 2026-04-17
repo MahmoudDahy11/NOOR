@@ -12,7 +12,7 @@ class ProfileDataSource {
   Stream<UserProfileModel?> watchUserProfile(String uid) =>
       _userDoc(uid).snapshots().map(
         (doc) => doc.exists
-            ? UserProfileModel.fromFirestore(doc.data() ?? {})
+            ? UserProfileModel.fromFirestore(doc.data() ?? {}, doc.id)
             : null,
       );
 
@@ -36,7 +36,7 @@ class ProfileDataSource {
   Future<UserProfileModel?> getUserProfile(String uid) async {
     final doc = await _userDoc(uid).get();
     if (!doc.exists) return null;
-    return UserProfileModel.fromFirestore(doc.data() ?? {});
+    return UserProfileModel.fromFirestore(doc.data() ?? {}, doc.id);
   }
 
   Future<List<RoomModel>> getCreatedRooms(String uid) async {
