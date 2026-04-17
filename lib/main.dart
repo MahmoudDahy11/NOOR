@@ -1,8 +1,6 @@
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_preview/device_preview.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +8,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:tally_islamic/firebase_options.dart';
 
-import 'core/constants/app_keys.dart';
 import 'core/di/service_locator.dart';
 import 'core/env/app_env.dart';
 import 'core/router/app_router.dart';
 import 'core/services/local_notification_service.dart';
 import 'core/services/notification_message_handler.dart';
+import 'core/services/push_token_service.dart';
+import 'core/services/remote_notification_store_service.dart';
 import 'features/auth/data/service/local_storage.dart';
 
 Future<void> _handleRemoteMessageNavigation(RemoteMessage message) async {
@@ -28,7 +27,7 @@ Future<void> _handleRemoteMessageNavigation(RemoteMessage message) async {
 Future<void> _configureFirebaseMessaging() async {
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  await FirebaseMessaging.instance.requestPermission(
+  final settings = await FirebaseMessaging.instance.requestPermission(
     alert: true,
     badge: true,
     sound: true,
@@ -40,12 +39,27 @@ Future<void> _configureFirebaseMessaging() async {
     sound: true,
   );
 
-  FirebaseMessaging.onMessage.listen(
-    (message) => NotificationMessageHandler.handleForegroundMessage(
+  final canUsePush =
+      settings.authorizationStatus == AuthorizationStatus.authorized ||
+      settings.authorizationStatus == AuthorizationStatus.provisional;
+
+  if (canUsePush) {
+    await PushTokenService.syncCurrentUserToken();
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((token) {
+      PushTokenService.syncCurrentUserToken(token: token);
+    });
+  }
+
+  FirebaseMessaging.onMessage.listen((message) async {
+    await RemoteNotificationStoreService.storeIncomingMessageForCurrentUser(
+      message,
+    );
+    await NotificationMessageHandler.handleForegroundMessage(
       message,
       showNotification: LocalNotificationService.showHeadsUpNotification,
-    ),
-  );
+    );
+  });
 
   FirebaseMessaging.onMessageOpenedApp.listen(_handleRemoteMessageNavigation);
 }
@@ -65,40 +79,9 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await LocalStorageService.init();
   await LocalNotificationService.initialize();
-
-  final authUid = FirebaseAuth.instance.currentUser?.uid;
-  final cachedUid = LocalStorageService.getUserId();
-  final uid = authUid ?? cachedUid;
-
-  if (uid != null && uid.isNotEmpty) {
-    final notificationId =
-        message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString();
-    final data = Map<String, dynamic>.from(message.data);
-    final roomId = NotificationMessageHandler.extractRoomId(message);
-
-    await FirebaseFirestore.instance
-        .collection(AppKeys.usersCollection)
-        .doc(uid)
-        .collection(AppKeys.notificationsCollection)
-        .doc(notificationId)
-        .set({
-          AppKeys.notificationId: notificationId,
-          AppKeys.notificationTitle:
-              message.notification?.title ??
-              data[AppKeys.notificationTitle] ??
-              'Tally Islamic',
-          AppKeys.notificationBody:
-              message.notification?.body ??
-              data[AppKeys.notificationBody] ??
-              '',
-          AppKeys.notificationType: data[AppKeys.notificationType] ?? 'system',
-          AppKeys.notificationRoomId: roomId,
-          AppKeys.notificationRoute: data[AppKeys.notificationRoute],
-          AppKeys.notificationData: data,
-          AppKeys.notificationIsRead: false,
-          AppKeys.notificationSentAt: FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
-  }
+  await RemoteNotificationStoreService.storeIncomingMessageForCurrentUser(
+    message,
+  );
 
   await LocalNotificationService.showHeadsUpNotification(
     id: NotificationMessageHandler.resolveNotificationId(message),

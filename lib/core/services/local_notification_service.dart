@@ -25,6 +25,7 @@ class LocalNotificationService {
         importance: Importance.max,
         playSound: true,
         enableVibration: true,
+        showBadge: true,
       );
 
   static Future<void> initialize() async {
@@ -163,6 +164,14 @@ class LocalNotificationService {
         priority: Priority.high,
         ticker: 'Tally Islamic',
         color: const Color(0xFF2E8B57),
+        enableVibration: true,
+        playSound: true,
+        showWhen: true,
+        fullScreenIntent: true,
+        ongoing: false,
+        autoCancel: true,
+        enableLights: true,
+        ledColor: const Color(0xFF2E8B57),
       ),
       iOS: const DarwinNotificationDetails(
         presentAlert: true,

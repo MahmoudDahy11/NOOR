@@ -56,7 +56,33 @@ final class FeedJoinSuccess extends FeedState {
   const FeedJoinSuccess(this.roomId);
 }
 
+final class FeedNotifying extends FeedState {
+  final List<FeedRoomEntity> rooms;
+  final String activeTab;
+  final String notifyingRoomId;
+
+  const FeedNotifying({
+    required this.rooms,
+    required this.activeTab,
+    required this.notifyingRoomId,
+  });
+}
+
+final class FeedNotifyMeSuccess extends FeedState {
+  final String roomId;
+  final List<FeedRoomEntity> rooms;
+  final String activeTab;
+
+  const FeedNotifyMeSuccess({
+    required this.roomId,
+    required this.rooms,
+    required this.activeTab,
+  });
+}
+
 final class FeedFailure extends FeedState {
   final String message;
-  const FeedFailure(this.message);
+  final String activeTab;
+
+  const FeedFailure(this.message, {this.activeTab = 'active'});
 }

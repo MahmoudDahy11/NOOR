@@ -43,13 +43,17 @@ class _FeedView extends StatelessWidget {
     } else if (state is FeedFailure) {
       log('Feed Failure: ${state.message}');
       showSnakBar(context, state.message, isError: true);
-      context.read<FeedCubit>().loadFeed();
+      context.read<FeedCubit>().loadFeed(tab: state.activeTab);
+    } else if (state is FeedNotifyMeSuccess) {
+      showSnakBar(context, 'We’ll notify you when the room starts.');
     }
   }
 
   String _currentTab(FeedState state) => switch (state) {
     FeedLoaded(:final activeTab) => activeTab,
     FeedJoining(:final activeTab) => activeTab,
+    FeedNotifying(:final activeTab) => activeTab,
+    FeedNotifyMeSuccess(:final activeTab) => activeTab,
     _ => 'active',
   };
 
@@ -129,6 +133,13 @@ class _FeedView extends StatelessWidget {
       FeedJoining() => FeedListBody(
         state: FeedLoaded(rooms: state.rooms, activeTab: state.activeTab),
         joiningId: state.joiningRoomId,
+      ),
+      FeedNotifying() => FeedListBody(
+        state: FeedLoaded(rooms: state.rooms, activeTab: state.activeTab),
+        joiningId: state.notifyingRoomId,
+      ),
+      FeedNotifyMeSuccess() => FeedListBody(
+        state: FeedLoaded(rooms: state.rooms, activeTab: state.activeTab),
       ),
       FeedFailure() => SliverFillRemaining(
         hasScrollBody: false,

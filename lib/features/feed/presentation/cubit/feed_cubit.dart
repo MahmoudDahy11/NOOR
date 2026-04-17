@@ -23,7 +23,7 @@ class FeedCubit extends Cubit<FeedState> {
 
     final result = await _repo.getRooms(status: tab);
     result.fold(
-      (f) => emit(FeedFailure(f.errMessage)),
+      (f) => emit(FeedFailure(f.errMessage, activeTab: tab)),
       (rooms) => emit(
         FeedLoaded(rooms: rooms, activeTab: tab, hasMore: rooms.length == 10),
       ),
@@ -48,7 +48,7 @@ class FeedCubit extends Cubit<FeedState> {
     );
 
     result.fold(
-      (f) => emit(FeedFailure(f.errMessage)),
+      (f) => emit(FeedFailure(f.errMessage, activeTab: _currentTab)),
       (more) => emit(
         current.copyWith(
           rooms: [...current.rooms, ...more],
@@ -77,7 +77,7 @@ class FeedCubit extends Cubit<FeedState> {
     result.fold(
       (f) {
         log('[Feed] Join failed: ${f.errMessage}');
-        emit(FeedFailure(f.errMessage));
+        emit(FeedFailure(f.errMessage, activeTab: current.activeTab));
       },
       (_) {
         log('[Feed] Join success: $roomId');
@@ -86,20 +86,48 @@ class FeedCubit extends Cubit<FeedState> {
     );
   }
 
+  Future<void> notifyMe(String roomId) async {
+    final current = state;
+    if (current is! FeedLoaded) return;
+
+    emit(
+      FeedNotifying(
+        rooms: current.rooms,
+        activeTab: current.activeTab,
+        notifyingRoomId: roomId,
+      ),
+    );
+
+    final result = await _repo.notifyMe(roomId);
+    result.fold(
+      (f) => emit(FeedFailure(f.errMessage, activeTab: current.activeTab)),
+      (_) => emit(
+        FeedNotifyMeSuccess(
+          roomId: roomId,
+          rooms: current.rooms,
+          activeTab: current.activeTab,
+        ),
+      ),
+    );
+  }
+
   Future<void> joinPrivateRoom(String roomId) async {
     log('[Feed] Joining private room: $roomId');
     final result = await _repo.getRoomById(roomId);
 
-    result.fold((f) => emit(FeedFailure(f.errMessage)), (room) {
-      if (!room.isActive) {
-        emit(const FeedFailure('Room is not active yet.'));
-        return;
-      }
-      if (room.isExpired) {
-        emit(const FeedFailure('Room has expired.'));
-        return;
-      }
-      joinRoom(roomId);
-    });
+    result.fold(
+      (f) => emit(FeedFailure(f.errMessage, activeTab: _currentTab)),
+      (room) {
+        if (!room.isActive) {
+          emit(FeedFailure('Room is not active yet.', activeTab: _currentTab));
+          return;
+        }
+        if (room.isExpired) {
+          emit(FeedFailure('Room has expired.', activeTab: _currentTab));
+          return;
+        }
+        joinRoom(roomId);
+      },
+    );
   }
 }

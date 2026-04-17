@@ -8,6 +8,7 @@ class AppKeys {
   static const String userTicketsCollection = 'user_tickets';
   static const String otpsCollection = 'otps';
   static const String notificationsCollection = 'notifications';
+  static const String notifyMeCollection = 'notifyMe';
 
   // User Keys
   static const String uId = 'uid';
@@ -28,6 +29,8 @@ class AppKeys {
   static const String userStatsRoomsCreated = 'roomsCreated';
   static const String userStatsRoomsJoined = 'roomsJoined';
   static const String userStatsTotalCounts = 'totalCounts';
+  static const String userFcmToken = 'fcmToken';
+  static const String userFcmTokenUpdatedAt = 'fcmTokenUpdatedAt';
 
   // Room Keys
   static const String roomId = 'id';
@@ -81,6 +84,7 @@ class AppKeys {
   static const String notificationOpenedAt = 'openedAt';
   static const String notificationRoomId = 'roomId';
   static const String notificationRoute = 'route';
+  static const String notificationTypeRoomStarted = 'room_started';
 
   // RTDB — Live Counter Paths
   static const String liveCountersPath = 'live_counters';

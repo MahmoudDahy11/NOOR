@@ -58,12 +58,15 @@ class FeedRepoImpl implements FeedRepo {
     try {
       final uid = _auth.currentUser!.uid;
       await _firestore.runTransaction((tx) async {
-        final roomRef = _firestore.collection(AppKeys.roomsCollection).doc(roomId);
+        final roomRef = _firestore
+            .collection(AppKeys.roomsCollection)
+            .doc(roomId);
         final snap = await tx.get(roomRef);
         if (!snap.exists) throw Exception('Room not found.');
         final status = snap.data()?[AppKeys.roomStatus] as String?;
-        final expiresAt = (snap.data()?[AppKeys.roomExpiresAt] as Timestamp?)?.toDate();
-        
+        final expiresAt = (snap.data()?[AppKeys.roomExpiresAt] as Timestamp?)
+            ?.toDate();
+
         if (status != 'active') {
           throw Exception('Room is not active.');
         }
@@ -81,6 +84,33 @@ class FeedRepoImpl implements FeedRepo {
           });
         }
       });
+      return right(null);
+    } catch (e) {
+      return left(CustomFailure(errMessage: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<CustomFailure, void>> notifyMe(String roomId) async {
+    try {
+      final uid = _auth.currentUser?.uid;
+      if (uid == null || uid.isEmpty) {
+        return left(
+          CustomFailure(errMessage: 'You need to sign in to enable reminders.'),
+        );
+      }
+
+      await _firestore
+          .collection(AppKeys.roomsCollection)
+          .doc(roomId)
+          .collection(AppKeys.notifyMeCollection)
+          .doc(uid)
+          .set({
+            AppKeys.userId: uid,
+            AppKeys.notificationRoomId: roomId,
+            'at': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
       return right(null);
     } catch (e) {
       return left(CustomFailure(errMessage: e.toString()));

@@ -14,6 +14,9 @@ abstract class FeedRepo {
   /// Join a public room — adds userId to participants.
   Future<Either<CustomFailure, void>> joinRoom(String roomId);
 
+  /// Save a reminder preference for a pending room.
+  Future<Either<CustomFailure, void>> notifyMe(String roomId);
+
   /// Validate private room ID exists and is joinable.
   Future<Either<CustomFailure, FeedRoomEntity>> getRoomById(String roomId);
 }

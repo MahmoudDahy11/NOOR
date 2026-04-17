@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../core/helper/show_snak_bar.dart';
 import '../cubit/feed_cubit.dart';
 import 'feed_empty_state.dart';
 import 'feed_room_card.dart';
@@ -39,7 +38,7 @@ class FeedListBody extends StatelessWidget {
             isJoining: joiningId == room.id,
             onJoin: () {
               if (room.isPending) {
-                showSnakBar(context, 'Notice when the room starts up');
+                context.read<FeedCubit>().notifyMe(room.id);
                 return;
               }
               context.read<FeedCubit>().joinRoom(room.id);

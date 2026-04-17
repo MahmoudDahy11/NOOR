@@ -118,3 +118,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/lunch_icon.png"
+  adaptive_icon_background: "#1A432F"
+  adaptive_icon_foreground: "assets/images/lunch_icon.png"
