@@ -11,7 +11,9 @@ class LocalNotificationService {
 
   static final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
-  static const String channelId = 'room_started_channel';
+
+  // Updated channel ID to v2 to allow sound/importance changes on Android
+  static const String channelId = 'room_started_v2';
   static const String _channelName = 'Room Started Alerts';
   static const String _channelDescription =
       'Heads-up alerts for live room start notifications.';
@@ -172,6 +174,8 @@ class LocalNotificationService {
         autoCancel: true,
         enableLights: true,
         ledColor: const Color(0xFF2E8B57),
+        ledOnMs: 1000,
+        ledOffMs: 1000,
       ),
       iOS: const DarwinNotificationDetails(
         presentAlert: true,
