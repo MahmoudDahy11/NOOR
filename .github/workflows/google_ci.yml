@@ -8,7 +8,6 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  # زيادة رامات الـ Java لضمان عدم فشل الـ Release build
 
 jobs:
   build:
@@ -46,16 +45,16 @@ jobs:
       - name: Run Tests
         run: flutter test
 
-      - name: Build APK (Release & Optimized)
+      - name: Build APK (Optimized Release)
         run: |
-          # --release: للإنتاج الفعلي وبحجم أصغر
-          # --split-per-abi: بيقسم الـ APK لملفات أصغر حسب نوع المعالج (v7, v8, x64)
-          # --obfuscate: بيخفي أسماء الكلاسات والـ methods لزيادة الأمان وتقليل الحجم
+          # --release: لتقليل الحجم وحذف أدوات الـ Debug
+          # --split-per-abi: لتقسيم الـ APK لملفات صغيرة حسب نوع المعالج
+          # --obfuscate: لضغط الكود وحمايته
           flutter build apk --release --split-per-abi --obfuscate --split-debug-info=build/app/outputs/symbols
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: flutter-release-apks
-          # بنرفع كل الـ APKS اللي نتجت عن الـ split
+          # سحب ملفات الـ release فقط التي تم تقسيمها
           path: build/app/outputs/flutter-apk/app-*-release.apk
